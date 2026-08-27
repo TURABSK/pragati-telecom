@@ -3,87 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pragati Telecom | Multi-Tool Digital Portal & AI Studio</title>
-  <meta name="description" content="Official Multi-Tool Web Portal for Pragati Telecom, Kalupur Middle Para, Murshidabad. 30+ Free AI & CSC Utility tools including Passport Photo Studio, Searchable PDF Maker, Image Resizer and Land Calculators.">
+  <title>Pragati Telecom | Smart Digital Tools Portal</title>
+  <meta name="description" content="Official Multi-Tool Web Portal for Pragati Telecom, Kalupur Middle Para, Murshidabad. Featuring 7 Premium Utility tools.">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     /* Instant Utility Modal Styling */
-    .tool-modal-backdrop {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(8px);
-      z-index: 3000;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-    }
-    .tool-modal-backdrop.active {
-      display: flex;
-    }
-    .tool-modal-box {
-      background: #ffffff;
-      border-radius: var(--radius-xl);
-      max-width: 600px;
-      width: 100%;
-      box-shadow: var(--shadow-xl);
-      border: 1px solid var(--border-light);
-      overflow: hidden;
-      animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    @keyframes modalPop {
-      0% { opacity: 0; transform: scale(0.92) translateY(20px); }
-      100% { opacity: 1; transform: scale(1) translateY(0); }
-    }
-    .tool-modal-header {
-      padding: 1.25rem 1.5rem;
-      background: #f8fafc;
-      border-bottom: 1px solid var(--border-light);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .tool-modal-body {
-      padding: 1.5rem;
-      max-height: 75vh;
-      overflow-y: auto;
-    }
-    .form-group-modal {
-      margin-bottom: 1.1rem;
-    }
-    .form-group-modal label {
-      display: block;
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: var(--text-secondary);
-      margin-bottom: 0.35rem;
-    }
-    .form-group-modal input, .form-group-modal select, .form-group-modal textarea {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1.5px solid var(--border-light);
-      border-radius: var(--radius-md);
-      font-size: 0.95rem;
-      outline: none;
-    }
-    .form-group-modal input:focus, .form-group-modal select:focus, .form-group-modal textarea:focus {
-      border-color: var(--brand-primary);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-    }
-    .modal-result-box {
-      margin-top: 1.2rem;
-      padding: 1.2rem;
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      border-radius: var(--radius-md);
-      font-size: 0.95rem;
-      color: #166534;
-      display: none;
-    }
+    .tool-modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); z-index: 3000; align-items: center; justify-content: center; padding: 1.5rem; }
+    .tool-modal-backdrop.active { display: flex; }
+    .tool-modal-box { background: #ffffff; border-radius: var(--radius-xl); max-width: 600px; width: 100%; box-shadow: var(--shadow-xl); border: 1px solid var(--border-light); overflow: hidden; animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    @keyframes modalPop { 0% { opacity: 0; transform: scale(0.92) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+    .tool-modal-header { padding: 1.25rem 1.5rem; background: #f8fafc; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; }
+    .tool-modal-body { padding: 1.5rem; max-height: 75vh; overflow-y: auto; }
+    .form-group-modal { margin-bottom: 1.1rem; }
+    .form-group-modal label { display: block; font-size: 0.88rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.35rem; }
+    .form-group-modal input { width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--border-light); border-radius: var(--radius-md); font-size: 0.95rem; outline: none; }
+    .form-group-modal input:focus { border-color: var(--brand-primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+    .modal-result-box { margin-top: 1.2rem; padding: 1.2rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-md); font-size: 0.95rem; color: #166534; display: none; }
   </style>
 </head>
 <body>
@@ -91,182 +27,51 @@
   <!-- HERO & DIRECTORY SECTION -->
   <main>
     <section class="hero-section">
-      <!-- Floating Ambient Lighting Orbs -->
       <div class="floating-orb orb-1"></div>
       <div class="floating-orb orb-2"></div>
 
       <div class="hero-container">
-        <!-- Center Badge with Pulsing Live Status -->
         <div class="hero-badge">
           <span class="pulse-dot"></span>
           <span>⚡ Pragati Telecom • Kalupur Middle Para, Murshidabad</span>
         </div>
 
-        <!-- Animated Gradient Heading -->
         <h1 class="hero-title">
           Smart Digital Seva &amp; <br>
-          <span class="gradient-text">AI Multi-Tool Portal</span>
+          <span class="gradient-text">Premium Tool Portal</span>
         </h1>
 
-        <!-- Subtitle -->
         <p class="hero-subtitle">
-          Experience ultra-fast, client-side tools designed for local CSC centers, students, and citizens. Instant <strong>AI Passport Photo Cropping</strong>, <strong>Searchable OCR PDF Creation</strong>, Government Form Resizers &amp; 30+ everyday utilities.
+          Experience ultra-fast, client-side tools designed for local CSC centers. Instant <strong>AI Passport Photo Cropping</strong>, <strong>Searchable OCR PDF Creation</strong>, Smart PVC Card Printing &amp; Daily Cash Tally.
         </p>
-
-        <!-- Feature Stat Pills -->
-        <div class="hero-stats-row">
-          <div class="stat-pill">
-            <span class="icon">⚡</span>
-            <span>30+ High-Speed Tools</span>
-          </div>
-          <div class="stat-pill">
-            <span class="icon">🔒</span>
-            <span>100% Private (No File Uploaded to Server)</span>
-          </div>
-          <div class="stat-pill">
-            <span class="icon">📍</span>
-            <span>Murshidabad Digital Seva Hub</span>
-          </div>
-          <div class="stat-pill">
-            <span class="icon">✨</span>
-            <span>Powered by Client-Side AI</span>
-          </div>
-        </div>
 
         <!-- SEARCH & FILTER BAR -->
         <div class="search-filter-wrapper" id="search-bar">
           <div class="search-bar-container">
             <span class="search-icon-inside">🔍</span>
-            <input 
-              type="text" 
-              id="toolSearchInput" 
-              class="main-search-input" 
-              placeholder="Search tools... (e.g., 'passport', 'pdf', 'resize', 'age', 'qr', 'voter')" 
-              autocomplete="off"
-            >
-            <button class="search-clear-btn" id="searchClearBtn" title="Clear Search">✕</button>
+            <input type="text" id="toolSearchInput" class="main-search-input" placeholder="Search tools... (e.g., 'pdf', 'photo', 'cash')" autocomplete="off">
+            <button class="search-clear-btn" id="searchClearBtn">✕</button>
           </div>
 
-          <!-- Category Filter Tabs -->
           <div class="category-filter-list" id="categoryFilterList">
-            <button class="filter-btn active" data-category="all">
-              <span>🌟</span> All Tools <span class="filter-count" id="countAll">30</span>
-            </button>
-            <button class="filter-btn" data-category="ai-photo">
-              <span>📸</span> AI &amp; Photo Studio <span class="filter-count" id="countAiPhoto">6</span>
-            </button>
-            <button class="filter-btn" data-category="pdf-doc">
-              <span>📄</span> PDF &amp; Documents <span class="filter-count" id="countPdfDoc">6</span>
-            </button>
-            <button class="filter-btn" data-category="govt-csc">
-              <span>🏛️</span> CSC &amp; Govt Portals <span class="filter-count" id="countGovtCsc">6</span>
-            </button>
-            <button class="filter-btn" data-category="image-resizer">
-              <span>✂️</span> Image &amp; Resizers <span class="filter-count" id="countImageResizer">6</span>
-            </button>
-            <button class="filter-btn" data-category="calc-utility">
-              <span>🧮</span> Calculators &amp; Utils <span class="filter-count" id="countCalcUtility">6</span>
-            </button>
+            <button class="filter-btn active" data-category="all"><span>🌟</span> All Tools <span class="filter-count">7</span></button>
+            <button class="filter-btn" data-category="ai-photo"><span>📸</span> Photo & Cards <span class="filter-count">2</span></button>
+            <button class="filter-btn" data-category="pdf-doc"><span>📄</span> PDF Suite <span class="filter-count">4</span></button>
+            <button class="filter-btn" data-category="calc-utility"><span>🧮</span> Utilities <span class="filter-count">1</span></button>
           </div>
         </div>
       </div>
     </section>
-    <!-- DIRECTORY META INFO BAR -->
-    <div class="directory-meta" id="tools-directory">
-      <div>
-        Showing <span class="tools-count-badge" id="visibleCountText">30</span> of 30 Tools
-      </div>
-      <div style="font-size: 0.85rem;">
-        <span>💡 Tip: Click any tool card to launch instantly</span>
-      </div>
-    </div>
 
-    <!-- 30 RESPONSIVE TOOL CARDS GRID -->
+    <!-- 7 RESPONSIVE TOOL CARDS GRID -->
     <section class="tools-section">
       <div class="tools-grid" id="toolsGrid">
-        <!-- 30 Cards dynamically rendered via JavaScript with full data attributes & direct links -->
-      </div>
-    </section>
-
-    <!-- PHYSICAL CSC & TELECOM SERVICES SECTION -->
-    <section class="services-highlight-section" id="services-section">
-      <div class="section-container">
-        <div class="section-header-center">
-          <span class="section-tag">Offline &amp; Online Hub</span>
-          <h2 class="section-title">Services Available at Pragati Telecom</h2>
-          <p class="section-desc">
-            Visit our center at Kalupur Middle Para, Murshidabad for high-quality printing, digital scheme registrations, and instant online support.
-          </p>
-        </div>
-
-        <div class="services-cards-grid">
-          <div class="service-feature-card">
-            <div class="service-icon">🖨️</div>
-            <h3 class="service-title">High Speed Xerox &amp; Color Print</h3>
-            <p class="service-text">Clear b/w and photo-quality color printing, project printing, syllabus, notes, and legal stamp paper copies.</p>
-          </div>
-
-          <div class="service-feature-card">
-            <div class="service-icon">💳</div>
-            <h3 class="service-title">PVC Smart ID Card Printing</h3>
-            <p class="service-text">Durable plastic PVC printing for Aadhaar, Voter EPIC, PAN card, Ayushman Bharat, and College ID cards.</p>
-          </div>
-
-          <div class="service-feature-card">
-            <div class="service-icon">📝</div>
-            <h3 class="service-title">Govt Schemes &amp; Job Applications</h3>
-            <p class="service-text">Hassle-free online form fill-up for WBPSC, SSC, Railways, Swasthya Sathi, Lakshmir Bhandar &amp; Student Credit Card.</p>
-          </div>
-
-          <div class="service-feature-card">
-            <div class="service-icon">🏧</div>
-            <h3 class="service-title">AEPS &amp; Micro ATM Banking</h3>
-            <p class="service-text">Instant cash withdrawal with Aadhaar fingerprint, money transfer to all national banks, mini statement &amp; balance inquiry.</p>
-          </div>
-
-          <div class="service-feature-card">
-            <div class="service-icon">📜</div>
-            <h3 class="service-title">Lamination &amp; Spiral Binding</h3>
-            <p class="service-text">Hot pouch lamination for marksheets &amp; certificates, book binding, spiral binding for projects and legal documents.</p>
-          </div>
-
-          <div class="service-feature-card">
-            <div class="service-icon">⚡</div>
-            <h3 class="service-title">Recharge &amp; Utility Bill Payments</h3>
-            <p class="service-text">Instant WBSEDCL electricity bill payment with receipt, prepaid/postpaid mobile recharges, DTH, and FASTag recharge.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CONTACT & LOCATION HERO BANNER -->
-    <section style="background: #ffffff; padding: 4rem 1.5rem; border-bottom: 1px solid var(--border-light);" id="contact-section">
-      <div style="max-width: 1100px; margin: 0 auto; background: linear-gradient(135deg, #eff6ff, #f0fdf4); border: 1.5px solid #bfdbfe; border-radius: var(--radius-xl); padding: 2.5rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 2rem;">
-        <div>
-          <span style="font-size: 0.8rem; font-weight: 800; color: var(--brand-primary); text-transform: uppercase; letter-spacing: 0.5px;">📍 Visit Our Center</span>
-          <h2 style="font-size: 1.85rem; font-weight: 800; color: var(--text-main); margin: 0.4rem 0 0.6rem;">Pragati Telecom Digital Seva</h2>
-          <p style="color: var(--text-secondary); max-width: 600px; font-size: 0.96rem;">
-            Kalupur Middle Para, Murshidabad, West Bengal. Open 7 days a week from 8:00 AM to 9:30 PM.
-          </p>
-          <div style="margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.95rem; font-weight: 700;">
-            <a href="tel:9775096842" style="color: var(--brand-primary);">📞 +91 9775096842</a>
-            <span style="color: #94a3b8;">•</span>
-            <a href="https://wa.me/919775096842" target="_blank" style="color: var(--brand-green);">💬 WhatsApp Support</a>
-          </div>
-        </div>
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-          <a href="tel:9775096842" class="btn-nav-whatsapp" style="padding: 0.85rem 1.6rem; font-size: 1rem; background: linear-gradient(135deg, #2563eb, #1d4ed8);">
-            <span>📞</span> Call Shop
-          </a>
-          <a href="https://wa.me/919775096842?text=Hello%20Pragati%20Telecom" target="_blank" class="btn-nav-whatsapp" style="padding: 0.85rem 1.6rem; font-size: 1rem;">
-            <span>💬</span> WhatsApp
-          </a>
-        </div>
+        <!-- Cards dynamically rendered via JavaScript -->
       </div>
     </section>
   </main>
 
-  <!-- INSTANT UTILITY MODAL (For interactive quick calculators & generators) -->
+  <!-- INSTANT UTILITY MODAL (For Cash Tally) -->
   <div class="tool-modal-backdrop" id="toolModalBackdrop">
     <div class="tool-modal-box">
       <div class="tool-modal-header">
@@ -274,510 +79,101 @@
           <span id="modalToolIcon" style="font-size: 1.5rem;">⚡</span>
           <h3 id="modalToolTitle" style="font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin: 0;">Tool Title</h3>
         </div>
-        <button id="modalCloseBtn" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1rem; font-weight: bold;">✕</button>
+        <button id="modalCloseBtn" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">✕</button>
       </div>
-      <div class="tool-modal-body" id="modalToolContent">
-        <!-- Injected dynamically based on tool clicked -->
-      </div>
+      <div class="tool-modal-body" id="modalToolContent"></div>
     </div>
   </div>
 
-  <!-- LOAD SHARED LAYOUT (Injects Frosted Glass Nav & Animated Dark Footer) -->
+  <!-- LOAD SHARED LAYOUT -->
   <script src="js/shared-layout.js"></script>
-  <!-- 30 TOOLS DATA & DIRECTORY SCRIPT -->
+
+  <!-- TOOLS DATA & SCRIPT -->
   <script>
-    // 30 Tools Detailed Database
+    // Exactly 7 Premium Tools Database
     const toolsData = [
+      {
+        id: "cash-tally",
+        title: "Cash Denomination Tally",
+        category: "calc-utility",
+        badge: "hot", badgeText: "Daily Cash",
+        icon: "💵", iconBg: "#ecfdf5", iconColor: "#059669", accent: "#059669",
+        desc: "Count daily currency notes (₹500 to ₹10) with automatic total calculation for evening shop closing.",
+        url: "#modal-cash", actionType: "modal", tags: ["cash", "tally", "notes", "money", "calculator"]
+      },
       {
         id: "photo-studio",
         title: "AI Photo Studio Pro",
         category: "ai-photo",
-        badge: "ai",
-        badgeText: "AI Studio",
-        icon: "📸",
-        iconBg: "#eff6ff",
-        iconColor: "#2563eb",
-        accent: "#2563eb",
-        desc: "Advanced passport cropping (35×45mm, 2×2 inch), local AI background removal, beauty filters & 4×6 / A4 print sheet maker.",
-        url: "tools/photo-studio.html",
-        actionType: "direct",
-        tags: ["passport", "photo", "background", "crop", "ai", "print", "4x6", "a4", "studio"]
+        badge: "ai", badgeText: "AI Studio",
+        icon: "📸", iconBg: "#eff6ff", iconColor: "#2563eb", accent: "#2563eb",
+        desc: "Advanced passport cropping (35×45mm), local AI background removal, and 4×6 print sheet maker.",
+        url: "tools/photo-studio.html", actionType: "direct", tags: ["passport", "photo", "background", "crop", "print"]
+      },
+      {
+        id: "smart-card",
+        title: "Smart Multi-Card Studio",
+        category: "ai-photo",
+        badge: "csc", badgeText: "PVC Print",
+        icon: "💳", iconBg: "#f5f3ff", iconColor: "#8b5cf6", accent: "#8b5cf6",
+        desc: "Auto-detects Aadhaar, PAN, Ration cards. Unlocks passwords and formats perfectly for PVC tray printing.",
+        url: "tools/smart-card.html", actionType: "direct", tags: ["pvc", "aadhaar", "pan", "ration", "card", "print"]
+      },
+      {
+        id: "searchable-pdf",
+        title: "Searchable PDF Maker (OCR)",
+        category: "pdf-doc",
+        badge: "ai", badgeText: "Gemini AI",
+        icon: "🔎", iconBg: "#fdf2f8", iconColor: "#db2777", accent: "#db2777",
+        desc: "Universal multi-column Bengali & English OCR scanner. Make images and voter lists searchable instantly.",
+        url: "tools/searchable-pdf.html", actionType: "direct", tags: ["pdf", "ocr", "searchable", "bengali", "voter"]
+      },
+      {
+        id: "pdf-compressor",
+        title: "Custom PDF Compressor",
+        category: "pdf-doc",
+        badge: "", badgeText: "Size Reducer",
+        icon: "🗜️", iconBg: "#fffbeb", iconColor: "#d97706", accent: "#d97706",
+        desc: "Intelligently shrink your PDF to an exact Target KB size using binary search compression without losing quality.",
+        url: "tools/pdf-compressor.html", actionType: "direct", tags: ["pdf", "compress", "size", "reduce", "kb"]
+      },
+      {
+        id: "pdf-editor",
+        title: "Smart Visual PDF Editor",
+        category: "pdf-doc",
+        badge: "", badgeText: "Editor",
+        icon: "✏️", iconBg: "#f0fdfa", iconColor: "#0d9488", accent: "#0d9488",
+        desc: "Directly click and edit text on any PDF. Features built-in Bengali font support and whiteout editing.",
+        url: "tools/pdf-editor.html", actionType: "direct", tags: ["pdf", "edit", "text", "bengali", "modify"]
       },
       {
         id: "pdf-maker",
-        title: "Searchable PDF Maker",
+        title: "Drag & Drop PDF Maker",
         category: "pdf-doc",
-        badge: "ai",
-        badgeText: "Gemini AI",
-        icon: "📄",
-        iconBg: "#f0f9ff",
-        iconColor: "#0284c7",
-        accent: "#0284c7",
-        desc: "Universal multi-column Bengali & English OCR scanner. Make images and voter lists searchable with embedded Bengali font.",
-        url: "tools/pdf-maker.html",
-        actionType: "direct",
-        tags: ["pdf", "ocr", "searchable", "bengali", "voter", "scanner", "compress"]
-      },
-      {
-        id: "passport-grid",
-        title: "Passport Photo 4×6 Grid",
-        category: "ai-photo",
-        badge: "hot",
-        badgeText: "Popular",
-        icon: "🪪",
-        iconBg: "#ecfdf5",
-        iconColor: "#10b981",
-        accent: "#10b981",
-        desc: "Fit 8, 12, 16, or 32 passport photos on standard 4×6 or A4 photographic paper with cut markers for studio printing.",
-        url: "tools/photo-studio.html",
-        actionType: "direct",
-        tags: ["grid", "passport", "4x6", "print", "sheet", "studio", "multiple"]
-      },
-      {
-        id: "job-resizer",
-        title: "Govt Job Photo & Sign Resizer",
-        category: "image-resizer",
-        badge: "csc",
-        badgeText: "CSC Special",
-        icon: "📐",
-        iconBg: "#f5f3ff",
-        iconColor: "#8b5cf6",
-        accent: "#8b5cf6",
-        desc: "Exact KB and pixel dimensions for SSC, UPSC, WBPSC, Railway, IBPS, and State Police job recruitment forms.",
-        url: "tools/photo-studio.html",
-        actionType: "direct",
-        tags: ["resize", "kb", "ssc", "upsc", "wbpsc", "job", "signature", "photo"]
-      },
-      {
-        id: "image-compressor",
-        title: "Smart Image Compressor",
-        category: "image-resizer",
-        badge: "",
-        badgeText: "Instant",
-        icon: "🗜️",
-        iconBg: "#fffbeb",
-        iconColor: "#f59e0b",
-        accent: "#f59e0b",
-        desc: "Compress large JPG, PNG, and WebP images down to 50KB, 100KB, or 200KB without visible loss of sharpness.",
-        url: "tools/photo-studio.html",
-        actionType: "direct",
-        tags: ["compress", "image", "jpg", "reduce", "size", "kb", "quality"]
-      },
-      {
-        id: "voter-cutter",
-        title: "Voter EPIC Multi-Cutter",
-        category: "govt-csc",
-        badge: "hot",
-        badgeText: "CSC Tool",
-        icon: "📑",
-        iconBg: "#fdf2f8",
-        iconColor: "#ec4899",
-        accent: "#ec4899",
-        desc: "Extract voter slip sections from electoral roll PDFs, split front & back, and format for instant PVC plastic card printing.",
-        url: "tools/pdf-maker.html",
-        actionType: "direct",
-        tags: ["voter", "epic", "election", "pvc", "card", "crop", "pdf"]
-      },
-      {
-        id: "aadhaar-mask",
-        title: "Aadhaar Masking Helper",
-        category: "govt-csc",
-        badge: "csc",
-        badgeText: "Privacy",
-        icon: "🛡️",
-        iconBg: "#ecfdf5",
-        iconColor: "#059669",
-        accent: "#059669",
-        desc: "Securely black-out the first 8 digits of Aadhaar numbers on e-Aadhaar cards for safe KYC submissions.",
-        url: "#modal-aadhaar",
-        actionType: "modal",
-        tags: ["aadhaar", "mask", "masking", "kyc", "security", "uidai", "privacy"]
-      },
-      {
-        id: "pan-formatter",
-        title: "PAN Photo & Signature Joiner",
-        category: "govt-csc",
-        badge: "csc",
-        badgeText: "NSDL / UTI",
-        icon: "💳",
-        iconBg: "#f0f9ff",
-        iconColor: "#0284c7",
-        accent: "#0284c7",
-        desc: "Format photo (213×213 px, 300 DPI, <30KB) and signature (400×200 px, 600 DPI, <60KB) for NSDL & UTI PAN portals.",
-        url: "tools/photo-studio.html",
-        actionType: "direct",
-        tags: ["pan", "nsdl", "uti", "213x213", "signature", "photo", "dpi"]
-      },
-      {
-        id: "bangla-typer",
-        title: "Bengali Unicode Typist & Converter",
-        category: "calc-utility",
-        badge: "",
-        badgeText: "Bangla",
-        icon: "⌨️",
-        iconBg: "#eef2ff",
-        iconColor: "#6366f1",
-        accent: "#6366f1",
-        desc: "Easy phonetic Bengali typing assistant with instant English-to-Bangla conversion and text cleaner for legal drafts.",
-        url: "#modal-bangla",
-        actionType: "modal",
-        tags: ["bengali", "bangla", "typing", "unicode", "avro", "bijoy", "keyboard"]
-      },
-      {
-        id: "upi-qr",
-        title: "Instant UPI Shop QR Generator",
-        category: "calc-utility",
-        badge: "hot",
-        badgeText: "Instant",
-        icon: "📱",
-        iconBg: "#ecfdf5",
-        iconColor: "#10b981",
-        accent: "#10b981",
-        desc: "Create customized UPI payment QR codes (PhonePe, GPay, Paytm) with custom amount & printable shop counter template.",
-        url: "#modal-upi",
-        actionType: "modal",
-        tags: ["upi", "qr", "payment", "phonepe", "gpay", "paytm", "barcode"]
-      },
-      {
-        id: "land-calc",
-        title: "Banglarbhumi Land Converter",
-        category: "calc-utility",
-        badge: "csc",
-        badgeText: "WB Special",
-        icon: "🌾",
-        iconBg: "#fffbeb",
-        iconColor: "#d97706",
-        accent: "#d97706",
-        desc: "Accurate land unit converter: Satak (Decimal), Katha, Bigha, Acre, Square Feet, and Square Meters used across West Bengal.",
-        url: "#modal-land",
-        actionType: "modal",
-        tags: ["land", "satak", "decimal", "katha", "bigha", "acre", "banglarbhumi", "plot"]
-      },
-      {
-        id: "age-calc",
-        title: "Govt Job Age Calculator",
-        category: "calc-utility",
-        badge: "",
-        badgeText: "Eligibility",
-        icon: "🎂",
-        iconBg: "#eff6ff",
-        iconColor: "#3b82f6",
-        accent: "#3b82f6",
-        desc: "Calculate precise age in Years, Months, and Days as on any cut-off date with SC/ST/OBC age relaxation checker.",
-        url: "#modal-age",
-        actionType: "modal",
-        tags: ["age", "dob", "calculator", "eligibility", "years", "months", "days", "govt"]
-      },
-      {
-        id: "pdf-merge",
-        title: "PDF Merge & Page Splitter",
-        category: "pdf-doc",
-        badge: "",
-        badgeText: "Client-Side",
-        icon: "📚",
-        iconBg: "#f5f3ff",
-        iconColor: "#8b5cf6",
-        accent: "#8b5cf6",
-        desc: "Join multiple PDF files into one single document, re-order pages, or extract specific pages instantly.",
-        url: "tools/pdf-maker.html",
-        actionType: "direct",
-        tags: ["pdf", "merge", "split", "combine", "organize", "pages"]
-      },
-      {
-        id: "signature-cleaner",
-        title: "Signature to Transparent PNG",
-        category: "image-resizer",
-        badge: "ai",
-        badgeText: "AI Clean",
-        icon: "✍️",
-        iconBg: "#f0fdfa",
-        iconColor: "#0d9488",
-        accent: "#0d9488",
-        desc: "Remove paper shadows, background grey tints, and pen smudges to extract pure transparent digital signature PNG.",
-        url: "tools/photo-studio.html",
-        actionType: "direct",
-        tags: ["signature", "transparent", "png", "sign", "ink", "extractor"]
-      },
-      {
-        id: "self-declaration",
-        title: "Income & Self-Declaration Generator",
-        category: "govt-csc",
-        badge: "csc",
-        badgeText: "Forms",
-        icon: "📜",
-        iconBg: "#fff1f2",
-        iconColor: "#e11d48",
-        accent: "#e11d48",
-        desc: "Ready-made printable Bengali and English self-declaration formats for Caste Certificate, Income proof & Scholarship.",
-        url: "#modal-declaration",
-        actionType: "modal",
-        tags: ["declaration", "affidavit", "income", "caste", "form", "bengali", "certificate"]
+        badge: "", badgeText: "Merge",
+        icon: "📑", iconBg: "#f8fafc", iconColor: "#475569", accent: "#475569",
+        desc: "Upload multiple images or PDFs, drag to reorder them, and merge into a single target-sized document.",
+        url: "tools/pdf-maker.html", actionType: "direct", tags: ["pdf", "merge", "combine", "drag", "images"]
       }
-    ];    // Append Tools 16-30
-    toolsData.push(
-      {
-        id: "wbsedcl-calc",
-        title: "WB Electricity Bill Estimator",
-        category: "calc-utility",
-        badge: "",
-        badgeText: "WBSEDCL",
-        icon: "⚡",
-        iconBg: "#fefce8",
-        iconColor: "#ca8a04",
-        accent: "#ca8a04",
-        desc: "Estimate WBSEDCL domestic quarterly electric bill based on unit consumption, slab rates, and timely payment rebate.",
-        url: "#modal-electric",
-        actionType: "modal",
-        tags: ["electric", "bill", "wbsedcl", "tariff", "units", "power", "meter"]
-      },
-      {
-        id: "emi-calc",
-        title: "EMI & Loan Interest Calculator",
-        category: "calc-utility",
-        badge: "",
-        badgeText: "Finance",
-        icon: "💰",
-        iconBg: "#ecfdf5",
-        iconColor: "#10b981",
-        accent: "#10b981",
-        desc: "Calculate monthly installment, total interest payable, and loan breakdown for bike loans, personal, and business financing.",
-        url: "#modal-emi",
-        actionType: "modal",
-        tags: ["emi", "loan", "interest", "finance", "calculator", "monthly"]
-      },
-      {
-        id: "gst-calc",
-        title: "CSC GST & Bill Cash Receipt",
-        category: "calc-utility",
-        badge: "",
-        badgeText: "Billing",
-        icon: "🧾",
-        iconBg: "#f8fafc",
-        iconColor: "#475569",
-        accent: "#475569",
-        desc: "Calculate 5%, 12%, 18% GST (CGST + SGST) and generate simple printable customer cash receipts for cyber cafe jobs.",
-        url: "#modal-gst",
-        actionType: "modal",
-        tags: ["gst", "invoice", "receipt", "bill", "tax", "cgst", "sgst"]
-      },
-      {
-        id: "word-counter",
-        title: "Text Case & Character Counter",
-        category: "calc-utility",
-        badge: "",
-        badgeText: "Forms",
-        icon: "📝",
-        iconBg: "#f0f9ff",
-        iconColor: "#0284c7",
-        accent: "#0284c7",
-        desc: "Count characters, words, lines and convert between UPPERCASE, lowercase, and Title Case for online application boxes.",
-        url: "#modal-text",
-        actionType: "modal",
-        tags: ["text", "word", "character", "case", "counter", "uppercase", "form"]
-      },
-      {
-        id: "cv-maker",
-        title: "Instant Bio-Data & CV Creator",
-        category: "pdf-doc",
-        badge: "hot",
-        badgeText: "Print Ready",
-        icon: "👔",
-        iconBg: "#eef2ff",
-        iconColor: "#4f46e5",
-        accent: "#4f46e5",
-        desc: "Fill in personal details and generate clean 1-page biodata or job resume formatted for instant A4 printing.",
-        url: "#modal-biodata",
-        actionType: "modal",
-        tags: ["biodata", "cv", "resume", "marriage", "job", "biodata-maker"]
-      },
-      {
-        id: "cash-tally",
-        title: "Cash Denomination Tally Counter",
-        category: "calc-utility",
-        badge: "",
-        badgeText: "Daily Cash",
-        icon: "💵",
-        iconBg: "#ecfdf5",
-        iconColor: "#059669",
-        accent: "#059669",
-        desc: "Count daily currency notes (₹500, ₹200, ₹100, ₹50, ₹20, ₹10) with automatic rupee words converter and closing slip.",
-        url: "#modal-cash",
-        actionType: "modal",
-        tags: ["cash", "denomination", "tally", "notes", "closing", "money", "counter"]
-      },
-      {
-        id: "wa-linker",
-        title: "Direct WhatsApp Message Linker",
-        category: "calc-utility",
-        badge: "",
-        badgeText: "Instant",
-        icon: "💬",
-        iconBg: "#f0fdf4",
-        iconColor: "#22c55e",
-        accent: "#22c55e",
-        desc: "Send WhatsApp document/photo messages to any customer number directly without saving the contact in your phone book.",
-        url: "#modal-whatsapp",
-        actionType: "modal",
-        tags: ["whatsapp", "direct", "message", "chat", "customer", "phone"]
-      },
-      {
-        id: "barcode-maker",
-        title: "High-Density Barcode Generator",
-        category: "calc-utility",
-        badge: "",
-        badgeText: "Labels",
-        icon: "🏷️",
-        iconBg: "#f1f5f9",
-        iconColor: "#334155",
-        accent: "#334155",
-        desc: "Generate standard Code 128, EAN-13, and Code 39 barcodes for shop stock, parcel tracking, and inventory slips.",
-        url: "#modal-barcode",
-        actionType: "modal",
-        tags: ["barcode", "code128", "label", "ean", "generator", "print"]
-      },
-      {
-        id: "stamp-maker",
-        title: "Round Digital Seal & Stamp Maker",
-        category: "image-resizer",
-        badge: "csc",
-        badgeText: "Custom Seal",
-        icon: "⭕",
-        iconBg: "#f5f3ff",
-        iconColor: "#7c3aed",
-        accent: "#7c3aed",
-        desc: "Design circular digital business seals & verification stamps with custom text for receipts, invoices, and certificates.",
-        url: "#modal-stamp",
-        actionType: "modal",
-        tags: ["stamp", "seal", "round", "rubber", "digital", "certificate"]
-      },
-      {
-        id: "speed-test",
-        title: "Speed & CSC Portal Ping Checker",
-        category: "calc-utility",
-        badge: "",
-        badgeText: "Network",
-        icon: "🌐",
-        iconBg: "#ecfeff",
-        iconColor: "#06b6d4",
-        accent: "#06b6d4",
-        desc: "Check real-time network latency, IP address, download responsiveness, and portal connectivity for CSC kiosks.",
-        url: "#modal-network",
-        actionType: "modal",
-        tags: ["speed", "ping", "ip", "network", "internet", "csc", "portal"]
-      },
-      {
-        id: "pf-calc",
-        title: "EPF & Pension Maturity Estimator",
-        category: "calc-utility",
-        badge: "",
-        badgeText: "Pension",
-        icon: "🏦",
-        iconBg: "#f0f9ff",
-        iconColor: "#0284c7",
-        accent: "#0284c7",
-        desc: "Calculate EPF retirement fund accumulation with compound interest, employee + employer contribution, and EPS pension.",
-        url: "#modal-epf",
-        actionType: "modal",
-        tags: ["epf", "pf", "pension", "gratuity", "provident", "fund", "salary"]
-      },
-      {
-        id: "ration-formatter",
-        title: "e-Ration (RCMS) Slip Formatter",
-        category: "govt-csc",
-        badge: "csc",
-        badgeText: "West Bengal",
-        icon: "🌾",
-        iconBg: "#fffbeb",
-        iconColor: "#d97706",
-        accent: "#d97706",
-        desc: "Format downloaded West Bengal digital e-Ration card slips into clear credit-card size PVC layouts ready for lamination.",
-        url: "tools/pdf-maker.html",
-        actionType: "direct",
-        tags: ["ration", "rcms", "khadya", "sathi", "wb", "pvc", "card"]
-      },
-      {
-        id: "rto-lookup",
-        title: "WB & All-India RTO Code Lookup",
-        category: "govt-csc",
-        badge: "",
-        badgeText: "Vehicle",
-        icon: "🚗",
-        iconBg: "#fef2f2",
-        iconColor: "#dc2626",
-        accent: "#dc2626",
-        desc: "Instant search for vehicle registration RTO districts (e.g. WB-57 Murshidabad Sadar, WB-58 Berhampore) & challan links.",
-        url: "#modal-rto",
-        actionType: "modal",
-        tags: ["rto", "vehicle", "wb57", "wb58", "murshidabad", "challan", "vahan"]
-      },
-      {
-        id: "dopo-stamp",
-        title: "Name & Date Stamp on Photo",
-        category: "ai-photo",
-        badge: "hot",
-        badgeText: "Exam Special",
-        icon: "🏷️",
-        iconBg: "#eff6ff",
-        iconColor: "#2563eb",
-        accent: "#2563eb",
-        desc: "Automatically print Candidate Name & Date of Photo (DOPO) in a clean white box at the bottom of passport photos.",
-        url: "tools/photo-studio.html",
-        actionType: "direct",
-        tags: ["date", "name", "dopo", "stamp", "photo", "police", "army", "exam"]
-      },
-      {
-        id: "pvc-aligner",
-        title: "PVC ID Card Front & Back Aligner",
-        category: "image-resizer",
-        badge: "csc",
-        badgeText: "Hardware",
-        icon: "🪪",
-        iconBg: "#faf5ff",
-        iconColor: "#9333ea",
-        accent: "#9333ea",
-        desc: "Align front & back ID scans side-by-side with exact 86×54 mm ISO standard credit card dimensions for flawless PVC tray printing.",
-        url: "tools/photo-studio.html",
-        actionType: "direct",
-        tags: ["pvc", "id", "card", "front", "back", "align", "86x54", "print"]
-      }
-    );
-    // DOM Elements
+    ];
+
     const toolsGrid = document.getElementById('toolsGrid');
     const searchInput = document.getElementById('toolSearchInput');
-    const searchClearBtn = document.getElementById('searchClearBtn');
-    const categoryFilterList = document.getElementById('categoryFilterList');
-    const visibleCountText = document.getElementById('visibleCountText');
-
+    const categoryBtns = document.querySelectorAll('.filter-btn');
     let currentCategory = 'all';
-    let searchQuery = '';
 
-    // Render Tool Cards
     function renderTools() {
       toolsGrid.innerHTML = '';
+      const q = searchInput.value.toLowerCase().trim();
 
       const filtered = toolsData.filter(tool => {
         const matchesCategory = currentCategory === 'all' || tool.category === currentCategory;
-        
-        const q = searchQuery.toLowerCase().trim();
-        const matchesSearch = !q || 
-          tool.title.toLowerCase().includes(q) || 
-          tool.desc.toLowerCase().includes(q) || 
-          tool.tags.some(tag => tag.toLowerCase().includes(q));
-
+        const matchesSearch = !q || tool.title.toLowerCase().includes(q) || tool.desc.toLowerCase().includes(q) || tool.tags.some(t => t.includes(q));
         return matchesCategory && matchesSearch;
       });
 
-      visibleCountText.textContent = filtered.length;
-
       if (filtered.length === 0) {
-        toolsGrid.innerHTML = `
-          <div class="no-tools-found">
-            <div class="no-tools-icon">🔍</div>
-            <div class="no-tools-title">No Tools Found</div>
-            <p class="no-tools-text">We couldn't find any tool matching "<strong>${searchQuery}</strong>" in the selected category.</p>
-            <button class="filter-btn active" onclick="resetFilters()">Reset All Filters</button>
-          </div>
-        `;
+        toolsGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #64748b;">No tools found matching your criteria.</div>`;
         return;
       }
 
@@ -786,367 +182,89 @@
         card.className = 'tool-card';
         card.href = tool.url;
         card.style.setProperty('--card-accent', tool.accent);
-        card.setAttribute('data-tool-id', tool.id);
-
+        
         if (tool.actionType === 'modal') {
-          card.addEventListener('click', function(e) {
-            e.preventDefault();
-            openToolModal(tool);
-          });
-        }
-
-        let badgeHtml = '';
-        if (tool.badgeText) {
-          badgeHtml = `<span class="tool-badge ${tool.badge}">${tool.badgeText}</span>`;
+          card.addEventListener('click', (e) => { e.preventDefault(); openToolModal(tool); });
         }
 
         card.innerHTML = `
           <div>
             <div class="tool-card-header">
-              <div class="tool-icon-wrapper" style="background: ${tool.iconBg}; color: ${tool.iconColor};">
-                ${tool.icon}
-              </div>
-              ${badgeHtml}
+              <div class="tool-icon-wrapper" style="background: ${tool.iconBg}; color: ${tool.iconColor};">${tool.icon}</div>
+              ${tool.badgeText ? `<span class="tool-badge ${tool.badge}">${tool.badgeText}</span>` : ''}
             </div>
-
             <div class="tool-card-body">
               <h3 class="tool-title">${tool.title}</h3>
               <p class="tool-description">${tool.desc}</p>
             </div>
           </div>
-
           <div class="tool-card-footer">
-            <span class="tool-category-label">⚡ ${getCategoryLabel(tool.category)}</span>
-            <span class="tool-launch-link">
-              Launch <span>→</span>
-            </span>
+            <span class="tool-launch-link">Launch <span>→</span></span>
           </div>
         `;
-
         toolsGrid.appendChild(card);
       });
     }
 
-    function getCategoryLabel(cat) {
-      switch(cat) {
-        case 'ai-photo': return 'AI & Photo';
-        case 'pdf-doc': return 'PDF & Docs';
-        case 'govt-csc': return 'CSC & Govt';
-        case 'image-resizer': return 'Image & Resizer';
-        case 'calc-utility': return 'Calculator & Utils';
-        default: return 'Tool';
-      }
-    }
-
-    // Category Buttons
-    categoryFilterList.querySelectorAll('.filter-btn').forEach(btn => {
+    categoryBtns.forEach(btn => {
       btn.addEventListener('click', function() {
-        categoryFilterList.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        categoryBtns.forEach(b => b.classList.remove('active'));
         this.classList.add('active');
         currentCategory = this.getAttribute('data-category');
         renderTools();
       });
     });
 
-    // Search Input
-    searchInput.addEventListener('input', function(e) {
-      searchQuery = e.target.value;
-      if (searchQuery.trim().length > 0) {
-        searchClearBtn.style.display = 'flex';
-      } else {
-        searchClearBtn.style.display = 'none';
-      }
-      renderTools();
-    });
-
-    searchClearBtn.addEventListener('click', function() {
-      searchInput.value = '';
-      searchQuery = '';
-      searchClearBtn.style.display = 'none';
-      renderTools();
-      searchInput.focus();
-    });
-
-    function resetFilters() {
-      searchInput.value = '';
-      searchQuery = '';
-      searchClearBtn.style.display = 'none';
-      currentCategory = 'all';
-      categoryFilterList.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      categoryFilterList.querySelector('[data-category="all"]').classList.add('active');
-      renderTools();
-    }
+    searchInput.addEventListener('input', renderTools);
+    document.getElementById('searchClearBtn').addEventListener('click', () => { searchInput.value = ''; renderTools(); });
 
     // =========================================================================
-    // INSTANT TOOL MODALS (Interactive Handlers for On-Page Utilities)
+    // MODAL LOGIC (Only for Cash Tally)
     // =========================================================================
     const modalBackdrop = document.getElementById('toolModalBackdrop');
-    const modalCloseBtn = document.getElementById('modalCloseBtn');
-    const modalToolTitle = document.getElementById('modalToolTitle');
-    const modalToolIcon = document.getElementById('modalToolIcon');
-    const modalToolContent = document.getElementById('modalToolContent');
-
+    
     function openToolModal(tool) {
-      modalToolTitle.textContent = tool.title;
-      modalToolIcon.textContent = tool.icon;
-      modalToolContent.innerHTML = getModalHTML(tool.id);
+      document.getElementById('modalToolTitle').textContent = tool.title;
+      document.getElementById('modalToolIcon').textContent = tool.icon;
+      
+      const content = `
+        <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Enter number of notes for daily evening closing register:</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group-modal"><label>₹500 ×</label><input type="number" id="n500" value="0" min="0"></div>
+          <div class="form-group-modal"><label>₹200 ×</label><input type="number" id="n200" value="0" min="0"></div>
+          <div class="form-group-modal"><label>₹100 ×</label><input type="number" id="n100" value="0" min="0"></div>
+          <div class="form-group-modal"><label>₹50 ×</label><input type="number" id="n50" value="0" min="0"></div>
+          <div class="form-group-modal"><label>₹20 ×</label><input type="number" id="n20" value="0" min="0"></div>
+          <div class="form-group-modal"><label>₹10 ×</label><input type="number" id="n10" value="0" min="0"></div>
+        </div>
+        <button style="width: 100%; background: #2563eb; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px;" id="btnTallyCash">Calculate Grand Total</button>
+        <div class="modal-result-box" id="resultCashBox"></div>
+      `;
+      document.getElementById('modalToolContent').innerHTML = content;
       modalBackdrop.classList.add('active');
       document.body.style.overflow = 'hidden';
 
-      // Attach tool-specific interactive logic
-      setupModalLogic(tool.id);
+      document.getElementById('btnTallyCash').addEventListener('click', function() {
+        const n500 = parseInt(document.getElementById('n500').value) || 0;
+        const n200 = parseInt(document.getElementById('n200').value) || 0;
+        const n100 = parseInt(document.getElementById('n100').value) || 0;
+        const n50 = parseInt(document.getElementById('n50').value) || 0;
+        const n20 = parseInt(document.getElementById('n20').value) || 0;
+        const n10 = parseInt(document.getElementById('n10').value) || 0;
+
+        const total = (n500 * 500) + (n200 * 200) + (n100 * 100) + (n50 * 50) + (n20 * 20) + (n10 * 10);
+        const totalNotes = n500 + n200 + n100 + n50 + n20 + n10;
+
+        const resBox = document.getElementById('resultCashBox');
+        resBox.style.display = 'block';
+        resBox.innerHTML = `
+          <div style="font-size: 1.25rem; font-weight: 900; color: #047857; margin-bottom: 0.35rem;">Total Cash: ₹${total.toLocaleString('en-IN')}</div>
+          <div style="font-size: 0.85rem; color: #166534;">Total Notes: <strong>${totalNotes} pieces</strong></div>
+        `;
+      });
     }
 
-    function closeModal() {
-      modalBackdrop.classList.remove('active');
-      document.body.style.overflow = '';
-    }
-
-    modalCloseBtn.addEventListener('click', closeModal);
-    modalBackdrop.addEventListener('click', function(e) {
-      if (e.target === modalBackdrop) closeModal();
-    });
-
-    // Modal Content Templates
-    function getModalHTML(toolId) {
-      if (toolId === 'age-calc') {
-        return `
-          <div class="form-group-modal">
-            <label>Date of Birth (DOB):</label>
-            <input type="date" id="inputDob" value="2000-01-01">
-          </div>
-          <div class="form-group-modal">
-            <label>Calculate Age As On (Cut-off Date):</label>
-            <input type="date" id="inputAsOn" value="${new Date().toISOString().split('T')[0]}">
-          </div>
-          <button class="btn-nav-whatsapp" style="width: 100%; justify-content: center; padding: 0.85rem;" id="btnCalcAge">
-            Calculate Exact Age
-          </button>
-          <div class="modal-result-box" id="resultAgeBox"></div>
-        `;
-      } else if (toolId === 'upi-qr') {
-        return `
-          <div class="form-group-modal">
-            <label>UPI ID (VPA):</label>
-            <input type="text" id="upiVpa" value="9775096842@ybl" placeholder="e.g., yourname@upi">
-          </div>
-          <div class="form-group-modal">
-            <label>Payee Name / Shop Name:</label>
-            <input type="text" id="upiName" value="Pragati Telecom" placeholder="Pragati Telecom">
-          </div>
-          <div class="form-group-modal">
-            <label>Amount (₹) (Optional - leave empty for any amount):</label>
-            <input type="number" id="upiAmount" placeholder="e.g., 50">
-          </div>
-          <button class="btn-nav-whatsapp" style="width: 100%; justify-content: center; padding: 0.85rem;" id="btnGenQR">
-            Generate Instant Payment QR
-          </button>
-          <div class="modal-result-box" id="resultQRBox" style="text-align: center;"></div>
-        `;
-      } else if (toolId === 'land-calc') {
-        return `
-          <div class="form-group-modal">
-            <label>Enter Area Value:</label>
-            <input type="number" id="landValue" value="1" step="any">
-          </div>
-          <div class="form-group-modal">
-            <label>Select Current Unit:</label>
-            <select id="landUnit">
-              <option value="satak">Satak / Decimal (শতক / ডেসিমাল)</option>
-              <option value="katha">Katha (কাঠা - 1 Katha = 1.65 Satak)</option>
-              <option value="bigha">Bigha (বিঘা - 1 Bigha = 20 Katha / 33 Satak)</option>
-              <option value="acre">Acre (একর - 1 Acre = 100 Satak)</option>
-              <option value="sqft">Square Feet (বর্গফুট - 1 Satak = 435.6 sq ft)</option>
-            </select>
-          </div>
-          <button class="btn-nav-whatsapp" style="width: 100%; justify-content: center; padding: 0.85rem;" id="btnConvertLand">
-            Convert to All Bengal Units
-          </button>
-          <div class="modal-result-box" id="resultLandBox"></div>
-        `;
-      } else if (toolId === 'cash-tally') {
-        return `
-          <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Enter number of notes for daily evening closing register:</p>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-            <div class="form-group-modal"><label>₹500 ×</label><input type="number" id="n500" value="0" min="0"></div>
-            <div class="form-group-modal"><label>₹200 ×</label><input type="number" id="n200" value="0" min="0"></div>
-            <div class="form-group-modal"><label>₹100 ×</label><input type="number" id="n100" value="0" min="0"></div>
-            <div class="form-group-modal"><label>₹50 ×</label><input type="number" id="n50" value="0" min="0"></div>
-            <div class="form-group-modal"><label>₹20 ×</label><input type="number" id="n20" value="0" min="0"></div>
-            <div class="form-group-modal"><label>₹10 ×</label><input type="number" id="n10" value="0" min="0"></div>
-          </div>
-          <button class="btn-nav-whatsapp" style="width: 100%; justify-content: center; padding: 0.85rem;" id="btnTallyCash">
-            Calculate Grand Total Tally
-          </button>
-          <div class="modal-result-box" id="resultCashBox"></div>
-        `;
-      } else if (toolId === 'wa-linker') {
-        return `
-          <div class="form-group-modal">
-            <label>Customer Mobile Number (10 Digits):</label>
-            <input type="tel" id="waCustPhone" placeholder="e.g. 9775096842" maxlength="10">
-          </div>
-          <div class="form-group-modal">
-            <label>Pre-filled Message (Optional):</label>
-            <textarea id="waCustMsg" rows="3" placeholder="Hello, your document is ready for collection at Pragati Telecom."></textarea>
-          </div>
-          <button class="btn-nav-whatsapp" style="width: 100%; justify-content: center; padding: 0.85rem;" id="btnOpenWA">
-            Open WhatsApp Chat Directly
-          </button>
-        `;
-      } else if (toolId === 'rto-lookup') {
-        return `
-          <div class="form-group-modal">
-            <label>Enter RTO Code or District Name:</label>
-            <input type="text" id="rtoInput" placeholder="e.g. WB 57, Murshidabad, WB 58, Berhampore">
-          </div>
-          <div class="modal-result-box" id="resultRtoBox" style="display: block; background: #f8fafc; border-color: #e2e8f0; color: #1e293b;">
-            <strong>Murshidabad District Codes:</strong><br>
-            • <strong>WB-57:</strong> Murshidabad RTO (Murshidabad Sadar / Baharampur)<br>
-            • <strong>WB-58:</strong> Berhampore Regional Transport Office<br>
-            • <strong>WB-59:</strong> Raiganj (North Dinajpur)<br>
-            • <strong>WB-51:</strong> Nadia (Krishnanagar)
-          </div>
-        `;
-      } else {
-        return `
-          <div style="text-align: center; padding: 1.5rem;">
-            <div style="font-size: 3rem; margin-bottom: 0.5rem;">⚡</div>
-            <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">Pragati Telecom Digital Utility</h4>
-            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">This utility is fully integrated into our master photo and PDF tools suite.</p>
-            <a href="tools/photo-studio.html" class="btn-nav-whatsapp" style="justify-content: center; text-decoration: none; padding: 0.85rem;">
-              Launch AI Studio &amp; Document Suite
-            </a>
-          </div>
-        `;
-      }
-    }
-
-    // Modal Interactive Logic Handlers
-    function setupModalLogic(toolId) {
-      if (toolId === 'age-calc') {
-        document.getElementById('btnCalcAge').addEventListener('click', function() {
-          const dob = new Date(document.getElementById('inputDob').value);
-          const asOn = new Date(document.getElementById('inputAsOn').value);
-          if (isNaN(dob.getTime()) || isNaN(asOn.getTime())) return;
-
-          let years = asOn.getFullYear() - dob.getFullYear();
-          let months = asOn.getMonth() - dob.getMonth();
-          let days = asOn.getDate() - dob.getDate();
-
-          if (days < 0) {
-            months--;
-            const prevMonth = new Date(asOn.getFullYear(), asOn.getMonth(), 0);
-            days += prevMonth.getDate();
-          }
-          if (months < 0) {
-            years--;
-            months += 12;
-          }
-
-          const totalDays = Math.floor((asOn - dob) / (1000 * 60 * 60 * 24));
-          const resBox = document.getElementById('resultAgeBox');
-          resBox.style.display = 'block';
-          resBox.innerHTML = `
-            <div style="font-size: 1.15rem; font-weight: 800; margin-bottom: 0.35rem; color: #047857;">
-              🎂 Age: ${years} Years, ${months} Months, ${days} Days
-            </div>
-            <div style="font-size: 0.85rem; color: #15803d;">
-              Total Days Lived: <strong>${totalDays.toLocaleString()} days</strong> | Total Months: <strong>${(years*12 + months)} months</strong>
-            </div>
-          `;
-        });
-      } else if (toolId === 'upi-qr') {
-        document.getElementById('btnGenQR').addEventListener('click', function() {
-          const vpa = document.getElementById('upiVpa').value.trim() || '9775096842@ybl';
-          const name = encodeURIComponent(document.getElementById('upiName').value.trim() || 'Pragati Telecom');
-          const amt = document.getElementById('upiAmount').value.trim();
-          
-          let upiUrl = `upi://pay?pa=${vpa}&pn=${name}&cu=INR`;
-          if (amt && Number(amt) > 0) {
-            upiUrl += `&am=${amt}`;
-          }
-
-          const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
-          const resBox = document.getElementById('resultQRBox');
-          resBox.style.display = 'block';
-          resBox.innerHTML = `
-            <div style="margin-bottom: 0.75rem; font-weight: 700;">Pragati Telecom UPI Standee:</div>
-            <img src="${qrApi}" alt="UPI QR Code" style="border: 4px solid #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 180px; height: 180px;">
-            <div style="font-size: 0.85rem; margin-top: 0.5rem; color: #166534;">Scan using PhonePe, GPay, Paytm or BHIM</div>
-          `;
-        });
-      } else if (toolId === 'land-calc') {
-        document.getElementById('btnConvertLand').addEventListener('click', function() {
-          const val = parseFloat(document.getElementById('landValue').value) || 0;
-          const unit = document.getElementById('landUnit').value;
-
-          let satak = 0;
-          if (unit === 'satak') satak = val;
-          else if (unit === 'katha') satak = val * 1.65;
-          else if (unit === 'bigha') satak = val * 33;
-          else if (unit === 'acre') satak = val * 100;
-          else if (unit === 'sqft') satak = val / 435.6;
-
-          const katha = satak / 1.65;
-          const bigha = satak / 33;
-          const acre = satak / 100;
-          const sqft = satak * 435.6;
-          const sqmtr = sqft * 0.092903;
-
-          const resBox = document.getElementById('resultLandBox');
-          resBox.style.display = 'block';
-          resBox.innerHTML = `
-            <div style="font-weight: 800; font-size: 1.05rem; margin-bottom: 0.5rem;">Converted Land Area in West Bengal Standards:</div>
-            <ul style="list-style: none; line-height: 1.8; padding: 0;">
-              <li>🌾 <strong>Satak / Decimal (শতক):</strong> ${satak.toFixed(4)} শতক</li>
-              <li>📐 <strong>Katha (কাঠা):</strong> ${katha.toFixed(4)} কাঠা</li>
-              <li>🚜 <strong>Bigha (বিঘা):</strong> ${bigha.toFixed(4)} বিঘা</li>
-              <li>🗺️ <strong>Acre (একর):</strong> ${acre.toFixed(4)} একর</li>
-              <li>📏 <strong>Square Feet (বর্গফুট):</strong> ${sqft.toFixed(2)} sq.ft</li>
-              <li>🏛️ <strong>Square Meters:</strong> ${sqmtr.toFixed(2)} sq.m</li>
-            </ul>
-          `;
-        });
-      } else if (toolId === 'cash-tally') {
-        document.getElementById('btnTallyCash').addEventListener('click', function() {
-          const n500 = parseInt(document.getElementById('n500').value) || 0;
-          const n200 = parseInt(document.getElementById('n200').value) || 0;
-          const n100 = parseInt(document.getElementById('n100').value) || 0;
-          const n50 = parseInt(document.getElementById('n50').value) || 0;
-          const n20 = parseInt(document.getElementById('n20').value) || 0;
-          const n10 = parseInt(document.getElementById('n10').value) || 0;
-
-          const total = (n500 * 500) + (n200 * 200) + (n100 * 100) + (n50 * 50) + (n20 * 20) + (n10 * 10);
-          const totalNotes = n500 + n200 + n100 + n50 + n20 + n10;
-
-          const resBox = document.getElementById('resultCashBox');
-          resBox.style.display = 'block';
-          resBox.innerHTML = `
-            <div style="font-size: 1.25rem; font-weight: 900; color: #047857; margin-bottom: 0.35rem;">
-              Total Cash: ₹${total.toLocaleString('en-IN')}
-            </div>
-            <div style="font-size: 0.85rem; color: #166534;">
-              Total Notes Count: <strong>${totalNotes} pieces</strong><br>
-              (₹500: ₹${n500*500} | ₹200: ₹${n200*200} | ₹100: ₹${n100*100} | ₹50: ₹${n50*50} | ₹20: ₹${n20*20} | ₹10: ₹${n10*10})
-            </div>
-          `;
-        });
-      } else if (toolId === 'wa-linker') {
-        document.getElementById('btnOpenWA').addEventListener('click', function() {
-          let phone = document.getElementById('waCustPhone').value.trim().replace(/\D/g, '');
-          if (!phone) {
-            alert('Please enter a 10-digit customer mobile number');
-            return;
-          }
-          if (phone.length === 10) phone = '91' + phone;
-          const msg = encodeURIComponent(document.getElementById('waCustMsg').value.trim() || 'Hello from Pragati Telecom');
-          window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
-        });
-      }
-    }
-
-    // Initial Load
+    document.getElementById('modalCloseBtn').addEventListener('click', () => { modalBackdrop.classList.remove('active'); document.body.style.overflow = ''; });
     renderTools();
   </script>
 </body>
