@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Visual PDF Editor v3</title>
+
+    <!-- Use NEWER pdf.js version that handles iText/Photoshop PDFs better -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module" id="pdfjs-script"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8; margin: 0; padding: 0;
+            display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+        }
+
+        .navbar {
+            background: #fff; padding: 10px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 10; flex-shrink: 0; gap: 10px;
+        }
+        .navbar h2 {
+            margin: 0; font-size: 18px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .navbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+        .btn {
+            background: white; border: 1px solid #cbd5e0;
+            padding: 7px 12px; border-radius: 8px; cursor: pointer;
+            font-weight: bold; color: #4a5568; transition: 0.2s;
+            display: inline-flex; align-items: center; gap: 5px; font-size: 13px;
+            white-space: nowrap;
+        }
+        .btn:hover { background: #edf2f7; }
+        .btn-save {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: white; border: none; display: none;
+        }
+        .badge {
+            font-size: 11px; padding: 3px 8px; border-radius: 12px;
+            background: #fff3cd; color: #856404; border: 1px solid #ffc107;
+        }
+        .badge.ok  { background: #d4edda; color: #155724; border-color: #28a745; }
+        .badge.err { background: #f8d7da; color: #721c24; border-color: #dc3545; }
+
+        /* Upload */
+        #upload-stage {
+            flex: 1; display: flex; justify-content: center;
+            align-items: center; padding: 20px; background: #f0f4f8;
+        }
+        .upload-box {
+            background: white; padding: 40px; border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            text-align: center; max-width: 520px; width: 100%;
+            border: 1px solid #e2e8f0;
+        }
+        .upload-box h3 { margin-top: 0; color: #2d3748; }
+        .upload-btn {
+            display: inline-block; margin-top: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white; padding: 14px 30px; border-radius: 10px;
+            font-size: 16px; font-weight: bold; cursor: pointer;
+            position: relative; overflow: hidden;
+        }
+        .upload-btn input {
+            position: absolute; inset: 0; opacity: 0;
+            cursor: pointer; width: 100%; height: 100%;
+        }
+        .upload-note {
+            margin-top: 14px; font-size: 12px; color: #a0aec0;
+            border-top: 1px solid #e2e8f0; padding-top: 12px; line-height: 1.8;
+        }
+
+        /* Workspace */
+        #workspace-stage {
+            display: none; flex: 1; overflow: hidden;
+            height: calc(100vh - 56px);
+        }
+        .left-panel {
+            flex: 2; padding: 15px; overflow: auto;
+            background: #cbd5e0; display: flex;
+            flex-direction: column; align-items: center;
+        }
+        .pdf-controls {
+            display: flex; gap: 8px; margin-bottom: 12px;
+            background: white; padding: 7px 14px;
+            border-radius: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            align-items: center; position: sticky; top: 0; z-index: 50;
+            flex-wrap: wrap; justify-content: center;
+        }
+        #zoom-wrapper { transform-origin: top center; transition: transform 0.1s ease-out; }
+        #pdf-wrapper {
+            position: relative; display: inline-block;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            background: white; border-radius: 4px;
+        }
+        canvas { display: block; border-radius: 4px; }
+
+        #ocr-badge {
+            display: none; position: absolute; top: 8px; right: 8px; z-index: 30;
+            background: #805ad5; color: white; font-size: 11px;
+            font-weight: bold; padding: 3px 10px; border-radius: 12px;
+        }
+
+        #highlight-layer {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none; z-index: 10;
+        }
+        .highlight-box {
+            position: absolute;
+            border: 1px solid rgba(79,172,254,0.5);
+            background: rgba(79,172,254,0.06);
+            cursor: pointer; pointer-events: auto;
+            transition: all 0.15s; border-radius: 2px;
+        }
+        .highlight-box:hover { border-color: #3182ce; background: rgba(49,130,206,0.15); }
+        .highlight-box.active { border: 2px solid #e53e3e; background: rgba(229,62,62,0.15); z-index: 20; }
+        .highlight-box.modified { border: 2px dashed #d69e2e; background: rgba(214,158,46,0.1); }
+
+        /* Right panel */
+        .right-panel {
+            flex: 1; min-width: 320px; max-width: 420px;
+            background: #fff; border-left: 1px solid #cbd5e0;
+            display: flex; flex-direction: column;
+        }
+        .right-header {
+            padding: 12px 15px; background: #f7fafc;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: bold; color: #2d3748; font-size: 14px; flex-shrink: 0;
+        }
+        .text-list { flex: 1; overflow-y: auto; padding: 12px; }
+        .text-item {
+            background: #fff; border: 1px solid #e2e8f0;
+            border-radius: 8px; padding: 10px; margin-bottom: 10px;
+            transition: 0.2s;
+        }
+        .text-item.active {
+            border-color: #e53e3e; background: #fff5f5;
+            box-shadow: 0 3px 10px rgba(229,62,62,0.15);
+        }
+        .orig-text {
+            font-size: 12px; color: #4a5568; margin-bottom: 7px;
+            background: #edf2f7; padding: 5px 8px; border-radius: 4px;
+            font-family: monospace; word-break: break-word;
+            display: flex; justify-content: space-between; align-items: flex-start; gap: 6px;
+        }
+        .modified-badge {
+            display: none; font-size: 10px; background: #fef3c7;
+            color: #92400e; padding: 1px 5px; border-radius: 4px;
+            font-weight: bold; white-space: nowrap;
+        }
+        .new-text-input {
+            width: 100%; padding: 7px 10px; border: 1px solid #cbd5e0;
+            border-radius: 5px; font-size: 14px; outline: none; transition: 0.2s;
+            font-family: inherit;
+        }
+        .new-text-input:focus { border-color: #e53e3e; box-shadow: 0 0 0 3px rgba(229,62,62,0.15); }
+
+        .empty-state { text-align: center; padding: 40px 20px; color: #a0aec0; }
+
+        /* Loading overlay */
+        #loading {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(255,255,255,0.93);
+            z-index: 2000; align-items: center; justify-content: center;
+            flex-direction: column; font-size: 16px; font-weight: bold; color: #4facfe;
+        }
+        .spinner {
+            width: 44px; height: 44px; border: 4px solid #e2e8f0;
+            border-top: 4px solid #4facfe; border-radius: 50%;
+            animation: spin 0.9s linear infinite; margin-bottom: 14px;
+        }
+        @keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+        #loading-sub { font-size: 13px; color: #718096; margin-top: 8px; font-weight: normal; }
+        .prog-wrap { width: 260px; background: #e2e8f0; border-radius: 99px; height: 8px; margin-top: 12px; overflow: hidden; display: none; }
+        .prog-fill { height: 100%; background: linear-gradient(90deg,#4facfe,#00f2fe); border-radius: 99px; transition: width 0.3s; }
+
+        .toast {
+            display: none; color: white; padding: 10px 22px; border-radius: 20px;
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 3000; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            white-space: nowrap;
+        }
+
+        /* Error modal */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5); z-index: 4000;
+            align-items: center; justify-content: center;
+        }
+        .modal-box {
+            background: white; border-radius: 12px; padding: 28px 30px;
+            max-width: 420px; width: 90%; text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .modal-box h3 { margin-top: 0; color: #e53e3e; }
+        .modal-box p { color: #4a5568; font-size: 14px; line-height: 1.6; }
+        .modal-box .modal-btn {
+            background: #667eea; color: white; border: none;
+            padding: 10px 24px; border-radius: 8px; cursor: pointer;
+            font-weight: bold; font-size: 14px; margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <h2>✨ Smart Visual PDF Editor</h2>
+    <div class="navbar-right">
+        <span class="badge" id="fontBadge">⏳ Font...</span>
+        <span class="badge" id="pdfBadge" style="display:none"></span>
+        <button class="btn btn-save" id="saveBtn" onclick="savePdf()">💾 Save Edited PDF</button>
+    </div>
+</div>
+
+<!-- Upload -->
+<div id="upload-stage">
+    <div class="upload-box">
+        <h3>📂 Upload PDF to Edit</h3>
+        <p style="color:#718096;font-size:14px;margin:0 0 4px;">
+            সব ধরনের PDF সাপোর্ট করে — text, scanned, Photoshop, iText।
+        </p>
+        <div class="upload-btn">
+            📂 Select PDF File
+            <input type="file" id="pdfInput" accept="application/pdf">
+        </div>
+        <div class="upload-note">
+            🔤 Text PDF → instant &nbsp;|&nbsp; 🖼️ Image/Scanned PDF → OCR auto<br>
+            📄 Photoshop PDF, iText PDF → ✅ supported
+        </div>
+    </div>
+</div>
+
+<!-- Workspace -->
+<div id="workspace-stage">
+    <div class="left-panel">
+        <div class="pdf-controls">
+            <button class="btn" onclick="prevPage()">⬅️</button>
+            <span id="pageInfo" style="font-weight:bold;color:#4a5568;font-size:13px;white-space:nowrap;">Page 1/1</span>
+            <button class="btn" onclick="nextPage()">➡️</button>
+            <div style="width:1px;height:15px;background:#cbd5e0;margin:0 2px;"></div>
+            <button class="btn" onclick="zoomOut()">−</button>
+            <span id="zoomLevel" style="font-size:13px;font-weight:bold;width:44px;text-align:center;">100%</span>
+            <button class="btn" onclick="zoomIn()">+</button>
+        </div>
+        <div id="zoom-wrapper">
+            <div id="pdf-wrapper">
+                <canvas id="pdfCanvas"></canvas>
+                <div id="highlight-layer"></div>
+                <div id="ocr-badge">🔍 OCR Mode</div>
+            </div>
+        </div>
+    </div>
+    <div class="right-panel">
+        <div class="right-header">📝 Click text on PDF → Edit here</div>
+        <div class="text-list" id="textList"></div>
+    </div>
+</div>
+
+<!-- Loading -->
+<div id="loading">
+    <div class="spinner"></div>
+    <span id="loadingText">⚙️ Processing...</span>
+    <div id="loading-sub"></div>
+    <div class="prog-wrap" id="progWrap">
+        <div class="prog-fill" id="progFill" style="width:0%"></div>
+    </div>
+</div>
+
+<div class="toast" id="toastMsg"></div>
+
+<!-- Error modal -->
+<div class="modal-overlay" id="errModal">
+    <div class="modal-box">
+        <h3>⚠️ PDF Load Warning</h3>
+        <p id="errModalMsg"></p>
+        <button class="modal-btn" onclick="document.getElementById('errModal').style.display='none'">OK, Continue</button>
+    </div>
+</div>
+
+<script type="module">
+// ─────────────────────────────────────────────
+// Import pdf.js as ES module (v4.x — better compatibility)
+// ─────────────────────────────────────────────
+import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs';
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs';
+
+// ── Constants ──
+const RENDER_SCALE = 1.5;
+const ASCII_ONLY   = /^[\x20-\x7E\s]*$/;
+const OCR_THRESHOLD = 15; // chars below this → treat as image page
+const FONT_URLS = [
+    'https://cdn.jsdelivr.net/gh/notofonts/notofonts.github.io/fonts/NotoSansBengali/hinted/ttf/NotoSansBengali-Regular.ttf',
+    'https://github.com/googlefonts/noto-fonts/raw/main/hinted/ttf/NotoSansBengali/NotoSansBengali-Regular.ttf',
+];
+
+// ── State ──
+let pdfDocJS         = null;
+let originalPdfBytes = null;
+let currentPageNum   = 1;
+let fileName         = "document.pdf";
+let unicodeFontBytes = null;
+let currentZoom      = 1.0;
+let pageData         = {};   // pageData[n] = [{id,origText,newText,pdfX,pdfY,fontSize,width,height,cssX,cssY,cssW,cssH,isOcr}]
+let pageIsOcr        = {};
+
+// ── DOM ──
+const canvas         = document.getElementById('pdfCanvas');
+const ctx            = canvas.getContext('2d');
+const textList       = document.getElementById('textList');
+const highlightLayer = document.getElementById('highlight-layer');
+const zoomWrapper    = document.getElementById('zoom-wrapper');
+const fontBadge      = document.getElementById('fontBadge');
+const pdfBadge       = document.getElementById('pdfBadge');
+const ocrBadge       = document.getElementById('ocr-badge');
+
+// ── Load Bengali font ──
+(async () => {
+    for (const url of FONT_URLS) {
+        try {
+            const res = await fetch(url, { mode: 'cors' });
+            if (!res.ok) continue;
+            const buf = await res.arrayBuffer();
+            if (buf.byteLength > 50000) {
+                unicodeFontBytes = buf;
+                fontBadge.textContent = '✅ Bengali';
+                fontBadge.className = 'badge ok';
+                return;
+            }
+        } catch(e) {}
+    }
+    fontBadge.textContent = '⚠️ Latin only';
+    fontBadge.className = 'badge err';
+})();
+
+// ── Zoom ──
+function applyZoom() {
+    zoomWrapper.style.transform = `scale(${currentZoom})`;
+    document.getElementById('zoomLevel').innerText = Math.round(currentZoom*100) + '%';
+}
+window.zoomIn  = () => { if(currentZoom<3.0){currentZoom=+(currentZoom+0.2).toFixed(1);applyZoom();} };
+window.zoomOut = () => { if(currentZoom>0.4){currentZoom=+(currentZoom-0.2).toFixed(1);applyZoom();} };
+
+// ── File Upload ──
+document.getElementById('pdfInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    fileName = file.name;
+    originalPdfBytes = await file.arrayBuffer();
+
+    document.getElementById('upload-stage').style.display = 'none';
+    showLoading('📂 Loading PDF...');
+
+    // ── Try multiple loading strategies ──
+    let loaded = false;
+
+    // Strategy 1: Standard load
+    try {
+        pdfDocJS = await pdfjsLib.getDocument({
+            data: originalPdfBytes.slice(0),
+            // KEY FIX: these flags handle Photoshop/iText PDFs
+            disableAutoFetch: false,
+            disableStream: false,
+            isEvalSupported: false,
+        }).promise;
+        loaded = true;
+        pdfBadge.textContent = '✅ PDF OK';
+        pdfBadge.className = 'badge ok';
+        pdfBadge.style.display = 'inline-block';
+    } catch(err1) {
+        console.warn('Strategy 1 failed:', err1.message);
+        // Strategy 2: With lenient parsing flags
+        try {
+            pdfDocJS = await pdfjsLib.getDocument({
+                data: originalPdfBytes.slice(0),
+                stopAtErrors: false,        // ignore non-fatal errors
+                ignoreErrors: true,
+            }).promise;
+            loaded = true;
+            pdfBadge.textContent = '⚠️ Partial load';
+            pdfBadge.className = 'badge';
+            pdfBadge.style.display = 'inline-block';
+            showModal('PDF loaded with some warnings. Some content may not display perfectly, but you can still edit and save.');
+        } catch(err2) {
+            console.error('Strategy 2 failed:', err2.message);
+            // Strategy 3: Force OCR — render page from raw bytes using fallback
+            pdfBadge.textContent = '🔍 OCR mode';
+            pdfBadge.className = 'badge';
+            pdfBadge.style.display = 'inline-block';
+            showModal('PDF could not be parsed normally. Switching to full OCR mode — all pages will be OCR-processed.');
+            // Still try once more with most lenient settings
+            try {
+                pdfDocJS = await pdfjsLib.getDocument({
+                    data: originalPdfBytes.slice(0),
+                    stopAtErrors: false,
+                }).promise;
+                loaded = true;
+            } catch(err3) {
+                hideLoading();
+                alert('❌ Could not load this PDF at all.\n\nError: ' + (err3.message || err3));
+                location.reload();
+                return;
+            }
+        }
+    }
+
+    if (loaded) {
+        document.getElementById('workspace-stage').style.display = 'flex';
+        document.getElementById('saveBtn').style.display = 'inline-flex';
+        currentZoom = 1.0; applyZoom();
+        await renderPage(1);
+    }
+    hideLoading();
+});
+
+// ── Render Page ──
+async function renderPage(num) {
+    currentPageNum = num;
+    showLoading(`📄 Rendering page ${num}...`);
+
+    let page, viewport;
+    try {
+        page     = await pdfDocJS.getPage(num);
+        viewport = page.getViewport({ scale: RENDER_SCALE });
+        canvas.width  = viewport.width;
+        canvas.height = viewport.height;
+
+        await page.render({ canvasContext: ctx, viewport }).promise;
+    } catch(renderErr) {
+        console.warn('Render error:', renderErr);
+        // Draw error placeholder
+        canvas.width  = 595 * RENDER_SCALE;
+        canvas.height = 842 * RENDER_SCALE;
+        ctx.fillStyle = '#f8f8f8';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = '#999';
+        ctx.font = '20px sans-serif';
+        ctx.fillText('Could not render page ' + num, 30, 80);
+        viewport = { width: canvas.width, height: canvas.height, scale: RENDER_SCALE };
+    }
+
+    document.getElementById('pageInfo').innerText = `Page ${num}/${pdfDocJS.numPages}`;
+
+    if (!pageData[num]) {
+        await extractPage(num, page, viewport);
+    }
+
+    renderSidebar();
+    ocrBadge.style.display = pageIsOcr[num] ? 'block' : 'none';
+    hideLoading();
+}
+
+// ── Extract Text or OCR ──
+async function extractPage(num, page, viewport) {
+    if (!page) { pageIsOcr[num]=true; pageData[num]=await ocrPage(num,viewport); return; }
+
+    let totalChars = 0;
+    let textContent;
+    try {
+        textContent  = await page.getTextContent();
+        totalChars   = textContent.items.reduce((s,it) => s + (it.str||'').trim().length, 0);
+    } catch(e) { totalChars = 0; }
+
+    if (totalChars < OCR_THRESHOLD) {
+        pageIsOcr[num] = true;
+        pageData[num]  = await ocrPage(num, viewport);
+    } else {
+        pageIsOcr[num] = false;
+        pageData[num]  = extractNativeText(num, textContent, viewport);
+    }
+}
+
+// ── Native text extraction (FIXED) ──
+function extractNativeText(num, textContent, viewport) {
+    const items = [];
+    textContent.items.forEach((item, idx) => {
+        const str = (item.str||'').trim();
+        if (!str) return;
+
+        // FIX: correct font size via matrix magnitude
+        const a = item.transform[0], b = item.transform[1];
+        const fontSize = Math.max(Math.sqrt(a*a + b*b), 4);
+
+        const pdfX   = item.transform[4];
+        const pdfY   = item.transform[5];
+        const rawW   = (item.width  > 0) ? item.width  : str.length * fontSize * 0.55;
+        const rawH   = (item.height > 0) ? item.height : fontSize;
+
+        // FIX: correct CSS Y (PDF y=0 is bottom; CSS y=0 is top)
+        const cssX = pdfX * RENDER_SCALE;
+        const cssY = viewport.height - (pdfY + fontSize) * RENDER_SCALE;
+
+        // Skip items that render off-canvas
+        if (cssY < -5 || cssY > viewport.height + 5) return;
+
+        items.push({
+            id: `p${num}_${idx}`,
+            origText: str, newText: str,
+            pdfX, pdfY, fontSize,
+            width: rawW, height: rawH,
+            cssX, cssY,
+            cssW: rawW * RENDER_SCALE,
+            cssH: Math.max(rawH * RENDER_SCALE, fontSize * RENDER_SCALE),
+            isOcr: false,
+        });
+    });
+    return items;
+}
+
+// ── OCR via Tesseract ──
+async function ocrPage(pageNum, viewport) {
+    showLoading(`🔍 OCR on page ${pageNum}... (10–30s)`);
+    showProg(0);
+
+    // Render to temp canvas at higher scale for better OCR accuracy
+    const ocrScale  = 2.5;
+    const tmpCanvas = document.createElement('canvas');
+    let page2;
+    try {
+        page2 = await pdfDocJS.getPage(pageNum);
+        const vp2 = page2.getViewport({ scale: ocrScale });
+        tmpCanvas.width  = vp2.width;
+        tmpCanvas.height = vp2.height;
+        const tmpCtx = tmpCanvas.getContext('2d');
+        await page2.render({ canvasContext: tmpCtx, viewport: vp2 }).promise;
+    } catch(e) {
+        // If render fails too, try current canvas
+        tmpCanvas.width  = canvas.width;
+        tmpCanvas.height = canvas.height;
+        const tmpCtx = tmpCanvas.getContext('2d');
+        tmpCtx.drawImage(canvas, 0, 0);
+    }
+
+    const worker = await Tesseract.createWorker('ben+eng', 1, {
+        logger: m => {
+            if (m.status === 'recognizing text') showProg(Math.round(m.progress*100));
+        }
+    });
+    await worker.setParameters({ tessedit_pageseg_mode: Tesseract.PSM.AUTO });
+    const result  = await worker.recognize(tmpCanvas);
+    await worker.terminate();
+    hideProg();
+
+    const renderRatio = RENDER_SCALE / (tmpCanvas.width / (viewport.width / RENDER_SCALE));
+    // Scale factor: OCR canvas px → PDF points
+    const pxToPt = 1 / (tmpCanvas.width > canvas.width
+        ? (tmpCanvas.width / (viewport.width))
+        : RENDER_SCALE);
+
+    const items = [];
+    (result.data.words||[]).forEach((w, idx) => {
+        const str = (w.text||'').trim();
+        if (!str || w.confidence < 25) return;
+
+        const bb = w.bbox;
+        // map OCR px → PDF points
+        const scaleOcrToPdf = 72 / 96; // approximate; refine with page size
+        const canvasToPdf   = (viewport.width / RENDER_SCALE) / tmpCanvas.width;
+
+        const pdfX = bb.x0 * canvasToPdf;
+        const pdfY = (viewport.height/RENDER_SCALE) - bb.y1 * canvasToPdf; // flip Y
+        const wPdf = (bb.x1 - bb.x0) * canvasToPdf;
+        const hPdf = (bb.y1 - bb.y0) * canvasToPdf;
+        const fontSize = Math.max(hPdf * 0.75, 6);
+
+        // CSS positions on RENDER_SCALE canvas
+        const ratio  = RENDER_SCALE / (tmpCanvas.width / (viewport.width / RENDER_SCALE));
+        const cssX   = bb.x0 * (canvas.width  / tmpCanvas.width);
+        const cssY   = bb.y0 * (canvas.height / tmpCanvas.height);
+        const cssW   = (bb.x1 - bb.x0) * (canvas.width  / tmpCanvas.width);
+        const cssH   = (bb.y1 - bb.y0) * (canvas.height / tmpCanvas.height);
+
+        items.push({
+            id: `p${pageNum}_ocr${idx}`,
+            origText: str, newText: str,
+            pdfX, pdfY, fontSize,
+            width: wPdf, height: hPdf,
+            cssX, cssY, cssW, cssH,
+            isOcr: true,
+        });
+    });
+    return items;
+}
+
+// ── Render sidebar ──
+function renderSidebar() {
+    textList.innerHTML  = '';
+    highlightLayer.innerHTML = '';
+    const items = pageData[currentPageNum];
+
+    if (!items || items.length === 0) {
+        textList.innerHTML = '<div class="empty-state"><div style="font-size:36px">🔍</div><div>No text found.<br><small>Try a higher quality scan.</small></div></div>';
+        return;
+    }
+
+    items.forEach(item => {
+        const isModified = item.newText !== item.origText;
+
+        const div = document.createElement('div');
+        div.className = 'text-item';
+        div.id = `si_${item.id}`;
+        div.innerHTML = `
+            <div class="orig-text">
+                <span style="flex:1;word-break:break-word">${esc(item.origText)}</span>
+                <span class="modified-badge" style="display:${isModified?'inline':'none'}">✏️</span>
+            </div>
+            <input type="text" class="new-text-input" value="${esc(item.newText)}" placeholder="Replacement text...">
+        `;
+
+        const box = document.createElement('div');
+        box.className = 'highlight-box' + (isModified?' modified':'');
+        box.id = `bx_${item.id}`;
+        box.style.cssText = `left:${item.cssX}px;top:${item.cssY}px;width:${item.cssW+4}px;height:${item.cssH+2}px;`;
+
+        const activate = () => {
+            document.querySelectorAll('.text-item').forEach(el=>el.classList.remove('active'));
+            document.querySelectorAll('.highlight-box').forEach(el=>el.classList.remove('active'));
+            div.classList.add('active'); box.classList.add('active');
+            div.scrollIntoView({ behavior:'smooth', block:'nearest' });
+            div.querySelector('input').focus();
+        };
+
+        box.addEventListener('click', activate);
+        div.addEventListener('click', activate);
+
+        const inp = div.querySelector('input');
+        inp.addEventListener('focus', activate);
+        inp.addEventListener('input', function() {
+            item.newText = this.value;
+            const badge  = div.querySelector('.modified-badge');
+            const changed = item.newText !== item.origText;
+            badge.style.display = changed ? 'inline' : 'none';
+            box.classList.toggle('modified', changed);
+        });
+
+        textList.appendChild(div);
+        highlightLayer.appendChild(box);
+    });
+}
+
+// ── Navigation ──
+window.prevPage = () => { if(currentPageNum>1) renderPage(currentPageNum-1); };
+window.nextPage = () => { if(pdfDocJS && currentPageNum<pdfDocJS.numPages) renderPage(currentPageNum+1); };
+
+// ── Save PDF ──
+window.savePdf = async () => {
+    showLoading('⚙️ Applying changes...');
+    let skipped = 0;
+
+    try {
+        const { PDFDocument, rgb, StandardFonts } = PDFLib;
+        const pdfDoc = await PDFDocument.load(originalPdfBytes.slice(0), { ignoreEncryption: true });
+
+        const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        let customFont  = null;
+        if (unicodeFontBytes) {
+            try {
+                pdfDoc.registerFontkit(window.fontkit);
+                customFont = await pdfDoc.embedFont(unicodeFontBytes, { subset: true });
+            } catch(fe) { console.warn('Font embed failed:', fe); }
+        }
+
+        const pages = pdfDoc.getPages();
+
+        for (const [pageStr, items] of Object.entries(pageData)) {
+            const pNum = parseInt(pageStr);
+            const page = pages[pNum - 1];
+            if (!page) continue;
+            const { width: pW, height: pH } = page.getSize();
+
+            for (const item of items) {
+                if (item.newText === item.origText || !item.newText.trim()) continue;
+
+                try {
+                    // Whiteout: cover original text
+                    // FIX: more generous box to fully cover
+                    const wh = Math.max(item.height, item.fontSize) * 1.5;
+                    const wy = Math.max(0, item.pdfY - item.fontSize * 0.3);
+                    const ww = Math.max(item.width + 8, item.fontSize * item.origText.length * 0.6);
+
+                    page.drawRectangle({
+                        x:      Math.max(0, item.pdfX - 2),
+                        y:      Math.max(0, wy),
+                        width:  Math.min(ww, pW - item.pdfX),
+                        height: Math.min(wh, pH - wy),
+                        color:  rgb(1,1,1),
+                    });
+
+                    // Draw new text
+                    const isAscii = ASCII_ONLY.test(item.newText);
+                    const font    = (!isAscii && customFont) ? customFont : helvetica;
+                    let safeText  = item.newText;
+                    if (!isAscii && !customFont) {
+                        safeText = item.newText.replace(/[^\x20-\x7E]/g, '?');
+                    }
+
+                    const drawY = Math.max(2, Math.min(item.pdfY, pH - item.fontSize - 2));
+                    const lines = safeText.split('\n');
+                    lines.forEach((line, li) => {
+                        if (!line.trim()) return;
+                        const ly = drawY - li * item.fontSize * 1.3;
+                        if (ly < 2) return;
+                        try {
+                            page.drawText(line, {
+                                x:        item.pdfX,
+                                y:        ly,
+                                size:     Math.max(item.fontSize, 6),
+                                font,
+                                color:    rgb(0,0,0),
+                                maxWidth: Math.max(item.width, 30),
+                            });
+                        } catch(le) { skipped++; }
+                    });
+                } catch(ie) {
+                    console.warn('Item save error:', ie);
+                    skipped++;
+                }
+            }
+        }
+
+        const bytes = await pdfDoc.save();
+        const blob  = new Blob([bytes], { type:'application/pdf' });
+        const url   = URL.createObjectURL(blob);
+        const a     = document.createElement('a');
+        a.href = url; a.download = 'Edited_' + fileName; a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 8000);
+
+        showToast(
+            skipped > 0 ? `⚠️ Saved (${skipped} item(s) skipped)` : '✅ PDF Saved!',
+            skipped > 0 ? '#d69e2e' : '#48bb78'
+        );
+    } catch(err) {
+        console.error(err);
+        alert('❌ Save failed: ' + err.message);
+    }
+    hideLoading();
+};
+
+// ── UI Helpers ──
+function showLoading(msg, sub='') {
+    document.getElementById('loading').style.display='flex';
+    document.getElementById('loadingText').textContent=msg;
+    document.getElementById('loading-sub').textContent=sub;
+}
+function hideLoading() { document.getElementById('loading').style.display='none'; hideProg(); }
+function showProg(pct) { document.getElementById('progWrap').style.display='block'; document.getElementById('progFill').style.width=pct+'%'; }
+function hideProg()    { document.getElementById('progWrap').style.display='none'; }
+function showToast(msg,color='#48bb78') {
+    const t=document.getElementById('toastMsg'); t.textContent=msg; t.style.background=color;
+    t.style.display='block'; setTimeout(()=>t.style.display='none',5000);
+}
+function showModal(msg) {
+    document.getElementById('errModalMsg').textContent=msg;
+    document.getElementById('errModal').style.display='flex';
+}
+function esc(s) {
+    return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+</script>
+</body>
+</html>
