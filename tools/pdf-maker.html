@@ -3,12 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Drag & Drop PDF Maker | Pragati Telecom</title>
+<title>Drag &amp; Drop PDF Maker | Merge Images &amp; PDFs | Pragati Telecom</title>
+<meta name="description" content="Combine JPG, PNG, WebP images and PDF pages into a single target-sized PDF document. Reorder pages with drag &amp; drop, adjust compression, and optionally embed AI OCR.">
+  <link rel="canonical" href="https://turabsk.github.io/pragati-telecom/tools/pdf-maker.html">
+
+
+<!-- Open Graph / Social Sharing -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://turabsk.github.io/pragati-telecom/tools/pdf-maker.html">
+<meta property="og:title" content="Drag &amp; Drop PDF Maker | Merge Images &amp; PDFs">
+<meta property="og:description" content="Upload images or PDF pages, drag to sort the order, and merge into a single target-sized PDF with optional Gemini OCR text recognition.">
+<meta property="og:site_name" content="Pragati Telecom">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Drag &amp; Drop PDF Maker | Merge Images &amp; PDFs">
+<meta name="twitter:description" content="Sort, merge, and compress multiple images and PDF documents directly in your web browser.">
+
+<!-- Schema.org JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Drag & Drop PDF Maker",
+  "url": "https://turabsk.github.io/pragati-telecom/tools/pdf-maker.html",
+  "description": "Interactive multi-page PDF merger and creator with drag-and-drop page sorting, target KB optimization, and optional AI OCR.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "All modern web browsers",
+  "browserRequirements": "HTML5 Canvas and JavaScript enabled"
+}
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
 
 <style>
 :root {
@@ -155,13 +185,129 @@ button,.download{border:0; border-radius:10px; padding:14px 20px; font-weight:80
   </div>
 
   <div id="success" class="success card">
-    <h1>✅ Task Completed</h1>
+    <h2 style="font-weight: 900; color: var(--green); margin-bottom: 10px;">✅ Task Completed</h2>
     <p id="result" style="font-size:16px;margin:20px 0; font-weight: 600; color: var(--ink2);"></p>
     <a id="download" class="download">📥 Download Merged PDF</a>
     <br><br>
     <button onclick="location.reload()" style="background:#f1f5f9;color:var(--ink);border:1px solid var(--border); padding: 12px 20px; font-weight: 700; border-radius: 10px; margin-top: 15px; cursor: pointer;">🔄 Create Another</button>
   </div>
 </div>
+
+<!-- ======================================================================= -->
+<!-- TOOL DOCUMENTATION & INFORMATION CONTAINER (Below Interactive Workspace) -->
+<!-- ======================================================================= -->
+
+<section class="home-content-section" style="max-width: 1100px; margin-top: 3.5rem;">
+  
+  <article class="home-article-card">
+    <h2 class="home-section-title">📑 How Drag &amp; Drop PDF Maker Works</h2>
+    <p class="home-section-desc">
+      When assembling multi-page applications, project reports, or receipts, users frequently need to combine different photos (such as mobile snapshots of marksheets and ID cards) and existing PDF pages into a single organized document. <strong>Drag &amp; Drop PDF Maker</strong> provides a visual workspace where you can freely arrange pages, set a target file size, and optionally embed searchable Bengali &amp; English text.
+    </p>
+
+    <div class="features-grid-3col">
+      <div class="feature-box">
+        <div class="feature-box-icon">🖱️</div>
+        <h3>Sortable Page Grid</h3>
+        <p>Powered by Sortable.js — drag and drop any thumbnail card to reorder pages intuitively with real-time numbering.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-icon">🎯</div>
+        <h3>Multi-Pass Compression</h3>
+        <p>Dynamically tests 4 JPEG quality passes (85%, 70%, 50%, 35%) to match your chosen target file size (100 KB to 5000 KB).</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-icon">🤖</div>
+        <h3>Optional AI OCR Layer</h3>
+        <p>Optionally extracts text coordinates using Google Gemini AI and embeds an invisible selectable text layer with Bengali fonts.</p>
+      </div>
+    </div>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">⚖️ Local Processing vs. Optional AI OCR (Privacy Difference)</h2>
+    <p class="home-section-desc">
+      We maintain strict transparency between our two operational modes:
+    </p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+      <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 1.5rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 800; color: #14532d; margin-bottom: 0.5rem;">Standard Mode (OCR Unchecked)</h3>
+        <p style="font-size: 0.9rem; color: #166534; line-height: 1.6;">
+          <strong>100% Client-Side Local:</strong> Images and PDF pages are loaded, sorted, compressed, and merged strictly inside your browser RAM. No data is sent across the network.
+        </p>
+      </div>
+
+      <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 1.5rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e3a8a; margin-bottom: 0.5rem;">AI OCR Mode (OCR Checked)</h3>
+        <p style="font-size: 0.9rem; color: #1e40af; line-height: 1.6;">
+          <strong>Direct Google API Transmission:</strong> Image canvas slices are transmitted via HTTPS POST to Google's Gemini API using your personal API key stored in <code>localStorage</code>.
+        </p>
+      </div>
+    </div>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">📋 Step-by-Step Guide</h2>
+    <ol style="margin-left: 1.5rem; color: var(--text-secondary); line-height: 1.8; font-size: 0.95rem;">
+      <li style="margin-bottom: 0.5rem;"><strong>Upload Pages:</strong> Click <em>"Select Images / PDF Pages"</em> to upload multiple photos (JPG, PNG, WebP) or existing PDFs.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Reorder Pages:</strong> Click and drag any thumbnail card in the grid to place pages in the correct sequence. Delete unwanted pages using the ✕ button.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Set Target Size:</strong> Move the Target Size slider (e.g. 500 KB or 1000 KB).</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Select OCR Preference:</strong> Keep <em>"Make Searchable (AI OCR)"</em> checked if you have entered a Gemini API key, or uncheck it for instant offline local creation.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Generate &amp; Download:</strong> Click <em>"Generate Merged PDF"</em> and download the finalized document.</li>
+    </ol>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">❓ Frequently Asked Questions (PDF Maker)</h2>
+    <div class="faq-container">
+      <details class="faq-item">
+        <summary class="faq-question">Can I mix JPEG photos and PDF documents in the same file?</summary>
+        <div class="faq-answer">
+          Yes. You can upload multiple JPG photos, PNG screenshots, and existing PDF documents simultaneously. The tool breaks multi-page PDFs into individual sortable cards.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Is the Gemini API key required for creating merged PDFs?</summary>
+        <div class="faq-answer">
+          No. The Gemini API key is only required if you check the <em>"Make Searchable (AI OCR)"</em> box. For standard PDF merging and size compression, no API key is necessary.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Where is my Gemini API key stored?</summary>
+        <div class="faq-answer">
+          Your key is saved locally in your browser's private storage (<code>localStorage</code>) under <code>pragati_gemini_key</code>. It is never transmitted to Pragati Telecom servers.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">How does page reordering work on touchscreens?</summary>
+        <div class="faq-answer">
+          On mobile devices and tablets, tap and hold a card briefly, then drag it to your desired position in the grid.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">What is the maximum number of pages I can merge?</summary>
+        <div class="faq-answer">
+          You can easily merge 20–50 pages on typical laptops and smartphones depending on available browser memory.
+        </div>
+      </details>
+    </div>
+
+    <!-- Related Tools & Guides Navigation -->
+    <div class="quick-links-bar" style="margin-top: 2rem;">
+      <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Related Utilities &amp; Guides:</span>
+      <a href="../guides/convert-images-to-pdf.html" class="quick-link-pill" style="background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe;">📖 Image to PDF Guide</a>
+      <a href="pdf-compressor.html" class="quick-link-pill">🗜️ Custom PDF Compressor</a>
+      <a href="pdf-editor.html" class="quick-link-pill">✏️ Smart Visual PDF Editor</a>
+      <a href="searchable-pdf.html" class="quick-link-pill">🔎 Searchable PDF Maker</a>
+    </div>
+  </article>
+
+</section>
 
 <script>
 // JS logic exactly preserved from source
