@@ -3,11 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Custom PDF Compressor | Pragati Telecom</title>
+<title>Custom PDF Compressor | Shrink PDF to Exact Target KB | Pragati Telecom</title>
+<meta name="description" content="Free client-side PDF compressor by Pragati Telecom. Reduce PDF file size to an exact Target KB (30 KB to 1000 KB) using intelligent binary search compression in your browser.">
+  <link rel="canonical" href="https://turabsk.github.io/pragati-telecom/tools/pdf-compressor.html">
+
+
+<!-- Open Graph / Social Sharing -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://turabsk.github.io/pragati-telecom/tools/pdf-compressor.html">
+<meta property="og:title" content="Custom PDF Compressor | Shrink PDF to Exact Target KB">
+<meta property="og:description" content="Intelligently shrink your PDF files to meet strict online job and portal upload size limits (e.g. under 100 KB or 200 KB) without server uploads.">
+<meta property="og:site_name" content="Pragati Telecom">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Custom PDF Compressor | Exact Target KB Tool">
+<meta name="twitter:description" content="Reduce PDF file size to exact Target KB limits in your browser without software installations.">
+
+<!-- Schema.org JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Custom PDF Compressor",
+  "url": "https://turabsk.github.io/pragati-telecom/tools/pdf-compressor.html",
+  "description": "Browser-based PDF compressor using binary search quality and scale iterations to reach exact user-specified kilobyte limits.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "All modern web browsers",
+  "browserRequirements": "HTML5 Canvas and JavaScript enabled"
+}
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
 
 <style>
 :root {
@@ -121,6 +151,123 @@ input[type="range"] { width: 100%; cursor: pointer; height: 6px; background: #cb
     <a class="btn btn-download" id="downloadBtn" href="#">📥 Download Compressed PDF</a>
   </div>
 </div>
+
+<!-- ======================================================================= -->
+<!-- TOOL DOCUMENTATION & INFORMATION CONTAINER (Below Interactive Workspace) -->
+<!-- ======================================================================= -->
+
+<section class="home-content-section" style="max-width: 1000px; margin-top: 2rem;">
+  
+  <article class="home-article-card">
+    <h2 class="home-section-title">🗜️ How Custom PDF Compressor Works</h2>
+    <p class="home-section-desc">
+      Government recruitment boards, college admission portals, and scholarship systems in India commonly impose strict file-size limits (such as <em>"Upload marksheet under 100 KB"</em> or <em>"Certificate between 50 KB and 200 KB"</em>). Traditional compressors merely reduce quality by arbitrary percentages (e.g. low/medium/high), often leaving the file still too large or making text unreadable.
+    </p>
+    <p class="home-section-desc">
+      Our <strong>Custom PDF Compressor</strong> uses a client-side binary search algorithm. It dynamically renders PDF pages at varying resolutions and JPEG compression qualities (through 6 outer scale passes and 6 inner quality tests) to calculate the maximum visual clarity that fits within your exact Target KB ceiling.
+    </p>
+
+    <div class="features-grid-3col">
+      <div class="feature-box">
+        <div class="feature-box-icon">🎯</div>
+        <h3>Exact Target KB Slider</h3>
+        <p>Set any target limit from 30 KB up to 1000 KB in 10 KB increments to match online portal specifications.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-icon">⚖️</div>
+        <h3>Binary Search Tuning</h3>
+        <p>Iteratively tests multi-page canvas render scales and JPEG quantization tables to find the sharpest possible compression.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-icon">🛡️</div>
+        <h3>Text-Safety Guard</h3>
+        <p>Detects purely text-based vector PDFs and preserves the original file if rasterization would inadvertently increase size.</p>
+      </div>
+    </div>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">📋 Step-by-Step Compression Guide</h2>
+    <ol style="margin-left: 1.5rem; color: var(--text-secondary); line-height: 1.8; font-size: 0.95rem;">
+      <li style="margin-bottom: 0.5rem;"><strong>Upload PDF:</strong> Click the upload zone and select the PDF document you wish to shrink.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Inspect Current Size:</strong> The original file size (in KB) is displayed in the comparison table.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Set Target KB:</strong> Move the slider to your required target (e.g. 100 KB, 200 KB, or 500 KB).</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Click Compress:</strong> Click <em>"Reduce Size to Target KB"</em>. The in-browser engine tests resolutions and builds the compressed document.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Download Result:</strong> Once compression finishes, click <em>"Download Compressed PDF"</em> to save the output file.</li>
+    </ol>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">⚙️ Technical Limitations &amp; Quality Considerations</h2>
+    <p class="home-section-desc">
+      To achieve precise kilobyte reductions, the tool renders vector pages into optimized JPEG streams. Please keep the following technical considerations in mind:
+    </p>
+    <ul>
+      <li><strong>Scanned Documents &amp; Certificates:</strong> Highly effective for scanned marksheets, voter slips, electricity bills, and certificates.</li>
+      <li><strong>Small Target Ceilings:</strong> Compressing a multi-page PDF to very small targets (e.g. 30 KB for a 5-page document) will naturally reduce image sharpness to fit within the mathematical byte constraint.</li>
+      <li><strong>Encrypted PDFs:</strong> Password-protected PDFs should first be decrypted or printed to a standard PDF before compression.</li>
+    </ul>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">🔒 Privacy &amp; Local Processing Disclosure</h2>
+    <div class="legal-alert success">
+      <p>
+        <strong>100% Client-Side In-Browser Execution:</strong> PDF page parsing (via PDF.js) and document reconstruction (via PDF-Lib) occur exclusively within your device's browser memory (RAM). <strong>Your confidential documents are never uploaded to Pragati Telecom servers or third-party cloud services.</strong>
+      </p>
+    </div>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">❓ Frequently Asked Questions (PDF Compressor)</h2>
+    <div class="faq-container">
+      <details class="faq-item">
+        <summary class="faq-question">Why did the compressed size end up slightly below my target?</summary>
+        <div class="faq-answer">
+          To ensure your document never exceeds the maximum portal limit (e.g. a 200 KB limit failing at 200.5 KB), the binary search algorithm ensures the output size is strictly less than or equal to your chosen Target KB.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Will compressed text remain readable?</summary>
+        <div class="faq-answer">
+          For standard target settings (100 KB–300 KB per single page), certificates, signatures, and marksheets remain clear and legible for verification officers.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Can I compress multi-page PDF documents?</summary>
+        <div class="faq-answer">
+          Yes. The compressor automatically loops across all pages in the PDF document, applying consistent resolution and compression quality to each page.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Why did the tool tell me my text-based PDF was preserved?</summary>
+        <div class="faq-answer">
+          Certain digital PDFs consist purely of compact vector text fonts. Converting clean vector text into image-based JPEG pages can actually increase file size; in such cases, the tool intelligently preserves your original file.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Is there a file upload limit?</summary>
+        <div class="faq-answer">
+          Because processing happens in your browser's RAM, documents up to 50 MB with 10–20 pages can be compressed easily on standard computers and smartphones.
+        </div>
+      </details>
+    </div>
+
+    <!-- Related Tools & Guides Navigation -->
+    <div class="quick-links-bar" style="margin-top: 2rem;">
+      <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Related Utilities &amp; Guides:</span>
+      <a href="../guides/compress-pdf-target-size.html" class="quick-link-pill" style="background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe;">📖 Target KB Compression Guide</a>
+      <a href="pdf-editor.html" class="quick-link-pill">✏️ Smart Visual PDF Editor</a>
+      <a href="pdf-maker.html" class="quick-link-pill">📑 Drag &amp; Drop PDF Maker</a>
+      <a href="searchable-pdf.html" class="quick-link-pill">🔎 Searchable PDF Maker</a>
+    </div>
+  </article>
+
+</section>
 
 <!-- Original Javascript -->
 <script>
