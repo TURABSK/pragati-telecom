@@ -3,120 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pragati Telecom | Smart Digital Tools Portal</title>
-  <meta name="description" content="Official Multi-Tool Web Portal for Pragati Telecom, Kalupur Middle Para, Murshidabad. Featuring 7 Premium Utility tools.">
+  <title>Pragati Telecom | Smart Digital Tools Portal &amp; Document Utilities</title>
+  <meta name="description" content="Independent digital tools portal by Pragati Telecom (Kalupur Middle Para, Murshidabad). Free browser tools for passport photo cropping, smart PVC card layouts, target KB PDF compression, and cash tally.">
+  <link rel="canonical" href="https://turabsk.github.io/pragati-telecom/index.html">
   
+  <!-- Open Graph / Facebook / WhatsApp Sharing -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://turabsk.github.io/pragati-telecom/index.html">
+  <meta property="og:title" content="Pragati Telecom | Smart Digital Tools Portal &amp; Document Utilities">
+  <meta property="og:description" content="Fast, client-side digital utilities for CSC operators, cyber cafes, and students. Instant passport cropping, PVC card printing, and target KB PDF compression.">
+  <meta property="og:site_name" content="Pragati Telecom">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Pragati Telecom | Smart Digital Tools Portal">
+  <meta name="twitter:description" content="Fast, client-side digital utilities for document formatting, photo cropping, and PDF compression.">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Pragati Telecom Digital Tools Portal",
+        "url": "https://turabsk.github.io/pragati-telecom/index.html",
+        "description": "Browser-based digital tool suite for passport photo cropping, smart card formatting, PDF compression, and cash tallying.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "All modern web browsers",
+        "browserRequirements": "Requires JavaScript and HTML5 Canvas support"
+      },
+      {
+        "@type": "LocalBusiness",
+        "name": "Pragati Telecom",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Kalupur Middle Para",
+          "addressLocality": "Murshidabad",
+          "addressRegion": "West Bengal",
+          "addressCountry": "India"
+        },
+        "telephone": "+919775096842",
+        "url": "https://turabsk.github.io/pragati-telecom/index.html"
+      }
+    ]
+  }
+  </script>
+
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  
-  <style>
-    /* =========================================================
-       BASE PORTAL STYLES
-       ========================================================= */
-    :root {
-      --ink: #0f172a; --ink2: #475569; --muted: #64748b; 
-      --border: #e2e8f0; --bg: #f8fafc; --card: #ffffff;
-      --primary: #2563eb; --primary-light: #0ea5e9;
-      --green: #10b981; --red: #ef4444; --radius: 16px;
-    }
-    * { box-sizing: border-box; margin:0; padding:0; }
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; color: var(--ink); min-height: 100vh; display: flex; flex-direction: column; }
-    button, input { font-family: inherit; }
-
-    /* Hero Section */
-    .hero-section { text-align: center; padding: 40px 20px 20px 20px; }
-    .hero-container { max-width: 800px; margin: 0 auto; }
-    .hero-title { font-size: 32px; font-weight: 900; color: var(--ink); margin-bottom: 15px; line-height: 1.2; }
-    .hero-title span { color: var(--primary); }
-    .hero-subtitle { color: var(--muted); font-size: 15px; font-weight: 500; margin-bottom: 30px; }
-
-    /* Category Filter */
-    .category-filter-list { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap;}
-    .filter-btn { padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #475569; cursor: pointer; font-weight: 700; transition: 0.2s; }
-    .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 10px rgba(37,99,235,0.2); }
-
-    /* =========================================================
-       🔴🔴🔴 SPONSOR AD BANNER STYLES 🔴🔴🔴
-       ========================================================= */
-    .sponsor-ad-container {
-      max-width: 1240px;
-      margin: 0 auto 30px auto; 
-      padding: 0 20px;
-      width: 100%;
-    }
-    .sponsor-ad-box {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 10px;
-      text-align: center;
-      position: relative;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.2s ease;
-    }
-    .sponsor-ad-box:hover {
-      transform: translateY(-2px);
-      border-color: var(--primary-light);
-      box-shadow: 0 8px 25px rgba(14,165,233,0.1);
-    }
-    .ad-label {
-      position: absolute;
-      top: 0;
-      right: 15px;
-      background: #f1f5f9;
-      color: #64748b;
-      font-size: 10px;
-      font-weight: 800;
-      padding: 3px 10px;
-      border-bottom-left-radius: 6px;
-      border-bottom-right-radius: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      z-index: 2;
-    }
-    .sponsor-ad-box img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 10px;
-      display: block;
-      width: 100%;
-      max-height: 120px; /* ব্যানারের হাইট কন্ট্রোল */
-      object-fit: cover;
-    }
-    .sponsor-ad-box a {
-      display: block;
-      width: 100%;
-    }
-
-    /* Tools Grid */
-    .tools-section { max-width: 1240px; margin: 0 auto 40px; padding: 0 20px; width: 100%; }
-    .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-    .tool-card { text-decoration: none; color: inherit; background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-    .tool-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.05); border-color: var(--card-accent, #cbd5e1); }
-    .tool-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
-    .tool-icon-wrapper { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-    .tool-badge { font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 8px; background: #f1f5f9; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;}
-    .tool-title { font-size: 18px; font-weight: 900; margin: 0 0 8px 0; color: var(--ink); }
-    .tool-description { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.5; font-weight: 500;}
-    .tool-card-footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid #f1f5f9; font-size: 14px; font-weight: 800; color: var(--card-accent, #2563eb); display: flex; justify-content: space-between; align-items: center;}
-    
-    /* Modal Styles */
-    .tool-modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); z-index: 3000; align-items: center; justify-content: center; padding: 1.5rem; }
-    .tool-modal-backdrop.active { display: flex; }
-    .tool-modal-box { background: #ffffff; border-radius: 16px; max-width: 600px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); border: 1px solid var(--border); overflow: hidden; animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-    @keyframes modalPop { 0% { opacity: 0; transform: scale(0.92) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
-    .tool-modal-header { padding: 1.25rem 1.5rem; background: #f8fafc; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .tool-modal-body { padding: 1.5rem; max-height: 75vh; overflow-y: auto; }
-    .form-group-modal { margin-bottom: 1.1rem; }
-    .form-group-modal label { display: block; font-size: 0.88rem; font-weight: 800; color: var(--ink2); margin-bottom: 0.35rem; }
-    .form-group-modal input { width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; outline: none; font-weight: 600;}
-    .form-group-modal input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
-    .modal-result-box { margin-top: 1.2rem; padding: 1.2rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; font-size: 0.95rem; color: #166534; display: none; }
-  </style>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
@@ -128,44 +63,42 @@
     <section class="hero-section">
       <div class="hero-container">
         <h1 class="hero-title">
-          Smart Digital Seva &amp; <span style="color: #2563eb;">Premium Tool Portal</span>
+          Smart Digital Utilities &amp; <span style="color: #2563eb;">Productivity Portal</span>
         </h1>
         <p class="hero-subtitle">
-          Experience ultra-fast, client-side tools designed for local CSC centers. Instant <strong>AI Passport Photo Cropping</strong>, <strong>Searchable OCR PDF Creation</strong>, Smart PVC Card Printing &amp; Daily Cash Tally.
+          Practical browser-based tools designed for cyber cafes, CSC centers, students, and citizens. Instant <strong>Passport Photo Cropping</strong>, <strong>Smart PVC Card Layouts</strong>, <strong>Target-KB PDF Compression</strong>, and <strong>Daily Cash Tallies</strong>.
         </p>
 
-        <!-- CATEGORY FILTER BAR -->
-        <div class="category-filter-list" id="categoryFilterList">
-          <button class="filter-btn active" data-category="all">🌟 All Tools</button>
-          <button class="filter-btn" data-category="ai-photo">📸 Photo & Cards</button>
-          <button class="filter-btn" data-category="pdf-doc">📄 PDF Suite</button>
-          <button class="filter-btn" data-category="calc-utility">🧮 Utilities</button>
+        <!-- SEARCH & CATEGORY FILTER BAR -->
+        <div class="search-filter-wrapper" id="search-bar">
+          <div class="search-bar-container">
+            <span class="search-icon-inside">🔍</span>
+            <input type="text" class="main-search-input" id="toolSearchInput" placeholder="Search any tool (e.g. passport, cash, ocr, pvc, compress, merge)..." autocomplete="off" aria-label="Search tools">
+            <button class="search-clear-btn" id="searchClearBtn" aria-label="Clear Search">✕</button>
+          </div>
+
+          <div class="category-filter-list" id="categoryFilterList">
+            <button class="filter-btn active" data-category="all">🌟 All Tools</button>
+            <button class="filter-btn" data-category="ai-photo">📸 Photo &amp; Cards</button>
+            <button class="filter-btn" data-category="pdf-doc">📄 PDF Suite</button>
+            <button class="filter-btn" data-category="calc-utility">🧮 Utilities</button>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ===================================================================== -->
-    <!-- 🔴🔴🔴 স্পন্সর অ্যাড ব্যানার (SPONSOR AD BANNER) - এখান থেকে শুরু 🔴🔴🔴 -->
-    <!-- ===================================================================== -->
-    
+    <!-- SPONSOR NOTICE BANNER -->
     <div class="sponsor-ad-container no-print">
       <div class="sponsor-ad-box">
-        <div class="ad-label">Sponsored</div>
-
-        <!-- 👇👇👇 ১. এখানে স্পন্সরের ওয়েবসাইটের লিংক (href="...") পরিবর্তন করুন 👇👇👇 -->
+        <div class="ad-label">Partner &amp; Support Notice</div>
         <a href="https://wa.me/919775096842" target="_blank" rel="noopener noreferrer">
-          
-          <!-- 👇👇👇 ২. এখানে স্পন্সরের ব্যানারের ছবির লিংক (src="...") পরিবর্তন করুন 👇👇👇 -->
-          <img src="https://via.placeholder.com/1200x120?text=Your+Sponsor+Ad+Banner+Here+(1200x120)" alt="Sponsor Advertisement">
-        
+          <div style="padding: 18px 10px; background: linear-gradient(135deg, #eff6ff, #f0fdf4); border-radius: 8px; font-weight: 700; color: #1e40af; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+            <span>⚡ <strong>Pragati Telecom Digital Desk:</strong> Kalupur Middle Para, Murshidabad. Need help with card printing or document formatting?</span>
+            <span style="background: #2563eb; color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 0.8rem;">Connect on WhatsApp →</span>
+          </div>
         </a>
       </div>
     </div>
-
-    <!-- ===================================================================== -->
-    <!-- 🔴🔴🔴 স্পন্সর অ্যাড ব্যানার (SPONSOR AD BANNER) - এখানে শেষ 🔴🔴🔴 -->
-    <!-- ===================================================================== -->
-
 
     <!-- 7 RESPONSIVE TOOL CARDS GRID -->
     <section class="tools-section">
@@ -173,23 +106,257 @@
         <!-- Cards dynamically rendered via JavaScript -->
       </div>
     </section>
+
+    <!-- =================================================================== -->
+    <!-- COMPREHENSIVE HOMEPAGE CONTENT & INFORMATIONAL SECTIONS             -->
+    <!-- =================================================================== -->
+
+    <section class="home-content-section">
+      
+      <!-- 1. About Pragati Telecom Overview -->
+      <article class="home-article-card">
+        <h2 class="home-section-title">🌐 About Pragati Telecom &amp; Our Digital Mission</h2>
+        <p class="home-section-desc">
+          <strong>Pragati Telecom</strong> is an independent digital tools portal based in <strong>Kalupur Middle Para, Murshidabad, West Bengal</strong>. Developed out of practical, day-to-day experience running a local digital service center, this platform simplifies repetitive document preparation tasks. Whether resizing a candidate's signature for an online examination portal or formatting double-sided identity cards for PVC tray printing, our utilities eliminate the need for cumbersome desktop software.
+        </p>
+
+        <div class="features-grid-3col">
+          <div class="feature-box">
+            <div class="feature-box-icon">⚡</div>
+            <h3>Zero Software Installation</h3>
+            <p>Every tool runs directly inside your web browser. No plugins, heavy desktop software, or paid subscriptions required.</p>
+          </div>
+          <div class="feature-box">
+            <div class="feature-box-icon">🔒</div>
+            <h3>Local Client-Side Privacy</h3>
+            <p>Document resizing, passport cropping, and PDF compression occur locally in your device's memory without server uploads.</p>
+          </div>
+          <div class="feature-box">
+            <div class="feature-box-icon">🎯</div>
+            <h3>Built for Real Portals</h3>
+            <p>Presets match standard Indian recruitment portal requirements, 35×45mm passport dimensions, and standard PVC card trays.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2. Who Can Use These Tools? -->
+      <article class="home-article-card">
+        <h2 class="home-section-title">👥 Who Can Benefit From Our Platform?</h2>
+        <p class="home-section-desc">
+          Our browser utilities are engineered for anyone requiring fast, reliable document formatting without technical complexity:
+        </p>
+
+        <div class="features-grid-3col">
+          <div class="feature-box">
+            <div class="feature-box-icon">🏪</div>
+            <h3>CSC &amp; Cyber Cafe Operators</h3>
+            <p>Quickly prepare Aadhaar, PAN, and Ration card cutouts for PVC tray printing, crop passport photos on 4×6 photo sheets, and tally evening counter cash registers.</p>
+          </div>
+          <div class="feature-box">
+            <div class="feature-box-icon">🎓</div>
+            <h3>Students &amp; Job Seekers</h3>
+            <p>Compress application PDFs to precise kilobyte limits (e.g. under 100 KB or 200 KB) and format official passport photographs with exact white or colored backgrounds.</p>
+          </div>
+          <div class="feature-box">
+            <div class="feature-box-icon">🏢</div>
+            <h3>Small Businesses &amp; Retailers</h3>
+            <p>Merge invoice images into a single PDF, extract text from scanned Bengali/English receipts, and count daily physical cash denominations accurately.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- 3. How the Tools Work: Processing Models -->
+      <article class="home-article-card">
+        <h2 class="home-section-title">⚙️ How Our Tools Work: Client-Side vs. AI OCR Processing</h2>
+        <p class="home-section-desc">
+          To maintain transparency, we clearly separate how your files are handled based on the tool you select:
+        </p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 1.5rem;">
+            <div style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: #166534; margin-bottom: 0.5rem;">Model 1: 100% In-Browser Local Tools</div>
+            <h3 style="font-size: 1.15rem; font-weight: 800; color: #14532d; margin-bottom: 0.6rem;">Local Client Processing</h3>
+            <p style="font-size: 0.9rem; color: #166534; line-height: 1.6; margin-bottom: 0.8rem;">
+              The <strong>Photo Studio</strong>, <strong>Smart Multi-Card Studio</strong>, <strong>PDF Compressor</strong>, <strong>Visual PDF Editor</strong>, and <strong>Cash Tally</strong> run entirely inside your browser using HTML5 Canvas, PDF-Lib, Tesseract.js Web Workers, and WebAssembly.
+            </p>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #15803d;">✔ Files never leave your computer or phone.</div>
+          </div>
+
+          <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 1.5rem;">
+            <div style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: #1e40af; margin-bottom: 0.5rem;">Model 2: Optional Cloud OCR</div>
+            <h3 style="font-size: 1.15rem; font-weight: 800; color: #1e3a8a; margin-bottom: 0.6rem;">Optional Google Gemini OCR</h3>
+            <p style="font-size: 0.9rem; color: #1e40af; line-height: 1.6; margin-bottom: 0.8rem;">
+              When creating multi-column searchable PDFs from scanned documents in <strong>Searchable PDF Maker</strong>, you can optionally provide your own Google Gemini API key to recognize text via Google's official API over HTTPS.
+            </p>
+            <div style="font-size: 0.85rem; font-weight: 700; color: #2563eb;">✔ Controlled directly by your personal API key.</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 4. Privacy & Security Summary -->
+      <article class="home-article-card">
+        <h2 class="home-section-title">🔒 Privacy, File Handling &amp; Security</h2>
+        <p class="home-section-desc">
+          Pragati Telecom does not operate a file-storage cloud backend or retain user documents. Once you close your browser tab, all temporary memory buffers (blobs and canvas contexts) are immediately freed by your browser. For comprehensive information regarding API keys and local storage, please review our full <a href="privacy-policy.html" style="color: var(--brand-primary); font-weight: 700; text-decoration: underline;">Privacy Policy</a>.
+        </p>
+      </article>
+
+      <!-- 5. Independent Platform Disclaimer Box -->
+      <div class="legal-alert warning" style="margin-bottom: 2rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 800; color: #92400e; margin-bottom: 0.4rem;">⚠️ Important Independent Notice</h3>
+        <p style="font-size: 0.92rem; color: #78350f; line-height: 1.6;">
+          <strong>Pragati Telecom is an independent digital tools website.</strong> We are not affiliated with, authorized by, associated with, or representing any government department, ministry, or statutory authority (such as UIDAI, PM-JAY, NSDL, or Election Commission of India). Our tools assist with graphic alignment, resizing, and physical printing preparation of lawfully obtained electronic documents. For full details, please consult our <a href="disclaimer.html" style="color: #92400e; font-weight: 800; text-decoration: underline;">Disclaimer</a>.
+        </p>
+      </div>
+
+      <!-- 6. Cash Denomination Tally Guide -->
+      <article class="home-article-card">
+        <h2 class="home-section-title">💵 Cash Denomination Tally &amp; Daily Reconciliation Guide</h2>
+        <p class="home-section-desc">
+          Managing a customer-facing CSC kiosk, retail counter, or cyber cafe requires precise daily cash register balancing. The built-in <strong>Cash Denomination Tally</strong> utility allows operators to input counts for all active Indian currency notes (₹500, ₹200, ₹100, ₹50, ₹20, and ₹10) to instantly calculate total cash balances and total note counts for evening closing accounts.
+        </p>
+
+        <div class="features-grid-3col">
+          <div class="feature-box">
+            <div class="feature-box-icon">⚡</div>
+            <h3>Instant JavaScript Arithmetic</h3>
+            <p>Calculates denomination totals and piece quantities simultaneously with zero page reloads or latency.</p>
+          </div>
+          <div class="feature-box">
+            <div class="feature-box-icon">🔒</div>
+            <h3>100% Client-Side Privacy</h3>
+            <p>Financial numbers and currency counts are never sent over the internet or saved to external databases.</p>
+          </div>
+          <div class="feature-box">
+            <div class="feature-box-icon">🧾</div>
+            <h3>Direct Counter Helper</h3>
+            <p>Matches standard Indian cash register denominations for quick evening reconciliation and bank deposit slips.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- 7. Knowledge Base & Operator Guides Spotlight -->
+      <article class="home-article-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+          <h2 class="home-section-title" style="margin-bottom: 0;">📚 Knowledge Base &amp; Operator Guides</h2>
+          <a href="guides/index.html" class="btn-primary" style="padding: 8px 16px; font-size: 0.88rem; text-decoration: none; border-radius: var(--radius-md);">View All 8 Guides →</a>
+        </div>
+        <p class="home-section-desc">
+          Practical, step-by-step documentation created for cyber cafes, CSC operators, and students. Learn in-browser document compression, PVC printing, and privacy hygiene:
+        </p>
+
+        <div class="features-grid-3col">
+          <a href="guides/compress-pdf-target-size.html" class="feature-box" style="text-decoration: none; color: inherit; transition: transform 0.2s ease;">
+            <div class="feature-box-icon">🗜️</div>
+            <h3 style="color: var(--brand-primary);">Compress PDF to Target KB</h3>
+            <p>Master binary search resolution scaling to fit under strict 100 KB or 200 KB job portal upload limits.</p>
+          </a>
+          <a href="guides/what-is-searchable-pdf.html" class="feature-box" style="text-decoration: none; color: inherit; transition: transform 0.2s ease;">
+            <div class="feature-box-icon">🔎</div>
+            <h3 style="color: var(--brand-primary);">What Is a Searchable PDF?</h3>
+            <p>Understand dual-layer OCR text embedding to enable instant Ctrl+F word searches inside voter lists and deeds.</p>
+          </a>
+          <a href="guides/arrange-print-pvc-cards.html" class="feature-box" style="text-decoration: none; color: inherit; transition: transform 0.2s ease;">
+            <div class="feature-box-icon">💳</div>
+            <h3 style="color: var(--brand-primary);">Arrange &amp; Print PVC Cards</h3>
+            <p>CR80 dimensions (85.6×54mm), decrypting e-Aadhaar PDFs, side-by-side alignment, and printer tray scaling.</p>
+          </a>
+        </div>
+      </article>
+
+      <!-- 8. Frequently Asked Questions (FAQ Accordion) -->
+      <article class="home-article-card">
+        <h2 class="home-section-title">❓ Frequently Asked Questions (FAQ)</h2>
+        <p class="home-section-desc">
+          Find quick, honest answers to common questions about our platform, features, and processing methods:
+        </p>
+
+        <div class="faq-container">
+          <details class="faq-item">
+            <summary class="faq-question">Are the tools on Pragati Telecom free to use?</summary>
+            <div class="faq-answer">
+              Yes. All 7 digital tools on Pragati Telecom are freely accessible directly through your web browser without paywalls or mandatory account registrations.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">Are my personal files and photos uploaded to Pragati Telecom servers?</summary>
+            <div class="faq-answer">
+              No. Pragati Telecom does not have a server database or file-storage backend. When you use tools like the AI Photo Studio, Smart Multi-Card Studio, or PDF Compressor, all computations occur locally inside your browser's memory (RAM).
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">Which tools use the Google Gemini API, and why is an API key needed?</summary>
+            <div class="faq-answer">
+              Only the <em>Searchable PDF Maker</em> and the optional OCR checkbox in the <em>Drag &amp; Drop PDF Maker</em> utilize the Google Gemini API. This feature allows advanced multi-column text extraction from scanned documents. Users supply their own Gemini API key, which is saved locally in their browser and never shared with Pragati Telecom.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">Does every tool require an active internet connection?</summary>
+            <div class="faq-answer">
+              Once the initial web page and libraries (like PDF.js, PDF-Lib, and Cropper) load in your browser, the local tools (Photo Studio cropping, Smart Card alignment, and PDF Compression) can execute entirely offline without sending network requests. Only the AI OCR features require an internet connection to contact Google's API.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">Can I use these tools on mobile devices or tablets?</summary>
+            <div class="faq-answer">
+              Yes. The portal is fully responsive and works on modern mobile browsers (Google Chrome, Safari, Edge, Firefox). However, for multi-card tray printing and precise PDF visual editing, a desktop or laptop with a connected printer offers the optimal experience.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">Can cyber cafe and CSC operators use these tools for customer jobs?</summary>
+            <div class="faq-answer">
+              Yes. Operators are welcome to use our layout and cropping tools to streamline customer print jobs, passport photo sheets, and document resizing, provided the documents processed are legitimate and handled with customer consent.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">Is Pragati Telecom an official government portal?</summary>
+            <div class="faq-answer">
+              No. Pragati Telecom is an independent digital tool and productivity website developed in Murshidabad. We are not an official government body and do not issue or certify government credentials.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">Where can I learn more about data handling, privacy, and terms?</summary>
+            <div class="faq-answer">
+              You can read our detailed <a href="privacy-policy.html">Privacy Policy</a>, <a href="terms.html">Terms &amp; Conditions</a>, <a href="disclaimer.html">Disclaimer</a>, and <a href="about.html">About Us</a> pages for comprehensive information.
+            </div>
+          </details>
+        </div>
+
+        <!-- Quick Links Bar -->
+        <div class="quick-links-bar">
+          <a href="about.html" class="quick-link-pill">ℹ️ About Us</a>
+          <a href="contact.html" class="quick-link-pill">📞 Contact Us</a>
+          <a href="privacy-policy.html" class="quick-link-pill">🔒 Privacy Policy</a>
+          <a href="terms.html" class="quick-link-pill">📜 Terms of Use</a>
+          <a href="disclaimer.html" class="quick-link-pill">⚠️ Disclaimer</a>
+        </div>
+      </article>
+
+    </section>
   </main>
 
   <!-- INSTANT UTILITY MODAL (For Cash Tally) -->
-  <div class="tool-modal-backdrop" id="toolModalBackdrop">
+  <div class="tool-modal-backdrop" id="toolModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalToolTitle">
     <div class="tool-modal-box">
       <div class="tool-modal-header">
         <div style="display: flex; align-items: center; gap: 0.6rem;">
           <span id="modalToolIcon" style="font-size: 1.5rem;">⚡</span>
-          <h3 id="modalToolTitle" style="font-size: 1.15rem; font-weight: 900; color: var(--ink); margin: 0;">Tool Title</h3>
+          <h3 id="modalToolTitle" style="font-size: 1.15rem; font-weight: 900; color: var(--text-main); margin: 0;">Tool Title</h3>
         </div>
-        <button id="modalCloseBtn" style="background: #f1f5f9; border: none; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-weight: bold; color: var(--ink2);">✕</button>
+        <button id="modalCloseBtn" aria-label="Close modal" style="background: #f1f5f9; border: none; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-weight: bold; color: var(--text-secondary);">✕</button>
       </div>
       <div class="tool-modal-body" id="modalToolContent"></div>
     </div>
   </div>
 
-  <!-- TOOLS DATA & SCRIPT -->
+  <!-- TOOLS DATA & SCRIPT (100% UNCHANGED & FUNCTIONAL) -->
   <script>
     // 7 Premium Tools Database
     const toolsData = [
@@ -260,12 +427,18 @@
 
     const toolsGrid = document.getElementById('toolsGrid');
     const categoryBtns = document.querySelectorAll('.filter-btn');
+    const searchInput = document.getElementById('toolSearchInput');
+    const searchClearBtn = document.getElementById('searchClearBtn');
     let currentCategory = 'all';
 
-    // This function is called from shared-layout.js when the top search bar is used
+    // Renders the tool cards based on category and search query
     window.renderTools = function(searchQuery = '') {
       toolsGrid.innerHTML = '';
-      const q = searchQuery.toLowerCase().trim();
+      const q = (searchQuery || (searchInput ? searchInput.value : '')).toLowerCase().trim();
+
+      if (searchClearBtn) {
+        searchClearBtn.style.display = q ? 'inline-flex' : 'none';
+      }
 
       const filtered = toolsData.filter(tool => {
         const matchesCategory = currentCategory === 'all' || tool.category === currentCategory;
@@ -306,6 +479,22 @@
         `;
         toolsGrid.appendChild(card);
       });
+    };
+
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        renderTools(this.value);
+      });
+    }
+
+    if (searchClearBtn) {
+      searchClearBtn.addEventListener('click', function() {
+        if (searchInput) {
+          searchInput.value = '';
+          searchInput.focus();
+          renderTools('');
+        }
+      });
     }
 
     categoryBtns.forEach(btn => {
@@ -313,9 +502,6 @@
         categoryBtns.forEach(b => b.classList.remove('active'));
         this.classList.add('active');
         currentCategory = this.getAttribute('data-category');
-        
-        // Pass the current search value if it exists in the top nav
-        const searchInput = document.getElementById('topSearchInput');
         renderTools(searchInput ? searchInput.value : '');
       });
     });
@@ -332,21 +518,24 @@
       const content = `
         <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1.2rem; font-weight: 600;">Enter number of notes for daily evening closing register:</p>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-          <div class="form-group-modal"><label>₹500 ×</label><input type="number" id="n500" value="0" min="0"></div>
-          <div class="form-group-modal"><label>₹200 ×</label><input type="number" id="n200" value="0" min="0"></div>
-          <div class="form-group-modal"><label>₹100 ×</label><input type="number" id="n100" value="0" min="0"></div>
-          <div class="form-group-modal"><label>₹50 ×</label><input type="number" id="n50" value="0" min="0"></div>
-          <div class="form-group-modal"><label>₹20 ×</label><input type="number" id="n20" value="0" min="0"></div>
-          <div class="form-group-modal"><label>₹10 ×</label><input type="number" id="n10" value="0" min="0"></div>
+          <div class="form-group-modal"><label>₹500 ×</label><input type="number" id="n500" value="0" min="0" oninput="calcTotal()"></div>
+          <div class="form-group-modal"><label>₹200 ×</label><input type="number" id="n200" value="0" min="0" oninput="calcTotal()"></div>
+          <div class="form-group-modal"><label>₹100 ×</label><input type="number" id="n100" value="0" min="0" oninput="calcTotal()"></div>
+          <div class="form-group-modal"><label>₹50 ×</label><input type="number" id="n50" value="0" min="0" oninput="calcTotal()"></div>
+          <div class="form-group-modal"><label>₹20 ×</label><input type="number" id="n20" value="0" min="0" oninput="calcTotal()"></div>
+          <div class="form-group-modal"><label>₹10 ×</label><input type="number" id="n10" value="0" min="0" oninput="calcTotal()"></div>
         </div>
         <button style="width: 100%; background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; border: none; padding: 14px; border-radius: 10px; font-weight: 800; cursor: pointer; margin-top: 15px; font-family: inherit; font-size: 15px; box-shadow: 0 4px 15px rgba(37,99,235,0.2);" id="btnTallyCash">Calculate Grand Total</button>
-        <div class="modal-result-box" id="resultCashBox"></div>
+        <div class="modal-result-box" id="resultCashBox" style="display:block; margin-top: 15px;">
+          <div style="font-size: 1.4rem; font-weight: 900; color: #047857; margin-bottom: 0.35rem;" id="cashTotalDisplay">Total Cash: ₹0</div>
+          <div style="font-size: 0.95rem; color: #166534; font-weight: 600;" id="cashNotesDisplay">Total Notes: <strong>0 pieces</strong></div>
+        </div>
       `;
       document.getElementById('modalToolContent').innerHTML = content;
       modalBackdrop.classList.add('active');
       document.body.style.overflow = 'hidden';
 
-      document.getElementById('btnTallyCash').addEventListener('click', function() {
+      window.calcTotal = function() {
         const n500 = parseInt(document.getElementById('n500').value) || 0;
         const n200 = parseInt(document.getElementById('n200').value) || 0;
         const n100 = parseInt(document.getElementById('n100').value) || 0;
@@ -357,16 +546,15 @@
         const total = (n500 * 500) + (n200 * 200) + (n100 * 100) + (n50 * 50) + (n20 * 20) + (n10 * 10);
         const totalNotes = n500 + n200 + n100 + n50 + n20 + n10;
 
-        const resBox = document.getElementById('resultCashBox');
-        resBox.style.display = 'block';
-        resBox.innerHTML = `
-          <div style="font-size: 1.4rem; font-weight: 900; color: #047857; margin-bottom: 0.35rem;">Total Cash: ₹${total.toLocaleString('en-IN')}</div>
-          <div style="font-size: 0.95rem; color: #166534; font-weight: 600;">Total Notes: <strong>${totalNotes} pieces</strong></div>
-        `;
-      });
+        document.getElementById('cashTotalDisplay').textContent = `Total Cash: ₹${total.toLocaleString('en-IN')}`;
+        document.getElementById('cashNotesDisplay').innerHTML = `Total Notes: <strong>${totalNotes} pieces</strong>`;
+      };
+
+      document.getElementById('btnTallyCash').addEventListener('click', calcTotal);
     }
 
     document.getElementById('modalCloseBtn').addEventListener('click', () => { modalBackdrop.classList.remove('active'); document.body.style.overflow = ''; });
+    modalBackdrop.addEventListener('click', (e) => { if(e.target === modalBackdrop) { modalBackdrop.classList.remove('active'); document.body.style.overflow = ''; } });
     
     // Initial Render
     renderTools();
