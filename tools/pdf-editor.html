@@ -3,7 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Visual PDF Editor | Pragati Telecom</title>
+<title>Smart Visual PDF Editor | Edit PDF Text &amp; Bengali Fonts | Pragati Telecom</title>
+<meta name="description" content="Directly click and edit text on PDF documents in your browser. Features whiteout text replacement, embedded Bengali &amp; English fonts, and client-side OCR fallback.">
+  <link rel="canonical" href="https://turabsk.github.io/pragati-telecom/tools/pdf-editor.html">
+
+
+<!-- Open Graph / Social Sharing -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://turabsk.github.io/pragati-telecom/tools/pdf-editor.html">
+<meta property="og:title" content="Smart Visual PDF Editor | Edit PDF Text &amp; Bengali Unicode">
+<meta property="og:description" content="Click any text on your PDF to modify values, names, or numbers with embedded Noto Sans Bengali and Helvetica fonts. 100% in-browser processing.">
+<meta property="og:site_name" content="Pragati Telecom">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Smart Visual PDF Editor | Edit PDF Text">
+<meta name="twitter:description" content="Click and edit text on any PDF with built-in Bengali font support and OCR fallback.">
+
+<!-- Schema.org JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Smart Visual PDF Editor",
+  "url": "https://turabsk.github.io/pragati-telecom/tools/pdf-editor.html",
+  "description": "Interactive browser PDF editor for clicking text bounding boxes, visual whiteout replacement, and embedding custom Bengali Unicode fonts.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "All modern web browsers",
+  "browserRequirements": "HTML5 Canvas, PDF.js, and JavaScript enabled"
+}
+</script>
 
 <!-- Standard script tags -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -13,6 +42,7 @@
 
 <!-- Premium Font Matches Home Page -->
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
 
 <style>
 :root {
@@ -22,7 +52,6 @@
   --green: #10b981; --red: #ef4444; --radius: 16px;
 }
 * { box-sizing: border-box; margin:0; padding:0; }
-/* FIX: Changed height to min-height and allowed scrolling */
 body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; color: var(--ink); display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
 
 /* Breadcrumb Sub-Header */
@@ -39,7 +68,6 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; color:
 .btn-save:hover { transform: translateY(-1px); box-shadow: 0 6px 15px rgba(16,185,129,0.3); }
 
 /* Upload Stage */
-/* FIX: Added min-height to ensure footer stays at bottom */
 #upload-stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; background: var(--bg); min-height: 60vh; }
 .title { text-align: center; margin-bottom: 30px; }
 .title h1 { margin:0 0 8px; font-size:32px; font-weight: 900; color:var(--ink); }
@@ -56,7 +84,6 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; color:
 .upload-note { margin-top: 20px; font-size: 13px; color: var(--muted); font-weight: 500; background: #f1f5f9; padding: 12px; border-radius: 8px; border: 1px solid var(--border); }
 
 /* Workspace Stage */
-/* FIX: Removed overflow: hidden */
 #workspace-stage { display: none; flex: 1; background: #e2e8f0; align-items: stretch; min-height: 80vh; }
 .left-panel { flex: 2; padding: 20px; display: flex; flex-direction: column; align-items: center; position: relative; }
 .pdf-controls { display: flex; gap: 8px; margin-bottom: 20px; background: white; padding: 8px 16px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); align-items: center; position: sticky; top: 90px; z-index: 50; border: 1px solid var(--border); }
@@ -66,7 +93,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; color:
 #pdf-wrapper { position: relative; display: inline-block; box-shadow: 0 10px 30px rgba(0,0,0,0.15); background: white; border-radius: 4px; }
 canvas { display: block; border-radius: 4px; }
 
-#ocr-badge { display: none; position: absolute; top: 10px; right: 10px; z-index: 30; background: var(--primary2); color: white; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 12px; box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3); }
+#ocr-badge { display: none; position: absolute; top: 10px; right: 10px; z-index: 30; background: var(--primary); color: white; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 12px; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); }
 
 #highlight-layer { position: absolute; inset: 0; pointer-events: none; z-index: 10; }
 .highlight-box { position: absolute; border: 1px solid rgba(14,165,233,0.5); background: rgba(14,165,233,0.06); cursor: pointer; pointer-events: auto; transition: all 0.15s; border-radius: 2px; }
@@ -169,6 +196,112 @@ canvas { display: block; border-radius: 4px; }
     <div class="text-list" id="textList"></div>
   </div>
 </div>
+
+<!-- ======================================================================= -->
+<!-- TOOL DOCUMENTATION & INFORMATION CONTAINER (Below Interactive Workspace) -->
+<!-- ======================================================================= -->
+
+<section class="home-content-section" style="max-width: 1100px; margin-top: 3.5rem;">
+  
+  <article class="home-article-card">
+    <h2 class="home-section-title">✏️ How Smart Visual PDF Editor Works</h2>
+    <p class="home-section-desc">
+      Editing text inside read-only PDF documents usually requires expensive desktop software. <strong>Smart Visual PDF Editor</strong> offers an intuitive, browser-based solution: it renders the PDF document, detects text coordinate boxes (or runs in-browser Tesseract.js OCR for scanned pages), and lets you click any line to replace names, dates, amounts, or misspelled words.
+    </p>
+
+    <div class="features-grid-3col">
+      <div class="feature-box">
+        <div class="feature-box-icon">🎯</div>
+        <h3>Interactive Bounding Boxes</h3>
+        <p>Hover over or click any text element on the rendered canvas to automatically highlight and open its edit field in the sidebar.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-icon">🇧🇩</div>
+        <h3>Bengali &amp; English Font Embed</h3>
+        <p>Includes built-in Google Noto Sans Bengali fontkit embedding, allowing flawless Bengali Unicode rendering alongside standard Latin text.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-icon">🔍</div>
+        <h3>Auto OCR for Scanned Documents</h3>
+        <p>If a page contains scanned raster images with fewer than 15 characters, in-browser Tesseract OCR triggers automatically to extract words.</p>
+      </div>
+    </div>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">⚙️ Whiteout Replacement Mechanism &amp; Limitations</h2>
+    <p class="home-section-desc">
+      It is important to understand how the visual replacement technique functions technically:
+    </p>
+    <ul>
+      <li><strong>Visual Whiteout Layer:</strong> When you replace a string, the engine draws an opaque white bounding rectangle (<code>page.drawRectangle({ color: rgb(1,1,1) })</code>) over the original text coordinates and renders your new string directly on top.</li>
+      <li><strong>Fixed Layout (No Vector Reflow):</strong> PDFs have absolute coordinate layouts. Changing a 4-letter word into a 20-letter sentence will not automatically reflow or push down subsequent paragraphs. Keep replacement text roughly proportional to the available space.</li>
+      <li><strong>Background Color:</strong> Whiteout replacement is designed for documents with clean white backgrounds (standard invoices, applications, certificates).</li>
+    </ul>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">📋 Step-by-Step Editing Guide</h2>
+    <ol style="margin-left: 1.5rem; color: var(--text-secondary); line-height: 1.8; font-size: 0.95rem;">
+      <li style="margin-bottom: 0.5rem;"><strong>Upload PDF:</strong> Click the upload zone and select the PDF file you need to modify.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Select Text:</strong> Click directly on any blue highlight box on the document or select the line from the right-side list.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Type Replacement:</strong> Enter your new text in English or Bengali in the input field. A yellow <em>"✏️ Changed"</em> badge appears.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Save PDF:</strong> Click the green <em>"💾 Save Edited PDF"</em> button in the top bar to download the modified document.</li>
+    </ol>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">🔒 Privacy &amp; Local Processing Disclosure</h2>
+    <div class="legal-alert success">
+      <p>
+        <strong>100% Client-Side In-Browser Execution:</strong> PDF parsing (via PDF.js), client-side OCR (via Tesseract.js), and font injection (via PDF-Lib) run entirely inside your browser's memory (RAM). <strong>Your files are never transmitted to Pragati Telecom servers.</strong>
+      </p>
+    </div>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">❓ Frequently Asked Questions (PDF Editor)</h2>
+    <div class="faq-container">
+      <details class="faq-item">
+        <summary class="faq-question">Can I write Bengali words inside the PDF?</summary>
+        <div class="faq-answer">
+          Yes. The editor automatically registers and embeds the <strong>Noto Sans Bengali</strong> fontkit, ensuring that complex Bengali conjuncts and vowels render cleanly in the saved PDF.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Why does the OCR mode activate on some pages?</summary>
+        <div class="faq-answer">
+          If a PDF page is a scanned photo or image without selectable digital text (less than 15 native characters), the tool automatically switches to in-browser OCR mode to detect word coordinates.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Can I move paragraphs or delete entire pages?</summary>
+        <div class="faq-answer">
+          This tool is specialized for targeted text modifications and corrections. For rearranging, adding, or merging full pages, use our <a href="pdf-maker.html">Drag &amp; Drop PDF Maker</a>.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Will the edited PDF open normally in Adobe Acrobat and Chrome?</summary>
+        <div class="faq-answer">
+          Yes. The output is a standard PDF 1.7 document compatible with all standard PDF viewers, browsers, and mobile devices.
+        </div>
+      </details>
+    </div>
+
+    <!-- Related Tools & Guides Navigation -->
+    <div class="quick-links-bar" style="margin-top: 2rem;">
+      <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Related Utilities &amp; Guides:</span>
+      <a href="../guides/edit-text-in-pdf.html" class="quick-link-pill" style="background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe;">📖 PDF Text Editing Guide</a>
+      <a href="searchable-pdf.html" class="quick-link-pill">🔎 Searchable PDF Maker (AI OCR)</a>
+      <a href="pdf-compressor.html" class="quick-link-pill">🗜️ Custom PDF Compressor</a>
+      <a href="pdf-maker.html" class="quick-link-pill">📑 Drag &amp; Drop PDF Maker</a>
+    </div>
+  </article>
+
+</section>
 
 <div id="loading">
   <div class="spinner"></div>
