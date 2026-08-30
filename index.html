@@ -5,63 +5,167 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pragati Telecom | Smart Digital Tools Portal</title>
   <meta name="description" content="Official Multi-Tool Web Portal for Pragati Telecom, Kalupur Middle Para, Murshidabad. Featuring 7 Premium Utility tools.">
-  <link rel="stylesheet" href="css/style.css">
+  
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
   <style>
-    /* Instant Utility Modal Styling */
+    /* =========================================================
+       BASE PORTAL STYLES
+       ========================================================= */
+    :root {
+      --ink: #0f172a; --ink2: #475569; --muted: #64748b; 
+      --border: #e2e8f0; --bg: #f8fafc; --card: #ffffff;
+      --primary: #2563eb; --primary-light: #0ea5e9;
+      --green: #10b981; --red: #ef4444; --radius: 16px;
+    }
+    * { box-sizing: border-box; margin:0; padding:0; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; color: var(--ink); min-height: 100vh; display: flex; flex-direction: column; }
+    button, input { font-family: inherit; }
+
+    /* Hero Section */
+    .hero-section { text-align: center; padding: 40px 20px 20px 20px; }
+    .hero-container { max-width: 800px; margin: 0 auto; }
+    .hero-title { font-size: 32px; font-weight: 900; color: var(--ink); margin-bottom: 15px; line-height: 1.2; }
+    .hero-title span { color: var(--primary); }
+    .hero-subtitle { color: var(--muted); font-size: 15px; font-weight: 500; margin-bottom: 30px; }
+
+    /* Category Filter */
+    .category-filter-list { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap;}
+    .filter-btn { padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #475569; cursor: pointer; font-weight: 700; transition: 0.2s; }
+    .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 10px rgba(37,99,235,0.2); }
+
+    /* =========================================================
+       🔴🔴🔴 SPONSOR AD BANNER STYLES 🔴🔴🔴
+       ========================================================= */
+    .sponsor-ad-container {
+      max-width: 1240px;
+      margin: 0 auto 30px auto; 
+      padding: 0 20px;
+      width: 100%;
+    }
+    .sponsor-ad-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+    .sponsor-ad-box:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary-light);
+      box-shadow: 0 8px 25px rgba(14,165,233,0.1);
+    }
+    .ad-label {
+      position: absolute;
+      top: 0;
+      right: 15px;
+      background: #f1f5f9;
+      color: #64748b;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      z-index: 2;
+    }
+    .sponsor-ad-box img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      display: block;
+      width: 100%;
+      max-height: 120px; /* ব্যানারের হাইট কন্ট্রোল */
+      object-fit: cover;
+    }
+    .sponsor-ad-box a {
+      display: block;
+      width: 100%;
+    }
+
+    /* Tools Grid */
+    .tools-section { max-width: 1240px; margin: 0 auto 40px; padding: 0 20px; width: 100%; }
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    .tool-card { text-decoration: none; color: inherit; background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+    .tool-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.05); border-color: var(--card-accent, #cbd5e1); }
+    .tool-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+    .tool-icon-wrapper { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .tool-badge { font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 8px; background: #f1f5f9; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;}
+    .tool-title { font-size: 18px; font-weight: 900; margin: 0 0 8px 0; color: var(--ink); }
+    .tool-description { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.5; font-weight: 500;}
+    .tool-card-footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid #f1f5f9; font-size: 14px; font-weight: 800; color: var(--card-accent, #2563eb); display: flex; justify-content: space-between; align-items: center;}
+    
+    /* Modal Styles */
     .tool-modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); z-index: 3000; align-items: center; justify-content: center; padding: 1.5rem; }
     .tool-modal-backdrop.active { display: flex; }
-    .tool-modal-box { background: #ffffff; border-radius: var(--radius-xl); max-width: 600px; width: 100%; box-shadow: var(--shadow-xl); border: 1px solid var(--border-light); overflow: hidden; animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .tool-modal-box { background: #ffffff; border-radius: 16px; max-width: 600px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); border: 1px solid var(--border); overflow: hidden; animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
     @keyframes modalPop { 0% { opacity: 0; transform: scale(0.92) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
-    .tool-modal-header { padding: 1.25rem 1.5rem; background: #f8fafc; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; }
+    .tool-modal-header { padding: 1.25rem 1.5rem; background: #f8fafc; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
     .tool-modal-body { padding: 1.5rem; max-height: 75vh; overflow-y: auto; }
     .form-group-modal { margin-bottom: 1.1rem; }
-    .form-group-modal label { display: block; font-size: 0.88rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.35rem; }
-    .form-group-modal input { width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--border-light); border-radius: var(--radius-md); font-size: 0.95rem; outline: none; }
-    .form-group-modal input:focus { border-color: var(--brand-primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
-    .modal-result-box { margin-top: 1.2rem; padding: 1.2rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-md); font-size: 0.95rem; color: #166534; display: none; }
+    .form-group-modal label { display: block; font-size: 0.88rem; font-weight: 800; color: var(--ink2); margin-bottom: 0.35rem; }
+    .form-group-modal input { width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; outline: none; font-weight: 600;}
+    .form-group-modal input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+    .modal-result-box { margin-top: 1.2rem; padding: 1.2rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; font-size: 0.95rem; color: #166534; display: none; }
   </style>
 </head>
 <body>
 
-  <!-- HERO & DIRECTORY SECTION -->
+  <!-- SHARED NAVIGATION BAR -->
+  <script src="js/shared-layout.js"></script>
+
   <main>
+    <!-- HERO SECTION -->
     <section class="hero-section">
-      <div class="floating-orb orb-1"></div>
-      <div class="floating-orb orb-2"></div>
-
       <div class="hero-container">
-        <div class="hero-badge">
-          <span class="pulse-dot"></span>
-          <span>⚡ Pragati Telecom • Kalupur Middle Para, Murshidabad</span>
-        </div>
-
         <h1 class="hero-title">
-          Smart Digital Seva &amp; <br>
-          <span class="gradient-text">Premium Tool Portal</span>
+          Smart Digital Seva &amp; <span style="color: #2563eb;">Premium Tool Portal</span>
         </h1>
-
         <p class="hero-subtitle">
           Experience ultra-fast, client-side tools designed for local CSC centers. Instant <strong>AI Passport Photo Cropping</strong>, <strong>Searchable OCR PDF Creation</strong>, Smart PVC Card Printing &amp; Daily Cash Tally.
         </p>
 
-        <!-- SEARCH & FILTER BAR -->
-        <div class="search-filter-wrapper" id="search-bar">
-          <div class="search-bar-container">
-            <span class="search-icon-inside">🔍</span>
-            <input type="text" id="toolSearchInput" class="main-search-input" placeholder="Search tools... (e.g., 'pdf', 'photo', 'cash')" autocomplete="off">
-            <button class="search-clear-btn" id="searchClearBtn">✕</button>
-          </div>
-
-          <div class="category-filter-list" id="categoryFilterList">
-            <button class="filter-btn active" data-category="all"><span>🌟</span> All Tools <span class="filter-count">7</span></button>
-            <button class="filter-btn" data-category="ai-photo"><span>📸</span> Photo & Cards <span class="filter-count">2</span></button>
-            <button class="filter-btn" data-category="pdf-doc"><span>📄</span> PDF Suite <span class="filter-count">4</span></button>
-            <button class="filter-btn" data-category="calc-utility"><span>🧮</span> Utilities <span class="filter-count">1</span></button>
-          </div>
+        <!-- CATEGORY FILTER BAR -->
+        <div class="category-filter-list" id="categoryFilterList">
+          <button class="filter-btn active" data-category="all">🌟 All Tools</button>
+          <button class="filter-btn" data-category="ai-photo">📸 Photo & Cards</button>
+          <button class="filter-btn" data-category="pdf-doc">📄 PDF Suite</button>
+          <button class="filter-btn" data-category="calc-utility">🧮 Utilities</button>
         </div>
       </div>
     </section>
+
+    <!-- ===================================================================== -->
+    <!-- 🔴🔴🔴 স্পন্সর অ্যাড ব্যানার (SPONSOR AD BANNER) - এখান থেকে শুরু 🔴🔴🔴 -->
+    <!-- ===================================================================== -->
+    
+    <div class="sponsor-ad-container no-print">
+      <div class="sponsor-ad-box">
+        <div class="ad-label">Sponsored</div>
+
+        <!-- 👇👇👇 ১. এখানে স্পন্সরের ওয়েবসাইটের লিংক (href="...") পরিবর্তন করুন 👇👇👇 -->
+        <a href="https://wa.me/919775096842" target="_blank" rel="noopener noreferrer">
+          
+          <!-- 👇👇👇 ২. এখানে স্পন্সরের ব্যানারের ছবির লিংক (src="...") পরিবর্তন করুন 👇👇👇 -->
+          <img src="https://via.placeholder.com/1200x120?text=Your+Sponsor+Ad+Banner+Here+(1200x120)" alt="Sponsor Advertisement">
+        
+        </a>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- 🔴🔴🔴 স্পন্সর অ্যাড ব্যানার (SPONSOR AD BANNER) - এখানে শেষ 🔴🔴🔴 -->
+    <!-- ===================================================================== -->
+
 
     <!-- 7 RESPONSIVE TOOL CARDS GRID -->
     <section class="tools-section">
@@ -77,20 +181,17 @@
       <div class="tool-modal-header">
         <div style="display: flex; align-items: center; gap: 0.6rem;">
           <span id="modalToolIcon" style="font-size: 1.5rem;">⚡</span>
-          <h3 id="modalToolTitle" style="font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin: 0;">Tool Title</h3>
+          <h3 id="modalToolTitle" style="font-size: 1.15rem; font-weight: 900; color: var(--ink); margin: 0;">Tool Title</h3>
         </div>
-        <button id="modalCloseBtn" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">✕</button>
+        <button id="modalCloseBtn" style="background: #f1f5f9; border: none; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-weight: bold; color: var(--ink2);">✕</button>
       </div>
       <div class="tool-modal-body" id="modalToolContent"></div>
     </div>
   </div>
 
-  <!-- LOAD SHARED LAYOUT -->
-  <script src="js/shared-layout.js"></script>
-
   <!-- TOOLS DATA & SCRIPT -->
   <script>
-    // Exactly 7 Premium Tools Database
+    // 7 Premium Tools Database
     const toolsData = [
       {
         id: "cash-tally",
@@ -158,13 +259,13 @@
     ];
 
     const toolsGrid = document.getElementById('toolsGrid');
-    const searchInput = document.getElementById('toolSearchInput');
     const categoryBtns = document.querySelectorAll('.filter-btn');
     let currentCategory = 'all';
 
-    function renderTools() {
+    // This function is called from shared-layout.js when the top search bar is used
+    window.renderTools = function(searchQuery = '') {
       toolsGrid.innerHTML = '';
-      const q = searchInput.value.toLowerCase().trim();
+      const q = searchQuery.toLowerCase().trim();
 
       const filtered = toolsData.filter(tool => {
         const matchesCategory = currentCategory === 'all' || tool.category === currentCategory;
@@ -173,7 +274,7 @@
       });
 
       if (filtered.length === 0) {
-        toolsGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #64748b;">No tools found matching your criteria.</div>`;
+        toolsGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #64748b; border: 1px dashed #cbd5e1; border-radius: 12px; font-weight: 600;">No tools found matching your criteria.</div>`;
         return;
       }
 
@@ -191,7 +292,7 @@
           <div>
             <div class="tool-card-header">
               <div class="tool-icon-wrapper" style="background: ${tool.iconBg}; color: ${tool.iconColor};">${tool.icon}</div>
-              ${tool.badgeText ? `<span class="tool-badge ${tool.badge}">${tool.badgeText}</span>` : ''}
+              ${tool.badgeText ? `<span class="tool-badge" style="color:${tool.accent}; border: 1px solid ${tool.accent}40; background:${tool.iconBg}">${tool.badgeText}</span>` : ''}
             </div>
             <div class="tool-card-body">
               <h3 class="tool-title">${tool.title}</h3>
@@ -199,7 +300,8 @@
             </div>
           </div>
           <div class="tool-card-footer">
-            <span class="tool-launch-link">Launch <span>→</span></span>
+            <span>Launch Tool</span>
+            <span style="font-size: 18px;">→</span>
           </div>
         `;
         toolsGrid.appendChild(card);
@@ -211,15 +313,15 @@
         categoryBtns.forEach(b => b.classList.remove('active'));
         this.classList.add('active');
         currentCategory = this.getAttribute('data-category');
-        renderTools();
+        
+        // Pass the current search value if it exists in the top nav
+        const searchInput = document.getElementById('topSearchInput');
+        renderTools(searchInput ? searchInput.value : '');
       });
     });
 
-    searchInput.addEventListener('input', renderTools);
-    document.getElementById('searchClearBtn').addEventListener('click', () => { searchInput.value = ''; renderTools(); });
-
     // =========================================================================
-    // MODAL LOGIC (Only for Cash Tally)
+    // MODAL LOGIC (For Cash Tally)
     // =========================================================================
     const modalBackdrop = document.getElementById('toolModalBackdrop');
     
@@ -228,8 +330,8 @@
       document.getElementById('modalToolIcon').textContent = tool.icon;
       
       const content = `
-        <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Enter number of notes for daily evening closing register:</p>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+        <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1.2rem; font-weight: 600;">Enter number of notes for daily evening closing register:</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
           <div class="form-group-modal"><label>₹500 ×</label><input type="number" id="n500" value="0" min="0"></div>
           <div class="form-group-modal"><label>₹200 ×</label><input type="number" id="n200" value="0" min="0"></div>
           <div class="form-group-modal"><label>₹100 ×</label><input type="number" id="n100" value="0" min="0"></div>
@@ -237,7 +339,7 @@
           <div class="form-group-modal"><label>₹20 ×</label><input type="number" id="n20" value="0" min="0"></div>
           <div class="form-group-modal"><label>₹10 ×</label><input type="number" id="n10" value="0" min="0"></div>
         </div>
-        <button style="width: 100%; background: #2563eb; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px;" id="btnTallyCash">Calculate Grand Total</button>
+        <button style="width: 100%; background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; border: none; padding: 14px; border-radius: 10px; font-weight: 800; cursor: pointer; margin-top: 15px; font-family: inherit; font-size: 15px; box-shadow: 0 4px 15px rgba(37,99,235,0.2);" id="btnTallyCash">Calculate Grand Total</button>
         <div class="modal-result-box" id="resultCashBox"></div>
       `;
       document.getElementById('modalToolContent').innerHTML = content;
@@ -258,13 +360,15 @@
         const resBox = document.getElementById('resultCashBox');
         resBox.style.display = 'block';
         resBox.innerHTML = `
-          <div style="font-size: 1.25rem; font-weight: 900; color: #047857; margin-bottom: 0.35rem;">Total Cash: ₹${total.toLocaleString('en-IN')}</div>
-          <div style="font-size: 0.85rem; color: #166534;">Total Notes: <strong>${totalNotes} pieces</strong></div>
+          <div style="font-size: 1.4rem; font-weight: 900; color: #047857; margin-bottom: 0.35rem;">Total Cash: ₹${total.toLocaleString('en-IN')}</div>
+          <div style="font-size: 0.95rem; color: #166534; font-weight: 600;">Total Notes: <strong>${totalNotes} pieces</strong></div>
         `;
       });
     }
 
     document.getElementById('modalCloseBtn').addEventListener('click', () => { modalBackdrop.classList.remove('active'); document.body.style.overflow = ''; });
+    
+    // Initial Render
     renderTools();
   </script>
 </body>
