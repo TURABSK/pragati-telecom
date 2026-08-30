@@ -3,12 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pragati AI Photo Studio Pro | Pragati Telecom</title>
+<title>AI Photo Studio Pro | Passport Photo Maker &amp; Print Sheet Tool | Pragati Telecom</title>
+<meta name="description" content="Free in-browser passport photo maker by Pragati Telecom. Crop standard 35x45mm photos, remove backgrounds with local AI WASM, and generate 4x6 &amp; A4 print sheets with 300 DPI.">
+  <link rel="canonical" href="https://turabsk.github.io/pragati-telecom/tools/photo-studio.html">
+
+
+<!-- Open Graph / Social Sharing -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://turabsk.github.io/pragati-telecom/tools/photo-studio.html">
+<meta property="og:title" content="AI Photo Studio Pro | Passport Photo Maker &amp; 4x6 Print Sheet Layout">
+<meta property="og:description" content="Crop passport &amp; visa photos, apply local AI background removal, and generate print-ready sheets directly in your browser without server uploads.">
+<meta property="og:site_name" content="Pragati Telecom">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Photo Studio Pro | Passport Photo Maker">
+<meta name="twitter:description" content="Free browser-based passport photo cropper, local AI background removal, and 4x6 photo sheet printer.">
+
+<!-- Schema.org JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "AI Photo Studio Pro",
+  "url": "https://turabsk.github.io/pragati-telecom/tools/photo-studio.html",
+  "description": "Browser-based passport photo cropper, local AI background removal, and 4x6 photo print sheet generator.",
+  "applicationCategory": "PhotoEditorApplication",
+  "operatingSystem": "All modern web browsers",
+  "browserRequirements": "HTML5 Canvas, WebAssembly, and JavaScript enabled"
+}
+</script>
 
 <!-- CropperJS & @imgly/background-removal -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.7/dist/umd/index.js"></script>
+
+<!-- Premium Font Matches Home Page -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
 
 <style>
 :root {
@@ -24,7 +57,7 @@
   --radius: 12px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;}
+body{font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;}
 
 /* Breadcrumb sub-header */
 .studio-top-bar {
@@ -44,6 +77,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .studio-breadcrumbs a {
   color: var(--accent);
   font-weight: 700;
+  text-decoration: none;
 }
 
 /* ── LAYOUT ── */
@@ -122,7 +156,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 <div class="studio-top-bar">
   <div class="studio-breadcrumbs">
-    <a href="../index.html">← Home</a> / <span>Pragati AI Photo Studio Pro</span>
+    <a href="../index.html">← Home</a> / <h1 style="display:inline;font-size:inherit;font-weight:inherit;margin:0;color:inherit;">Pragati AI Photo Studio Pro</h1>
   </div>
   <div style="font-size: 0.82rem; font-weight: 700; color: #64748b;">
     📍 Kalupur Middle Para, Murshidabad
@@ -300,6 +334,144 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   </div>
 
 </div>
+
+<!-- ======================================================================= -->
+<!-- TOOL DOCUMENTATION & INFORMATION CONTAINER (Below Interactive Workspace) -->
+<!-- ======================================================================= -->
+
+<section class="home-content-section" style="max-width: 1100px; margin-top: 3.5rem;">
+  
+  <article class="home-article-card">
+    <h2 class="home-section-title">📸 How AI Photo Studio Pro Works</h2>
+    <p class="home-section-desc">
+      <strong>AI Photo Studio Pro</strong> is a browser-based passport photo cropper and photo printing layout engine. Designed specifically for cyber cafes, studio photographers, and online form applicants, it handles the entire workflow of standardizing customer portraits, removing uneven background shadows, adding formal borders, and arranging multiple copies on standard 4×6 inch glossy paper or A4 sheets.
+    </p>
+
+    <div class="features-grid-3col">
+      <div class="feature-box">
+        <div class="feature-box-icon">📐</div>
+        <h3>Standard Aspect Ratios</h3>
+        <p>Built-in presets for 35×45mm passport size, 51×51mm (2×2 inch) visa size, and 25×35mm stamp size, plus custom millimeter inputs.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-icon">✂️</div>
+        <h3>Local AI Background Removal</h3>
+        <p>Utilizes client-side machine learning WebAssembly to detect subjects and replace cluttered backgrounds with clean white or light blue.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-icon">🖨️</div>
+        <h3>300 DPI Print Tiling</h3>
+        <p>Automatically calculates pixel dimensions at 300 DPI print quality and tiles multiple passport copies with 2mm cutting gaps.</p>
+      </div>
+    </div>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">📋 Step-by-Step Usage Guide</h2>
+    <ol style="margin-left: 1.5rem; color: var(--text-secondary); line-height: 1.8; font-size: 0.95rem;">
+      <li style="margin-bottom: 0.5rem;"><strong>Upload Portrait:</strong> Click the upload zone and select any clear portrait photo (JPG, PNG, or WEBP).</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Select Ratio &amp; Crop:</strong> Choose <em>35×45 mm Passport</em> or enter custom dimensions. Adjust the cropping rectangle to center the face and shoulders, then click <em>"Confirm Crop"</em>.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Edit &amp; Background:</strong> Click <em>"Auto Remove BG"</em> to isolate the portrait. Select a formal background color (White, Light Blue, Blue, or Custom Color) and add a thin black border stroke (1–2px) if desired.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Enhance Tone:</strong> Use the Brightness, Contrast, Saturation, and Warmth sliders or click <em>"Magic Auto Enhance"</em> to fix underexposed lighting.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Export Single or Sheet:</strong> Download a single high-resolution JPG/transparent PNG, or click <em>"Print Multiple Photos"</em> to export a full 4×6 inch (typically 8 photos) or A4 layout ready for photo printers.</li>
+    </ol>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">⚙️ Technical Specifications &amp; File Formats</h2>
+    <div class="table-responsive">
+      <table class="legal-table">
+        <thead>
+          <tr>
+            <th>Specification</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Supported Input Formats</strong></td>
+            <td>JPEG (.jpg, .jpeg), PNG (.png), WebP (.webp)</td>
+          </tr>
+          <tr>
+            <td><strong>Output Resolution</strong></td>
+            <td>High-density <strong>300 DPI</strong> rendering for physical photo paper output</td>
+          </tr>
+          <tr>
+            <td><strong>Supported Presets</strong></td>
+            <td>35×45 mm (Standard Passport), 51×51 mm (2×2 inch VISA), 25×35 mm (Stamp / ID), Free Ratio</td>
+          </tr>
+          <tr>
+            <td><strong>Print Sheet Sizes</strong></td>
+            <td>4×6 inch (102×152 mm) photo paper, A4 document paper (210×297 mm)</td>
+          </tr>
+          <tr>
+            <td><strong>Background Colors</strong></td>
+            <td>Transparent, Pure White (#ffffff), Light Blue (#dbeafe), Formal Blue (#1d4ed8), Red (#dc2626), Custom Picker</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">🔒 Privacy &amp; Local Processing Disclosure</h2>
+    <div class="legal-alert success">
+      <p>
+        <strong>100% Client-Side In-Browser Execution:</strong> Photo Studio Pro processes your photographs strictly in your device's browser memory (HTML5 Canvas &amp; local WebAssembly). <strong>Your photos are never uploaded to Pragati Telecom servers or third-party cloud services.</strong> Once you close the tab, all image buffers are freed.
+      </p>
+    </div>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">❓ Frequently Asked Questions (Photo Studio)</h2>
+    <div class="faq-container">
+      <details class="faq-item">
+        <summary class="faq-question">What is the standard passport photo dimension in India?</summary>
+        <div class="faq-answer">
+          The most common standard dimensions for Indian competitive exam portals, driving licenses, and official documentation is <strong>35 mm width by 45 mm height</strong> with the face covering roughly 70–80% of the vertical frame.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">How does background removal work without uploading my photo?</summary>
+        <div class="faq-answer">
+          We use modern WebAssembly (WASM) neural network models (<code>@imgly/background-removal</code>) that execute directly inside your browser using your computer's local CPU/GPU capabilities.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">How many passport photos fit on a 4×6 inch photo sheet?</summary>
+        <div class="faq-answer">
+          At 35×45mm with 2mm cutting gaps, a standard 4×6 inch (102×152mm) sheet typically fits <strong>8 passport photos</strong> arranged in a 2×4 grid.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Why is there a black border around the photo?</summary>
+        <div class="faq-answer">
+          A thin border (stroke) makes it much easier to cut printed photographs straight using scissors or paper trimmers. You can adjust or turn off the border using the <em>Photo Border (Stroke)</em> slider.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Can I use this tool on a mobile phone?</summary>
+        <div class="faq-answer">
+          Yes. The cropping and background replacement tools are fully touch-compatible on modern mobile browsers.
+        </div>
+      </details>
+    </div>
+
+    <!-- Related Tools & Guides Navigation -->
+    <div class="quick-links-bar" style="margin-top: 2rem;">
+      <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Related Utilities &amp; Guides:</span>
+      <a href="../guides/prepare-passport-id-photos.html" class="quick-link-pill" style="background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe;">📖 Passport Photo Guide</a>
+      <a href="smart-card.html" class="quick-link-pill">💳 Smart Multi-Card Studio</a>
+      <a href="pdf-compressor.html" class="quick-link-pill">🗜️ Custom PDF Compressor</a>
+      <a href="pdf-maker.html" class="quick-link-pill">📑 Drag &amp; Drop PDF Maker</a>
+    </div>
+  </article>
+
+</section>
 
 <!-- LOAD SHARED LAYOUT SCRIPT (Adds Header & Animated Footer) -->
 <script src="../js/shared-layout.js"></script>
