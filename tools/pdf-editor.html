@@ -5,12 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Visual PDF Editor | Pragati Telecom</title>
 
-<!-- Use NEWER pdf.js version that handles iText/Photoshop PDFs better -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module" id="pdfjs-script"></script>
+<!-- Standard script tags (No module required, works perfectly from local folder) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
 
+<!-- Premium Font Matches Home Page -->
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
@@ -177,10 +178,11 @@ canvas { display: block; border-radius: 4px; }
   </div>
 </div>
 
-<script type="module">
-// Keep original JS logic intact
-import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs';
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs';
+<script>
+// ─────────────────────────────────────────────
+// Standard JS Setup (No module import needed)
+// ─────────────────────────────────────────────
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 const RENDER_SCALE = 1.5;
 const ASCII_ONLY   = /^[\x20-\x7E\s]*$/;
@@ -222,18 +224,18 @@ document.getElementById('pdfInput').addEventListener('change', async (e) => {
 
     let loaded = false;
     try {
-        pdfDocJS = await pdfjsLib.getDocument({ data: originalPdfBytes.slice(0), disableAutoFetch: false, disableStream: false, isEvalSupported: false, }).promise;
+        pdfDocJS = await pdfjsLib.getDocument({ data: originalPdfBytes.slice(0), disableAutoFetch: false, disableStream: false, isEvalSupported: false }).promise;
         loaded = true; pdfBadge.textContent = '✅ PDF OK'; pdfBadge.className = 'badge ok'; pdfBadge.style.display = 'inline-block';
     } catch(err1) {
         try {
-            pdfDocJS = await pdfjsLib.getDocument({ data: originalPdfBytes.slice(0), stopAtErrors: false, ignoreErrors: true, }).promise;
+            pdfDocJS = await pdfjsLib.getDocument({ data: originalPdfBytes.slice(0), stopAtErrors: false, ignoreErrors: true }).promise;
             loaded = true; pdfBadge.textContent = '⚠️ Partial load'; pdfBadge.className = 'badge'; pdfBadge.style.display = 'inline-block';
             showModal('PDF loaded with some warnings. Some content may not display perfectly, but you can still edit and save.');
         } catch(err2) {
             pdfBadge.textContent = '🔍 OCR mode'; pdfBadge.className = 'badge'; pdfBadge.style.display = 'inline-block';
             showModal('PDF could not be parsed normally. Switching to full OCR mode — all pages will be OCR-processed.');
             try {
-                pdfDocJS = await pdfjsLib.getDocument({ data: originalPdfBytes.slice(0), stopAtErrors: false, }).promise;
+                pdfDocJS = await pdfjsLib.getDocument({ data: originalPdfBytes.slice(0), stopAtErrors: false }).promise;
                 loaded = true;
             } catch(err3) {
                 hideLoading(); alert('❌ Could not load this PDF at all.\n\nError: ' + (err3.message || err3)); location.reload(); return;
