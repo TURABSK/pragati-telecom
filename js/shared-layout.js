@@ -161,7 +161,7 @@
             </div>
             <div class="business-info-row">
               <span class="business-info-icon">✉️</span>
-              <div><strong>Email:</strong> <span style="color: #cbd5e1;">support@pragatitelecom.local (Owner to update)</span></div>
+              <div><strong>Email:</strong> <span style="color: #cbd5e1;">pragati.turab@gmail.com</span></div>
             </div>
           </div>
         </div>
