@@ -3,7 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Pragati Pro Searchable PDF Maker | Pragati Telecom</title>
+<title>Searchable PDF Maker (AI OCR) | Bengali &amp; Multi-Column Scanner | Pragati Telecom</title>
+<meta name="description" content="Convert scanned documents, voter lists, and land records into searchable PDFs with selectable Bengali and English text using Google Gemini AI OCR and jsPDF.">
+  <link rel="canonical" href="https://turabsk.github.io/pragati-telecom/tools/searchable-pdf.html">
+
+
+<!-- Open Graph / Social Sharing -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://turabsk.github.io/pragati-telecom/tools/searchable-pdf.html">
+<meta property="og:title" content="Searchable PDF Maker (AI OCR) | Bengali &amp; English Document Scanner">
+<meta property="og:description" content="Extract multi-column Bengali and English text from scanned voter lists and receipts into selectable, searchable PDF files.">
+<meta property="og:site_name" content="Pragati Telecom">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Searchable PDF Maker (AI OCR) | Pragati Telecom">
+<meta name="twitter:description" content="Create searchable PDFs with selectable text layers from scanned images and voter lists.">
+
+<!-- Schema.org JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Searchable PDF Maker (AI OCR)",
+  "url": "https://turabsk.github.io/pragati-telecom/tools/searchable-pdf.html",
+  "description": "Multi-column Bengali and English OCR scanner for converting scanned document images into searchable PDFs with selectable text layers.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "All modern web browsers",
+  "browserRequirements": "HTML5 Canvas, JavaScript, and user-provided Google Gemini API key"
+}
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -11,6 +40,7 @@
 
 <!-- Premium Font Matches Home Page -->
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
 
 <style>
 :root {
@@ -150,7 +180,7 @@ button,.download{border:0; border-radius:10px; padding:14px 20px; font-weight:80
         <div class="toggle">
           <input id="ocr" type="checkbox" checked style="width: 18px; height: 18px; accent-color: var(--primary); margin-top: 2px;">
           <div><b>🔎 Make Searchable (AI OCR)</b><br>
-          <p style="font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 4px;">Accurately scans both Bengali & English text columns.</p></div>
+          <p style="font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 4px;">Accurately scans both Bengali &amp; English text columns.</p></div>
         </div>
       </div>
 
@@ -167,13 +197,125 @@ button,.download{border:0; border-radius:10px; padding:14px 20px; font-weight:80
   </div>
 
   <div id="success" class="success card">
-    <h1>✅ Task Completed</h1>
+    <h2 style="font-weight: 900; color: var(--green); margin-bottom: 10px;">✅ Task Completed</h2>
     <p id="result" style="font-size:16px;margin:20px 0; font-weight: 600; color: var(--ink2);"></p>
     <a id="download" class="download">📥 Download Searchable PDF</a>
     <br><br>
     <button onclick="location.reload()" style="background:#f1f5f9;color:var(--ink);border:1px solid var(--border); padding: 12px 20px; font-weight: 700; border-radius: 10px; margin-top: 15px; cursor: pointer;">🔄 Create Another PDF</button>
   </div>
 </div>
+
+<!-- ======================================================================= -->
+<!-- TOOL DOCUMENTATION & INFORMATION CONTAINER (Below Interactive Workspace) -->
+<!-- ======================================================================= -->
+
+<section class="home-content-section" style="max-width: 1100px; margin-top: 3.5rem;">
+  
+  <article class="home-article-card">
+    <h2 class="home-section-title">🔎 How Searchable PDF Maker Works</h2>
+    <p class="home-section-desc">
+      A <strong>Searchable PDF</strong> contains an invisible, selectable text layer positioned exactly behind the visual scan image. When searching with <strong>Ctrl+F</strong> in Adobe Reader, Chrome, or mobile viewers, the viewer searches and highlights this invisible text while preserving the authentic visual appearance of the original paper document.
+    </p>
+    <p class="home-section-desc">
+      This tool is specifically optimized for complex regional documents such as <strong>3-column Bengali electoral voter rolls</strong>, land deeds (khatian/porcha), court decrees, and municipal records.
+    </p>
+
+    <div class="features-grid-3col">
+      <div class="feature-box">
+        <div class="feature-box-icon">📑</div>
+        <h3>Multi-Column Layout Slicing</h3>
+        <p>Intelligently segments multi-column scanned tables into vertical slices to avoid reading order confusion across voter boxes.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-icon">🇧🇩</div>
+        <h3>Bengali &amp; English Dual OCR</h3>
+        <p>Uses vision neural networks capable of recognizing Bengali conjunct characters, English names, and voter card alphanumeric serials.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-icon">👻</div>
+        <h3>Zero-Opacity Invisible Text Layer</h3>
+        <p>Injects text with 0% opacity (<code>opacity: 0</code>) aligned with original bounding box coordinates for seamless copy-pasting.</p>
+      </div>
+    </div>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">🤖 AI OCR Setup &amp; Google Gemini API Key Requirement</h2>
+    <p class="home-section-desc">
+      To perform vision-based optical character recognition without expensive server subscriptions, Searchable PDF Maker connects directly to Google's official Gemini API:
+    </p>
+    <ol style="margin-left: 1.5rem; color: var(--text-secondary); line-height: 1.8; font-size: 0.95rem;">
+      <li style="margin-bottom: 0.5rem;"><strong>Obtain a Gemini API Key:</strong> Get a free personal API key from <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" style="color: var(--primary); font-weight: 700; text-decoration: underline;">Google AI Studio</a>.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Paste &amp; Save:</strong> Enter your key in the secure login modal. It is saved locally in your browser's private <code>localStorage</code>.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Direct HTTPS Communication:</strong> During processing, your browser transmits image slices directly to Google's official API endpoint (<code>generativelanguage.googleapis.com</code>) over encrypted HTTPS.</li>
+    </ol>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">⚠️ OCR Accuracy Limitations &amp; Quality Notes</h2>
+    <p class="home-section-desc">
+      While modern AI OCR is exceptionally capable, optical recognition is never 100% error-free:
+    </p>
+    <ul>
+      <li><strong>Scan Resolution:</strong> Clear 200–300 DPI scans yield the highest recognition accuracy. Blurred photos, distorted angles, or extreme shadows may lead to misread characters.</li>
+      <li><strong>Verification Recommended:</strong> Critical legal documents, voter serial numbers, and financial records should always be verified against the visual scan.</li>
+      <li><strong>API Rate Limits:</strong> When processing multi-page documents, the engine includes automatic cooldown pauses to respect API rate limits.</li>
+    </ul>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">🔒 Privacy &amp; Data Transmission Notice</h2>
+    <div class="legal-alert warning">
+      <p>
+        <strong>Third-Party API Data Flow Notice:</strong> When using the AI OCR feature, image slices of your selected documents are transmitted over HTTPS directly to Google's Generative Language API using your personal API key. <strong>Pragati Telecom does not intercept, store, or log your files or API keys.</strong>
+      </p>
+    </div>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">❓ Frequently Asked Questions (Searchable PDF)</h2>
+    <div class="faq-container">
+      <details class="faq-item">
+        <summary class="faq-question">What does "Searchable PDF" mean?</summary>
+        <div class="faq-answer">
+          A searchable PDF looks identical to a photographed paper document, but allows you to press Ctrl+F (or Cmd+F) to search for specific words or copy text directly to your clipboard.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Can I search Bengali names inside scanned voter lists?</summary>
+        <div class="faq-answer">
+          Yes. The OCR model recognizes Bengali Unicode characters and embeds the Noto Sans Bengali font so you can search for voter names, relative names, and house numbers.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Is Google Gemini API key free to obtain?</summary>
+        <div class="faq-answer">
+          Google provides free API quotas for individual developers and personal projects through Google AI Studio.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">How can I remove my saved API key?</summary>
+        <div class="faq-answer">
+          Click the <em>"Logout / Clear API Key"</em> button in the right-hand sidebar. This instantly clears the key from your browser's local storage.
+        </div>
+      </details>
+    </div>
+
+    <!-- Related Tools & Guides Navigation -->
+    <div class="quick-links-bar" style="margin-top: 2rem;">
+      <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Related Utilities &amp; Guides:</span>
+      <a href="../guides/what-is-searchable-pdf.html" class="quick-link-pill" style="background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe;">📖 Searchable PDF Guide</a>
+      <a href="../guides/how-ocr-works-scanned-documents.html" class="quick-link-pill" style="background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe;">🔬 OCR Mechanics Guide</a>
+      <a href="pdf-maker.html" class="quick-link-pill">📑 Drag &amp; Drop PDF Maker</a>
+      <a href="pdf-editor.html" class="quick-link-pill">✏️ Smart Visual PDF Editor</a>
+      <a href="pdf-compressor.html" class="quick-link-pill">🗜️ Custom PDF Compressor</a>
+    </div>
+  </article>
+
+</section>
 
 <script>
 // Logic remains identical to your original searchable PDF tool.
