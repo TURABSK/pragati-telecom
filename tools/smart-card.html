@@ -3,7 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Multi-Card Studio | Pragati Telecom</title>
+<title>Smart Multi-Card Studio | PVC Card Print Layout &amp; Crop Tool | Pragati Telecom</title>
+<meta name="description" content="Auto-detect Aadhaar, PAN, Ayushman PMJAY, and Ration cards. Unlock password PDFs, crop front &amp; back, and arrange side-by-side on A4 for PVC card printing.">
+  <link rel="canonical" href="https://turabsk.github.io/pragati-telecom/tools/smart-card.html">
+
+
+<!-- Open Graph / Social Sharing -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://turabsk.github.io/pragati-telecom/tools/smart-card.html">
+<meta property="og:title" content="Smart Multi-Card Studio | PVC Card Formatting &amp; Print Tool">
+<meta property="og:description" content="Automatic document type detection, password unlocker, and standard 85.6x54mm PVC card alignment for cyber cafes and CSC operators.">
+<meta property="og:site_name" content="Pragati Telecom">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Smart Multi-Card Studio | PVC Card Formatting">
+<meta name="twitter:description" content="Automatic document type detection, password unlocker, and PVC card alignment for cyber cafes.">
+
+<!-- Schema.org JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Smart Multi-Card Studio",
+  "url": "https://turabsk.github.io/pragati-telecom/tools/smart-card.html",
+  "description": "Browser-based PVC card formatting utility for smart document cropping, side-by-side A4 printing, and ZIP export.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "All modern web browsers",
+  "browserRequirements": "HTML5 Canvas and JavaScript enabled"
+}
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -11,6 +40,7 @@
 
 <!-- Premium Font Matches Home Page -->
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
 
 <style>
 :root {
@@ -22,7 +52,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body {font-family:'Plus Jakarta Sans', Arial, sans-serif; background:#f1f5f9; color:var(--ink); min-height:100vh; display:flex; flex-direction:column;}
 
-button,input,select{font:family:inherit;}
+button,input,select{font-family:inherit;}
 button{cursor:pointer}
 
 /* Breadcrumb Sub-Header */
@@ -36,7 +66,7 @@ button{cursor:pointer}
 
 .hero { text-align:center; margin-bottom:25px; }
 .hero h1 { margin:0 0 8px; font-size:32px; font-weight: 900; color:var(--ink); }
-.hero p { margin:0; color:var(--muted); font-size:15px; font-weight: 500; }
+.hero p { margin:0; color:var(--muted); font-size:15px; font-weight: 500;}
 
 /* Mode Selection Bar */
 .modebar { display:flex; gap:10px; overflow:auto; background:#ffffff; border:1px solid var(--border); padding:10px; border-radius:14px; margin-bottom:25px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); justify-content: center; flex-wrap: wrap;}
@@ -206,6 +236,147 @@ input[type=range] { width:100%; accent-color:var(--primary); cursor:pointer; hei
     </div>
   </section>
 </main>
+
+<!-- ======================================================================= -->
+<!-- TOOL DOCUMENTATION & INFORMATION CONTAINER (Below Interactive Workspace) -->
+<!-- ======================================================================= -->
+
+<section class="home-content-section" style="max-width: 1100px; margin-top: 3.5rem;">
+  
+  <article class="home-article-card">
+    <h2 class="home-section-title">💳 How Smart Multi-Card Studio Works</h2>
+    <p class="home-section-desc">
+      <strong>Smart Multi-Card Studio</strong> is an automated document formatting and print-alignment utility engineered for cyber cafes, CSC centers, and digital service operators. When customers bring password-protected electronic identity PDFs or photographed cards, this tool handles decryption prompts, auto-detects the document type (Aadhaar, PAN, Ayushman PMJAY, Ration Card), isolates the front and back card regions, and positions them side-by-side in exact <strong>85.6 × 54 mm</strong> standard PVC dimensions.
+    </p>
+
+    <div class="features-grid-3col">
+      <div class="feature-box">
+        <div class="feature-box-icon">🔓</div>
+        <h3>Password-Protected PDF Decryption</h3>
+        <p>Prompts for the document password directly in the browser and decrypts the vector canvas locally without transmitting password data to any server.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-icon">✂️</div>
+        <h3>Intelligent Boundary Extraction</h3>
+        <p>Includes specialized coordinate extractors for Aadhaar (bottom half), PAN cards, Ayushman Bharat, and dual-column Ration cards.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-icon">🖨️</div>
+        <h3>Side-by-Side PVC &amp; A4 Print</h3>
+        <p>Automatically arranges front and back card faces side-by-side with 8mm spacing, ready for PVC tray printers or laminated A4 paper printing.</p>
+      </div>
+    </div>
+  </article>
+
+  <!-- Non-Government Disclaimer -->
+  <div class="legal-alert warning" style="margin-bottom: 2rem;">
+    <p>
+      <strong>⚠️ Independent Utility Disclaimer:</strong> Pragati Telecom is an independent digital tool platform. This utility is a visual cropping, alignment, and formatting assistant created to help lawful operators print physical cards. <strong>We do NOT issue, verify, generate, or validate government identity credentials.</strong> We have no affiliation with UIDAI, PM-JAY, NSDL, UTIITSL, or the Department of Food and Supplies. For details, view our <a href="../disclaimer.html" style="color: #92400e; font-weight: 800; text-decoration: underline;">Disclaimer</a>.
+    </p>
+  </div>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">📋 Step-by-Step Operating Instructions</h2>
+    <ol style="margin-left: 1.5rem; color: var(--text-secondary); line-height: 1.8; font-size: 0.95rem;">
+      <li style="margin-bottom: 0.5rem;"><strong>Upload Document:</strong> Drag and drop your electronic PDF or scanned image (JPG, PNG) into the upload box.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Password Unlock (If Protected):</strong> If your PDF is locked (e.g. e-Aadhaar), enter the password (e.g. first 4 letters of name in CAPITAL + year of birth) into the browser prompt.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Auto-Detection:</strong> The engine automatically classifies the card type and crops the front and back sections.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Fine-Tune Alignment:</strong> Use the Zoom (↔/↕) and Position (Left/Top) sliders if you wish to adjust margins or crop lines.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Print or Export:</strong> Click <em>"Direct Print"</em> (Ctrl+P) to print on your PVC card tray or photo paper, or click <em>"ফোল্ডারে সেভ (Save as ZIP)"</em> to download high-resolution JPG files.</li>
+    </ol>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">⚙️ Supported Formats &amp; Specifications</h2>
+    <div class="table-responsive">
+      <table class="legal-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Specification Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Supported Card Profiles</strong></td>
+            <td>Ayushman Bharat (PM-JAY), PAN Card, Aadhaar Card, Digital Ration Card (NFSA), Custom Card</td>
+          </tr>
+          <tr>
+            <td><strong>Standard PVC Dimensions</strong></td>
+            <td><strong>85.6 mm × 54.0 mm</strong> (CR80 standard credit-card aspect ratio)</td>
+          </tr>
+          <tr>
+            <td><strong>Export Formats</strong></td>
+            <td>Direct High-Resolution A4 Sheet Printing &amp; 300 DPI ZIP archive containing separate front and back JPGs</td>
+          </tr>
+          <tr>
+            <td><strong>Client-Side Engine</strong></td>
+            <td>PDF.js v2.16 + Tesseract.js OCR + JSZip (100% in-browser)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">🔒 Privacy &amp; Local Processing Disclosure</h2>
+    <div class="legal-alert success">
+      <p>
+        <strong>Zero Server Storage &amp; Complete Decryption Privacy:</strong> All password checks, PDF page extractions, and card crops occur strictly within your browser's local sandbox memory (RAM). <strong>Pragati Telecom never receives, logs, or stores your identity cards or passwords.</strong>
+      </p>
+    </div>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">❓ Frequently Asked Questions (Multi-Card Studio)</h2>
+    <div class="faq-container">
+      <details class="faq-item">
+        <summary class="faq-question">Why does the browser ask for a password when opening e-Aadhaar?</summary>
+        <div class="faq-answer">
+          Official e-Aadhaar PDF files from UIDAI are encrypted. The password is required to decrypt the document. Smart Multi-Card Studio decrypts the PDF directly inside your browser memory using PDF.js and never uploads your password.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Will the printed card match standard PVC card tray dimensions?</summary>
+        <div class="faq-answer">
+          Yes. The card bounding box is locked to <strong>85.6 × 54 mm</strong> (CR80 standard), which corresponds exactly to standard PVC plastic cards and Epson/Canon card trays.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Can I process multiple cards at the same time?</summary>
+        <div class="faq-answer">
+          Yes. You can upload multiple PDFs or card photos together. They will be added sequentially onto the A4 page for batch printing.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">How do I print both front and back on a single PVC card?</summary>
+        <div class="faq-answer">
+          The tool places the front and back side-by-side with 8mm spacing. If you use an inkjet card tray, place card blanks in Tray Slot 1 &amp; Slot 2. If using standard photo paper and a laminator, fold the cut sheet along the center line.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">What should I do if auto-crop clips a margin?</summary>
+        <div class="faq-answer">
+          You can use the real-time adjustment sliders on the right of each card box (Zoom ↔, Zoom ↕, Left ⇄, Top ⇅) to expand or re-center the crop box before printing.
+        </div>
+      </details>
+    </div>
+
+    <!-- Related Tools & Guides Navigation -->
+    <div class="quick-links-bar" style="margin-top: 2rem;">
+      <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Related Utilities &amp; Guides:</span>
+      <a href="../guides/arrange-print-pvc-cards.html" class="quick-link-pill" style="background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe;">📖 PVC Card Printing Guide</a>
+      <a href="photo-studio.html" class="quick-link-pill">📸 AI Photo Studio Pro</a>
+      <a href="pdf-compressor.html" class="quick-link-pill">🗜️ Custom PDF Compressor</a>
+      <a href="searchable-pdf.html" class="quick-link-pill">🔎 Searchable PDF Maker</a>
+    </div>
+  </article>
+
+</section>
 
 <script>
 /* =========================================================================
