@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Visual PDF Editor | Pragati Telecom</title>
 
-<!-- Standard script tags (Works perfectly on local offline files) -->
+<!-- Standard script tags -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
@@ -22,7 +22,8 @@
   --green: #10b981; --red: #ef4444; --radius: 16px;
 }
 * { box-sizing: border-box; margin:0; padding:0; }
-body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; color: var(--ink); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+/* FIX: Changed height to min-height and allowed scrolling */
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; color: var(--ink); display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
 
 /* Breadcrumb Sub-Header */
 .studio-top-bar { background: #ffffff; border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; z-index: 10; flex-shrink: 0;}
@@ -38,7 +39,8 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; color:
 .btn-save:hover { transform: translateY(-1px); box-shadow: 0 6px 15px rgba(16,185,129,0.3); }
 
 /* Upload Stage */
-#upload-stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; overflow: auto; background: var(--bg); }
+/* FIX: Added min-height to ensure footer stays at bottom */
+#upload-stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; background: var(--bg); min-height: 60vh; }
 .title { text-align: center; margin-bottom: 30px; }
 .title h1 { margin:0 0 8px; font-size:32px; font-weight: 900; color:var(--ink); }
 .title p { margin:0; color:var(--muted); font-size:15px; font-weight: 500; }
@@ -54,13 +56,14 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; color:
 .upload-note { margin-top: 20px; font-size: 13px; color: var(--muted); font-weight: 500; background: #f1f5f9; padding: 12px; border-radius: 8px; border: 1px solid var(--border); }
 
 /* Workspace Stage */
-#workspace-stage { display: none; flex: 1; overflow: hidden; background: #e2e8f0; }
-.left-panel { flex: 2; padding: 20px; overflow: auto; display: flex; flex-direction: column; align-items: center; position: relative; }
-.pdf-controls { display: flex; gap: 8px; margin-bottom: 20px; background: white; padding: 8px 16px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); align-items: center; position: sticky; top: 0; z-index: 50; border: 1px solid var(--border); }
+/* FIX: Removed overflow: hidden */
+#workspace-stage { display: none; flex: 1; background: #e2e8f0; align-items: stretch; min-height: 80vh; }
+.left-panel { flex: 2; padding: 20px; display: flex; flex-direction: column; align-items: center; position: relative; }
+.pdf-controls { display: flex; gap: 8px; margin-bottom: 20px; background: white; padding: 8px 16px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); align-items: center; position: sticky; top: 90px; z-index: 50; border: 1px solid var(--border); }
 .pdf-controls .btn { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-weight: 800; color: var(--ink); transition: 0.2s; font-family: inherit; }
 .pdf-controls .btn:hover { background: #e2e8f0; color: var(--primary); }
-#zoom-wrapper { transform-origin: top center; transition: transform 0.15s ease-out; }
-#pdf-wrapper { position: relative; display: inline-block; box-shadow: 0 10px 30px rgba(0,0,0,0.15); background: white; border-radius: 4px; margin-bottom: 40px;}
+#zoom-wrapper { transform-origin: top center; transition: transform 0.15s ease-out; margin-bottom: 40px; }
+#pdf-wrapper { position: relative; display: inline-block; box-shadow: 0 10px 30px rgba(0,0,0,0.15); background: white; border-radius: 4px; }
 canvas { display: block; border-radius: 4px; }
 
 #ocr-badge { display: none; position: absolute; top: 10px; right: 10px; z-index: 30; background: var(--primary2); color: white; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 12px; box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3); }
@@ -73,8 +76,8 @@ canvas { display: block; border-radius: 4px; }
 
 /* Right Panel */
 .right-panel { flex: 1; min-width: 320px; max-width: 450px; background: #fff; border-left: 1px solid var(--border); display: flex; flex-direction: column; box-shadow: -4px 0 20px rgba(0,0,0,0.03); z-index: 100; }
-.right-header { padding: 15px 20px; background: #f8fafc; border-bottom: 1px solid var(--border); font-weight: 800; color: var(--ink); font-size: 14px; flex-shrink: 0; display: flex; align-items: center; gap: 8px; }
-.text-list { flex: 1; overflow-y: auto; padding: 15px; background: #f1f5f9; }
+.right-header { padding: 15px 20px; background: #f8fafc; border-bottom: 1px solid var(--border); font-weight: 800; color: var(--ink); font-size: 14px; flex-shrink: 0; display: flex; align-items: center; gap: 8px; position: sticky; top: 80px; z-index: 10;}
+.text-list { flex: 1; padding: 15px; background: #f1f5f9; }
 .text-item { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 12px; transition: 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
 .text-item.active { border-color: var(--primary); box-shadow: 0 4px 15px rgba(37,99,235,0.1); transform: translateX(-4px); border-left: 4px solid var(--primary); }
 .orig-text { font-size: 13px; color: var(--ink2); margin-bottom: 8px; background: #f8fafc; padding: 6px 10px; border-radius: 6px; font-family: monospace; word-break: break-word; display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; border: 1px solid #e2e8f0; }
@@ -99,14 +102,12 @@ canvas { display: block; border-radius: 4px; }
 .modal-box .modal-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 800; font-size: 15px; width: 100%; font-family: inherit; transition: 0.2s; }
 .modal-box .modal-btn:hover { background: #1d4ed8; }
 
-/* ==========================================
-   RESPONSIVE LAYOUT FIX (For Mobile Screens)
-   ========================================== */
+/* Responsive adjustments */
 @media(max-width: 900px) {
-    #workspace-stage { flex-direction: column; overflow: hidden; }
-    .left-panel { flex: 1; width: 100%; overflow: auto; padding: 10px; }
-    .right-panel { flex: none; width: 100%; max-width: 100%; height: 45vh; border-left: none; border-top: 1px solid var(--border); }
-    .pdf-controls { flex-wrap: wrap; justify-content: center; }
+    #workspace-stage { flex-direction: column; }
+    .left-panel { flex: 1; width: 100%; padding: 10px; }
+    .right-panel { flex: none; width: 100%; max-width: 100%; border-left: none; border-top: 1px solid var(--border); }
+    .pdf-controls { flex-wrap: wrap; justify-content: center; top: 10px;}
 }
 </style>
 </head>
