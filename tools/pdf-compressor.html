@@ -1,538 +1,336 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Custom PDF Compressor</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-    <style>
-        /* Modern Font and Background */
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
-            margin: 0;
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Custom PDF Compressor | Pragati Telecom</title>
 
-        /* Glassmorphism Container */
-        .container {
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.05);
-            max-width: 600px;
-            width: 100%;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(10px);
-        }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-        /* Gradient Heading */
-        h1 {
-            margin-top: 0;
-            font-size: 32px;
-            font-weight: 800;
-            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
-        }
+<style>
+:root {
+  --ink: #0f172a; --ink2: #475569; --muted: #64748b; 
+  --border: #e2e8f0; --bg: #f8fafc; --card: #ffffff;
+  --primary: #2563eb; --primary-light: #0ea5e9;
+  --green: #10b981; --red: #ef4444; --radius: 16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body {font-family:'Plus Jakarta Sans', sans-serif; background:#f1f5f9; color:var(--ink); min-height:100vh; display:flex; flex-direction:column;}
 
-        p.info { 
-            color: #5f6c7b; 
-            font-size: 15px; 
-            line-height: 1.6; 
-            margin-bottom: 25px;
-            font-weight: 500;
-        }
+.studio-top-bar { background: #ffffff; border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+.studio-breadcrumbs { font-size: 0.9rem; color: var(--muted); font-weight: 600;}
+.studio-breadcrumbs a { color: var(--primary); font-weight: 700; text-decoration: none;}
 
-        /* Interactive Upload Section */
-        .upload-section {
-            margin: 20px 0;
-            padding: 30px 25px;
-            border: 3px dashed #66a6ff;
-            border-radius: 12px;
-            background-color: #f8f9fa;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .upload-section:hover {
-            border-color: #4facfe;
-            background-color: #f1f7fd;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.15);
-        }
+.pdf-app-wrapper { max-width: 900px; margin: 2rem auto 3rem; padding: 0 1.5rem; width: 100%; flex: 1; display:flex; flex-direction:column; align-items:center; }
 
-        input[type="file"] {
-            display: block;
-            margin: 0 auto;
-            font-size: 16px;
-            color: #333;
-            cursor: pointer;
-            width: 100%;
-        }
+.title{text-align:center; margin-bottom:30px; width: 100%;}
+.title h1{margin:0 0 8px; font-size:32px; font-weight: 900; color:var(--ink);}
+.title p{margin:0; color:var(--muted); font-size:15px; font-weight: 500;}
 
-        input[type="file"]::file-selector-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-right: 15px;
-            transition: all 0.3s;
-        }
+.card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 4px 20px rgba(0,0,0,0.03); width: 100%; padding: 30px;}
 
-        input[type="file"]::file-selector-button:hover {
-            box-shadow: 0 5px 15px rgba(118, 75, 162, 0.4);
-        }
+.upload-zone{text-align:center; padding: 50px 20px; border: 2px dashed #cbd5e1; background: #f8fafc; border-radius: 12px; cursor: pointer; transition: 0.2s; margin-bottom: 20px;}
+.upload-zone:hover{border-color: var(--primary); background: #eff6ff;}
+.upload-zone .icon{font-size: 45px; margin-bottom: 15px; display: block;}
+.upload-zone h2{font-weight: 800; font-size: 20px; color: var(--ink); margin-bottom: 8px;}
+.upload-zone p{color: var(--muted); font-size: 14px; font-weight: 600;}
 
-        /* Modern Slider */
-        .slider-container {
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 25px;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0;
-            text-align: left;
-        }
-        
-        .slider-header {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            margin-bottom: 15px;
-            font-size: 16px;
-            color: #2d3748;
-        }
-        
-        .target-display {
-            color: #e53e3e;
-            font-size: 20px;
-            font-weight: 800;
-        }
-        
-        input[type="range"] {
-            width: 100%;
-            cursor: pointer;
-            height: 10px;
-            background: #cbd5e0;
-            border-radius: 5px;
-            outline: none;
-            -webkit-appearance: none;
-        }
+.slider-container { background: #f8fafc; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid var(--border); }
+.slider-header { display: flex; justify-content: space-between; font-weight: 800; margin-bottom: 15px; font-size: 16px; color: var(--ink); }
+.target-display { color: var(--primary); font-size: 22px; font-weight: 900; }
+input[type="range"] { width: 100%; cursor: pointer; height: 6px; background: #cbd5e1; border-radius: 4px; outline: none; accent-color: var(--primary); }
 
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #e53e3e;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(229, 62, 62, 0.4);
-            transition: 0.2s;
-        }
-        
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.15);
-        }
+.info-table { width: 100%; border-collapse: collapse; margin: 25px 0; display: none; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+.info-table th, .info-table td { padding: 15px; text-align: left; font-size: 15px; font-weight: 600; }
+.info-table th { background-color: #f1f5f9; color: var(--ink); border-bottom: 1px solid var(--border); }
+.info-table td { background-color: #ffffff; border-bottom: 1px solid var(--border); color: var(--ink2); }
 
-        /* Info Table */
-        .info-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            display: none;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
+.btn { width: 100%; padding: 16px 24px; font-size: 16px; font-weight: 800; color: white; border: none; border-radius: 12px; cursor: pointer; transition: 0.2s; text-align: center; display: none; text-decoration: none; margin-top: 15px; font-family: inherit;}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+.btn-compress { background: linear-gradient(135deg, var(--primary-light), var(--primary)); }
+.btn-download { background: linear-gradient(135deg, #34d399, var(--green)); }
 
-        .info-table th, .info-table td {
-            padding: 12px 15px;
-            text-align: left;
-            font-size: 15px;
-        }
+.loading { display: none; color: var(--primary); font-weight: 800; margin-top: 25px; font-size: 16px; text-align: center; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
-        .info-table th {
-            background-color: #4facfe;
-            color: white;
-            font-weight: bold;
-        }
-        
-        .info-table td {
-            background-color: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
-            color: #4a5568;
-        }
-
-        /* Vibrant Buttons */
-        .btn-compress, .btn-download {
-            padding: 16px 24px;
-            font-size: 16px;
-            font-weight: bold;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            width: 100%;
-            display: none;
-            margin-top: 15px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-decoration: none;
-            box-sizing: border-box;
-        }
-
-        .btn-compress {
-            background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
-            box-shadow: 0 6px 15px rgba(242, 153, 74, 0.3);
-        }
-        
-        .btn-compress:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(242, 153, 74, 0.4);
-        }
-
-        .btn-download {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            box-shadow: 0 6px 15px rgba(17, 153, 142, 0.3);
-        }
-        
-        .btn-download:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(17, 153, 142, 0.4);
-        }
-
-        /* Status & Loading */
-        .loading {
-            display: none;
-            color: #764ba2;
-            font-weight: bold;
-            margin-top: 20px;
-            font-size: 16px;
-            animation: pulse 1.5s infinite;
-        }
-
-        .status-box {
-            margin: 20px 0;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 15px;
-            display: none;
-            background: linear-gradient(to right, #d4fc79 0%, #96e6a1 100%);
-            color: #1e5631;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(150, 230, 161, 0.2);
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
-        }
-    </style>
+.status-box { margin: 20px 0; padding: 16px; border-radius: 12px; font-size: 15px; display: none; background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-weight: 700; text-align: center; }
+</style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>🗜️ Ultra Custom PDF Compressor</h1>
-        <p class="info">Drag the volume slider to intelligently shrink your PDF to the perfect KB size.</p>
+<script src="../js/shared-layout.js"></script>
 
-        <div class="upload-section">
-            <input type="file" id="uploadPdf" accept="application/pdf">
-        </div>
+<div class="studio-top-bar">
+  <div class="studio-breadcrumbs">
+    <a href="../index.html">🏠 Home</a> <span style="margin:0 8px;color:#cbd5e1">/</span> <span>Custom PDF Compressor</span>
+  </div>
+  <div style="font-size: 0.85rem; font-weight: 700; color: #64748b; background: #f1f5f9; padding: 6px 12px; border-radius: 8px;">
+    📍 Kalupur Middle Para
+  </div>
+</div>
 
-        <div id="sizeGroup" style="display: none;">
-            <div class="slider-container">
-                <div class="slider-header">
-                    <span>🎯 Set Target Size:</span>
-                    <span class="target-display"><span id="sliderValue">200</span> KB</span>
-                </div>
-                <input type="range" id="targetSize" min="30" max="1000" step="10" value="200">
-                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #718096; margin-top: 10px; font-weight: bold;">
-                    <span>30 KB (Low Quality)</span>
-                    <span>1000 KB (High Quality)</span>
-                </div>
-            </div>
-        </div>
+<div class="pdf-app-wrapper">
+  <div class="title">
+    <h1>🗜️ Custom PDF Compressor</h1>
+    <p>Intelligently shrink your PDF to an exact Target KB size without losing quality.</p>
+  </div>
 
-        <div class="loading" id="loadingText">⚙️ Smart processing in progress... please wait ⏳</div>
-        <div class="status-box" id="statusBox"></div>
-
-        <table class="info-table" id="infoTable">
-            <tr>
-                <th>Description</th>
-                <th>File Size</th>
-            </tr>
-            <tr>
-                <td>📂 Original Size</td>
-                <td id="origSize" style="font-weight: bold;">-</td>
-            </tr>
-            <tr>
-                <td>✅ Compressed Size</td>
-                <td id="newSize" style="color: #38a169; font-weight: bold; font-size: 16px;">-</td>
-            </tr>
-        </table>
-
-        <button class="btn-compress" id="compressBtn">🗜️ Reduce Size to Target KB</button>
-        <a class="btn-download" id="downloadBtn" href="#">📥 Download Now</a>
+  <div class="card">
+    <div class="upload-zone" onclick="document.getElementById('uploadPdf').click()">
+      <span class="icon">📁</span>
+      <h2>Upload PDF File</h2>
+      <p>Click here to select a PDF</p>
+      <input type="file" id="uploadPdf" accept="application/pdf" style="display:none">
     </div>
 
-    <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    <div id="sizeGroup" style="display: none;">
+      <div class="slider-container">
+        <div class="slider-header">
+          <span>🎯 Set Target Size:</span>
+          <span class="target-display"><span id="sliderValue">200</span> KB</span>
+        </div>
+        <input type="range" id="targetSize" min="30" max="1000" step="10" value="200">
+        <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 10px; font-weight: 700;">
+          <span>30 KB (Low Quality)</span>
+          <span>1000 KB (High Quality)</span>
+        </div>
+      </div>
+    </div>
 
-        const uploadPdf = document.getElementById('uploadPdf');
-        const targetSizeSlider = document.getElementById('targetSize');
-        const sliderValue = document.getElementById('sliderValue');
-        const compressBtn = document.getElementById('compressBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const statusBox = document.getElementById('statusBox');
-        const infoTable = document.getElementById('infoTable');
-        const loadingText = document.getElementById('loadingText');
-        const sizeGroup = document.getElementById('sizeGroup');
+    <div class="loading" id="loadingText">⚙️ Smart processing in progress... please wait ⏳</div>
+    <div class="status-box" id="statusBox"></div>
+
+    <table class="info-table" id="infoTable">
+      <tr>
+        <th>Description</th>
+        <th>File Size</th>
+      </tr>
+      <tr>
+        <td>📂 Original Size</td>
+        <td id="origSize" style="font-weight: 800; color: var(--ink);">—</td>
+      </tr>
+      <tr>
+        <td>✅ Compressed Size</td>
+        <td id="newSize" style="color: var(--green); font-weight: 900; font-size: 18px;">—</td>
+      </tr>
+    </table>
+
+    <button class="btn btn-compress" id="compressBtn">🗜️ Reduce Size to Target KB</button>
+    <a class="btn btn-download" id="downloadBtn" href="#">📥 Download Compressed PDF</a>
+  </div>
+</div>
+
+<!-- Original Javascript -->
+<script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+    const uploadPdf = document.getElementById('uploadPdf');
+    const targetSizeSlider = document.getElementById('targetSize');
+    const sliderValue = document.getElementById('sliderValue');
+    const compressBtn = document.getElementById('compressBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const statusBox = document.getElementById('statusBox');
+    const infoTable = document.getElementById('infoTable');
+    const loadingText = document.getElementById('loadingText');
+    const sizeGroup = document.getElementById('sizeGroup');
+    
+    const origSizeTd = document.getElementById('origSize');
+    const newSizeTd = document.getElementById('newSize');
+
+    let selectedFileArrayBuffer = null;
+    let fileName = "";
+    let originalSizeKB = 0;
+
+    targetSizeSlider.addEventListener('input', function() {
+        sliderValue.textContent = this.value;
+    });
+
+    uploadPdf.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        fileName = file.name;
+        originalSizeKB = file.size / 1024;
         
-        const origSizeTd = document.getElementById('origSize');
-        const newSizeTd = document.getElementById('newSize');
+        origSizeTd.textContent = originalSizeKB.toFixed(2) + " KB";
+        infoTable.style.display = "table";
+        sizeGroup.style.display = "block";
+        compressBtn.style.display = "block";
+        
+        statusBox.style.display = "none";
+        downloadBtn.style.display = "none";
+        newSizeTd.textContent = "—";
 
-        let selectedFileArrayBuffer = null;
-        let fileName = "";
-        let originalSizeKB = 0;
+        if(originalSizeKB > 200) {
+            targetSizeSlider.value = 200;
+            sliderValue.textContent = 200;
+        } else {
+            targetSizeSlider.value = Math.round(originalSizeKB * 0.8);
+            sliderValue.textContent = targetSizeSlider.value;
+        }
 
-        targetSizeSlider.addEventListener('input', function() {
-            sliderValue.textContent = this.value;
-        });
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            selectedFileArrayBuffer = event.target.result;
+        };
+        reader.readAsArrayBuffer(file);
+    });
 
-        uploadPdf.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+    compressBtn.addEventListener('click', async function() {
+        if (!selectedFileArrayBuffer) return;
 
-            fileName = file.name;
-            originalSizeKB = file.size / 1024;
-            
-            origSizeTd.textContent = originalSizeKB.toFixed(2) + " KB";
-            infoTable.style.display = "table";
-            sizeGroup.style.display = "block";
-            compressBtn.style.display = "block";
-            
-            statusBox.style.display = "none";
-            downloadBtn.style.display = "none";
-            newSizeTd.textContent = "-";
+        loadingText.style.display = "block";
+        compressBtn.style.display = "none";
+        statusBox.style.display = "none";
+        downloadBtn.style.display = "none";
 
-            if(originalSizeKB > 200) {
-                targetSizeSlider.value = 200;
-                sliderValue.textContent = 200;
-            } else {
-                targetSizeSlider.value = Math.round(originalSizeKB * 0.8);
-                sliderValue.textContent = targetSizeSlider.value;
+        const targetKB = parseInt(targetSizeSlider.value);
+
+        try {
+            const pdf = await pdfjsLib.getDocument({ data: selectedFileArrayBuffer.slice(0) }).promise;
+
+            let totalChars = 0;
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                try {
+                    const pg = await pdf.getPage(pageNum);
+                    const tc = await pg.getTextContent();
+                    totalChars += tc.items.reduce((s, it) => s + (it.str || '').trim().length, 0);
+                } catch (e) { }
             }
+            const looksTextBased = (totalChars / pdf.numPages) > 200; 
 
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                selectedFileArrayBuffer = event.target.result;
-            };
-            reader.readAsArrayBuffer(file);
-        });
-
-        compressBtn.addEventListener('click', async function() {
-            if (!selectedFileArrayBuffer) return;
-
-            loadingText.style.display = "block";
-            compressBtn.style.display = "none";
-            statusBox.style.display = "none";
-            downloadBtn.style.display = "none";
-
-            const targetKB = parseInt(targetSizeSlider.value);
-
-            try {
-                // FIX: pdfjsLib can transfer/detach the ArrayBuffer it's given to its
-                // worker thread. Passing a COPY here keeps selectedFileArrayBuffer intact
-                // in case we need the original bytes later (fallback, re-compress, etc.).
-                const pdf = await pdfjsLib.getDocument({ data: selectedFileArrayBuffer.slice(0) }).promise;
-
-                // Detect text-heavy PDFs upfront — rasterizing text into a JPEG almost
-                // always makes the file BIGGER, so warn instead of silently failing.
-                let totalChars = 0;
+            async function renderAtScale(scale) {
+                const canvases = [];
                 for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                    try {
-                        const pg = await pdf.getPage(pageNum);
-                        const tc = await pg.getTextContent();
-                        totalChars += tc.items.reduce((s, it) => s + (it.str || '').trim().length, 0);
-                    } catch (e) { /* ignore, treat as no text */ }
+                    const page = await pdf.getPage(pageNum);
+                    const viewport = page.getViewport({ scale });
+                    const canvasEl = document.createElement('canvas');
+                    const context = canvasEl.getContext('2d');
+                    canvasEl.width = viewport.width;
+                    canvasEl.height = viewport.height;
+                    await page.render({ canvasContext: context, viewport }).promise;
+                    canvases.push({ canvas: canvasEl, w: viewport.width, h: viewport.height });
                 }
-                const looksTextBased = (totalChars / pdf.numPages) > 200; // rough heuristic
-
-                // FIX (root cause of "target KB-এর চেয়ে অনেক কম দিচ্ছে, quality খারাপ"):
-                // আগের ভার্সনে রেজোলিউশনের জন্য একটা FIXED ধাপ-তালিকা ছিল
-                // [1.6, 1.3, 1.0, 0.8, 0.6, 0.45, 0.32, 0.22] — কোনো ধাপে টার্গেটে
-                // পৌঁছানো না গেলে সরাসরি পরের (অনেক ছোট) ধাপে চলে যেত। কিন্তু সেই
-                // ছোট ধাপে প্রায়ই সর্বোচ্চ কোয়ালিটিতেও (best possible) ফাইল টার্গেটের
-                // অনেক নিচে চলে যেত — ফলে টার্গেট KB-এর ধারেকাছে পৌঁছাতোই না, আর
-                // রেজোলিউশন অনেক কমে যাওয়ায় (এটা quality-slider এর সমস্যা না,
-                // resolution/pixel-count কমে যাওয়ার সমস্যা) ছবি ঝাপসা দেখাতো।
-                //
-                // এখন রেজোলিউশনের জন্যও কোয়ালিটির মতোই একটা প্রকৃত (continuous)
-                // বাইনারি সার্চ করা হচ্ছে — ফিক্সড লিস্ট না। এতে ঠিক যতটুকু রেজোলিউশন
-                // কমাতে হয় ততটুকুই কমবে, আর টার্গেটের অনেক কাছাকাছি পৌঁছানো যাবে।
-
-                async function renderAtScale(scale) {
-                    const canvases = [];
-                    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                        const page = await pdf.getPage(pageNum);
-                        const viewport = page.getViewport({ scale });
-                        const canvasEl = document.createElement('canvas');
-                        const context = canvasEl.getContext('2d');
-                        canvasEl.width = viewport.width;
-                        canvasEl.height = viewport.height;
-                        await page.render({ canvasContext: context, viewport }).promise;
-                        canvases.push({ canvas: canvasEl, w: viewport.width, h: viewport.height });
-                    }
-                    return canvases;
-                }
-
-                async function buildAtQuality(canvases, quality) {
-                    const doc = await PDFLib.PDFDocument.create();
-                    for (const item of canvases) {
-                        const imgDataUrl = item.canvas.toDataURL('image/jpeg', quality);
-                        const embedImg = await doc.embedJpg(imgDataUrl);
-                        const newPage = doc.addPage([item.w, item.h]);
-                        newPage.drawImage(embedImg, { x: 0, y: 0, width: item.w, height: item.h });
-                    }
-                    return await doc.save({ useObjectStreams: true });
-                }
-
-                let finalBytes = null;
-                let finalSizeKB = Infinity;
-                let reachedTarget = false;
-
-                // ফলব্যাক ট্র্যাকিং (টার্গেট কোনোভাবেই না পৌঁছালে ব্যবহার হবে) —
-                // "টার্গেটের কাছাকাছি সেরা" ট্র্যাকিং থেকে ইচ্ছাকৃতভাবে আলাদা রাখা
-                // হলো, যাতে দুটো উদ্দেশ্য একে অপরকে ভুলভাবে প্রভাবিত না করে।
-                let smallestSeenBytes = null;
-                let smallestSeenKB = Infinity;
-
-                let scaleLow = 0.15, scaleHigh = 1.8;
-                const OUTER_ITERS = 6;
-
-                for (let outer = 0; outer < OUTER_ITERS; outer++) {
-                    const midScale = (scaleLow + scaleHigh) / 2;
-                    loadingText.innerText = `⚙️ রেজোলিউশন ও কোয়ালিটি মেলানো হচ্ছে... (ধাপ ${outer + 1}/${OUTER_ITERS})`;
-
-                    const canvases = await renderAtScale(midScale);
-
-                    const maxQBytes = await buildAtQuality(canvases, 0.92);
-                    const maxQSizeKB = maxQBytes.length / 1024;
-                    const minQBytes = await buildAtQuality(canvases, 0.05);
-                    const minQSizeKB = minQBytes.length / 1024;
-
-                    if (minQSizeKB < smallestSeenKB) { smallestSeenBytes = minQBytes; smallestSeenKB = minQSizeKB; }
-
-                    if (minQSizeKB > targetKB) {
-                        // এই রেজোলিউশনে সর্বনিম্ন কোয়ালিটিতেও টার্গেটের চেয়ে বড় —
-                        // আরেকটু ছোট রেজোলিউশনে যেতে হবে
-                        scaleHigh = midScale;
-                        continue;
-                    }
-
-                    if (maxQSizeKB <= targetKB) {
-                        // এই রেজোলিউশনে সর্বোচ্চ কোয়ালিটিতেও টার্গেটের নিচে —
-                        // মানে আরও বড় রেজোলিউশন (আরও ভালো কোয়ালিটি) ব্যবহার করার
-                        // সুযোগ আছে। এই ফলাফলটা candidate হিসেবে রেখে বড় রেজোলিউশনে যান।
-                        if (finalBytes === null || maxQSizeKB > finalSizeKB) {
-                            finalBytes = maxQBytes;
-                            finalSizeKB = maxQSizeKB;
-                            reachedTarget = true;
-                        }
-                        scaleLow = midScale;
-                        continue;
-                    }
-
-                    // টার্গেট এই রেজোলিউশনের কোয়ালিটি-রেঞ্জের মধ্যেই পাওয়া সম্ভব —
-                    // এখন কোয়ালিটি বাইনারি সার্চ করে নিখুঁতভাবে টার্গেটের কাছে পৌঁছান
-                    let lowQuality = 0.05, highQuality = 0.92;
-                    let bestAtScale = minQBytes, bestAtScaleKB = minQSizeKB;
-
-                    for (let iq = 0; iq < 6; iq++) {
-                        const midQuality = (lowQuality + highQuality) / 2;
-                        const testBytes = await buildAtQuality(canvases, midQuality);
-                        const testSizeKB = testBytes.length / 1024;
-
-                        if (testSizeKB <= targetKB) {
-                            bestAtScale = testBytes;
-                            bestAtScaleKB = testSizeKB;
-                            lowQuality = midQuality;
-                        } else {
-                            highQuality = midQuality;
-                        }
-                    }
-
-                    finalBytes = bestAtScale;
-                    finalSizeKB = bestAtScaleKB;
-                    reachedTarget = true;
-                    break; // এই রেজোলিউশনেই নিখুঁত মিল পাওয়া গেছে
-                }
-
-                // কোনো রেজোলিউশন/কোয়ালিটি কম্বিনেশনেই টার্গেটে পৌঁছানো না গেলে
-                // (finalBytes তখনও null), যা যা টেস্ট করা হয়েছিল তার মধ্যে সবচেয়ে
-                // ছোটটাই ব্যবহার করুন — একদম খালি হাতে ফেরত না দিয়ে।
-                if (finalBytes === null && smallestSeenBytes !== null) {
-                    finalBytes = smallestSeenBytes;
-                    finalSizeKB = smallestSeenKB;
-                }
-
-                // Last-resort safety net: never hand back something bigger than the
-                // original file. Should rarely trigger now that scale is also reduced,
-                // but stays as a guarantee.
-                let usedOriginal = false;
-                if (finalBytes === null || finalSizeKB >= originalSizeKB) {
-                    finalBytes = new Uint8Array(selectedFileArrayBuffer);
-                    finalSizeKB = originalSizeKB;
-                    usedOriginal = true;
-                }
-
-                newSizeTd.textContent = finalSizeKB.toFixed(2) + " KB";
-
-                const blob = new Blob([finalBytes], { type: "application/pdf" });
-                const downloadUrl = URL.createObjectURL(blob);
-                
-                downloadBtn.href = downloadUrl;
-                downloadBtn.download = "Target_" + targetKB + "KB_" + fileName;
-
-                loadingText.style.display = "none";
-                loadingText.innerText = "⚙️ Smart processing in progress... please wait ⏳";
-
-                if (usedOriginal) {
-                    statusBox.innerHTML = looksTextBased
-                        ? `⚠️ এই PDF-টা মূলত টেক্সট-ভিত্তিক — ছবিতে রূপান্তর করে কমপ্রেস করলে সাইজ উল্টো বেড়ে যায়, তাই <b>মূল ফাইলটাই</b> অপরিবর্তিত রাখা হলো (${finalSizeKB.toFixed(2)} KB)। টেক্সট PDF ছোট করতে চাইলে আলাদা পদ্ধতি লাগবে (মেটাডেটা/ফন্ট অপটিমাইজেশন), ছবি-কমপ্রেশন নয়।`
-                        : `⚠️ এত ছোট টার্গেটে (${targetKB} KB) পৌঁছানো যায়নি মূল ফাইলের চেয়ে ছোট রেখে, তাই <b>মূল ফাইলটাই</b> রাখা হলো (${finalSizeKB.toFixed(2)} KB)।`;
-                } else if (!reachedTarget) {
-                    statusBox.innerHTML = `⚠️ সর্বনিম্ন রেজোলিউশনেও একদম ${targetKB} KB-তে পৌঁছানো যায়নি, তবে যতটা সম্ভব কমানো হয়েছে: <b>${finalSizeKB.toFixed(2)} KB</b> (মূল সাইজ ${originalSizeKB.toFixed(2)} KB থেকে)।`;
-                } else {
-                    statusBox.innerHTML = `✔️ Success! File size matched close to <b>${targetKB} KB</b> (${finalSizeKB.toFixed(2)} KB).`;
-                }
-                statusBox.style.display = "block";
-                downloadBtn.style.display = "block";
-                compressBtn.style.display = "block";
-
-            } catch (error) {
-                loadingText.style.display = "none";
-                compressBtn.style.display = "block";
-                alert("❌ Sorry, could not precisely match the target size.");
-                console.error(error);
+                return canvases;
             }
-        });
-    </script>
+
+            async function buildAtQuality(canvases, quality) {
+                const doc = await PDFLib.PDFDocument.create();
+                for (const item of canvases) {
+                    const imgDataUrl = item.canvas.toDataURL('image/jpeg', quality);
+                    const embedImg = await doc.embedJpg(imgDataUrl);
+                    const newPage = doc.addPage([item.w, item.h]);
+                    newPage.drawImage(embedImg, { x: 0, y: 0, width: item.w, height: item.h });
+                }
+                return await doc.save({ useObjectStreams: true });
+            }
+
+            let finalBytes = null;
+            let finalSizeKB = Infinity;
+            let reachedTarget = false;
+
+            let smallestSeenBytes = null;
+            let smallestSeenKB = Infinity;
+
+            let scaleLow = 0.15, scaleHigh = 1.8;
+            const OUTER_ITERS = 6;
+
+            for (let outer = 0; outer < OUTER_ITERS; outer++) {
+                const midScale = (scaleLow + scaleHigh) / 2;
+                loadingText.innerText = `⚙️ রেজোলিউশন ও কোয়ালিটি মেলানো হচ্ছে... (ধাপ ${outer + 1}/${OUTER_ITERS})`;
+
+                const canvases = await renderAtScale(midScale);
+
+                const maxQBytes = await buildAtQuality(canvases, 0.92);
+                const maxQSizeKB = maxQBytes.length / 1024;
+                const minQBytes = await buildAtQuality(canvases, 0.05);
+                const minQSizeKB = minQBytes.length / 1024;
+
+                if (minQSizeKB < smallestSeenKB) { smallestSeenBytes = minQBytes; smallestSeenKB = minQSizeKB; }
+
+                if (minQSizeKB > targetKB) {
+                    scaleHigh = midScale;
+                    continue;
+                }
+
+                if (maxQSizeKB <= targetKB) {
+                    if (finalBytes === null || maxQSizeKB > finalSizeKB) {
+                        finalBytes = maxQBytes;
+                        finalSizeKB = maxQSizeKB;
+                        reachedTarget = true;
+                    }
+                    scaleLow = midScale;
+                    continue;
+                }
+
+                let lowQuality = 0.05, highQuality = 0.92;
+                let bestAtScale = minQBytes, bestAtScaleKB = minQSizeKB;
+
+                for (let iq = 0; iq < 6; iq++) {
+                    const midQuality = (lowQuality + highQuality) / 2;
+                    const testBytes = await buildAtQuality(canvases, midQuality);
+                    const testSizeKB = testBytes.length / 1024;
+
+                    if (testSizeKB <= targetKB) {
+                        bestAtScale = testBytes;
+                        bestAtScaleKB = testSizeKB;
+                        lowQuality = midQuality;
+                    } else {
+                        highQuality = midQuality;
+                    }
+                }
+
+                finalBytes = bestAtScale;
+                finalSizeKB = bestAtScaleKB;
+                reachedTarget = true;
+                break; 
+            }
+
+            if (finalBytes === null && smallestSeenBytes !== null) {
+                finalBytes = smallestSeenBytes;
+                finalSizeKB = smallestSeenKB;
+            }
+
+            let usedOriginal = false;
+            if (finalBytes === null || finalSizeKB >= originalSizeKB) {
+                finalBytes = new Uint8Array(selectedFileArrayBuffer);
+                finalSizeKB = originalSizeKB;
+                usedOriginal = true;
+            }
+
+            newSizeTd.textContent = finalSizeKB.toFixed(2) + " KB";
+
+            const blob = new Blob([finalBytes], { type: "application/pdf" });
+            const downloadUrl = URL.createObjectURL(blob);
+            
+            downloadBtn.href = downloadUrl;
+            downloadBtn.download = "Target_" + targetKB + "KB_" + fileName;
+
+            loadingText.style.display = "none";
+            loadingText.innerText = "⚙️ Smart processing in progress... please wait ⏳";
+
+            if (usedOriginal) {
+                statusBox.innerHTML = looksTextBased
+                    ? `⚠️ এই PDF-টা মূলত টেক্সট-ভিত্তিক — ছবিতে রূপান্তর করে কমপ্রেস করলে সাইজ উল্টো বেড়ে যায়, তাই <b>মূল ফাইলটাই</b> অপরিবর্তিত রাখা হলো (${finalSizeKB.toFixed(2)} KB)।`
+                    : `⚠️ এত ছোট টার্গেটে (${targetKB} KB) পৌঁছানো যায়নি মূল ফাইলের চেয়ে ছোট রেখে, তাই <b>মূল ফাইলটাই</b> রাখা হলো (${finalSizeKB.toFixed(2)} KB)।`;
+            } else if (!reachedTarget) {
+                statusBox.innerHTML = `⚠️ সর্বনিম্ন রেজোলিউশনেও একদম ${targetKB} KB-তে পৌঁছানো যায়নি, তবে যতটা সম্ভব কমানো হয়েছে: <b>${finalSizeKB.toFixed(2)} KB</b>`;
+            } else {
+                statusBox.innerHTML = `✔️ Success! File size matched close to <b>${targetKB} KB</b> (${finalSizeKB.toFixed(2)} KB).`;
+            }
+            statusBox.style.display = "block";
+            downloadBtn.style.display = "block";
+            compressBtn.style.display = "block";
+
+        } catch (error) {
+            loadingText.style.display = "none";
+            compressBtn.style.display = "block";
+            alert("❌ Sorry, could not precisely match the target size.");
+            console.error(error);
+        }
+    });
+</script>
 </body>
 </html>
