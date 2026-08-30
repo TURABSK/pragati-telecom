@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Visual PDF Editor | Pragati Telecom</title>
 
-<!-- Standard script tags (No module required, works perfectly from local folder) -->
+<!-- Standard script tags (Works perfectly on local offline files) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
@@ -38,7 +38,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; color:
 .btn-save:hover { transform: translateY(-1px); box-shadow: 0 6px 15px rgba(16,185,129,0.3); }
 
 /* Upload Stage */
-#upload-stage { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; overflow: auto; background: var(--bg); }
+#upload-stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; overflow: auto; background: var(--bg); }
 .title { text-align: center; margin-bottom: 30px; }
 .title h1 { margin:0 0 8px; font-size:32px; font-weight: 900; color:var(--ink); }
 .title p { margin:0; color:var(--muted); font-size:15px; font-weight: 500; }
@@ -60,7 +60,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; color:
 .pdf-controls .btn { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-weight: 800; color: var(--ink); transition: 0.2s; font-family: inherit; }
 .pdf-controls .btn:hover { background: #e2e8f0; color: var(--primary); }
 #zoom-wrapper { transform-origin: top center; transition: transform 0.15s ease-out; }
-#pdf-wrapper { position: relative; display: inline-block; box-shadow: 0 10px 30px rgba(0,0,0,0.15); background: white; border-radius: 4px; }
+#pdf-wrapper { position: relative; display: inline-block; box-shadow: 0 10px 30px rgba(0,0,0,0.15); background: white; border-radius: 4px; margin-bottom: 40px;}
 canvas { display: block; border-radius: 4px; }
 
 #ocr-badge { display: none; position: absolute; top: 10px; right: 10px; z-index: 30; background: var(--primary2); color: white; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 12px; box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3); }
@@ -98,6 +98,16 @@ canvas { display: block; border-radius: 4px; }
 .modal-box p { color: var(--ink2); font-size: 15px; line-height: 1.6; font-weight: 500; margin-bottom: 20px; }
 .modal-box .modal-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 800; font-size: 15px; width: 100%; font-family: inherit; transition: 0.2s; }
 .modal-box .modal-btn:hover { background: #1d4ed8; }
+
+/* ==========================================
+   RESPONSIVE LAYOUT FIX (For Mobile Screens)
+   ========================================== */
+@media(max-width: 900px) {
+    #workspace-stage { flex-direction: column; overflow: hidden; }
+    .left-panel { flex: 1; width: 100%; overflow: auto; padding: 10px; }
+    .right-panel { flex: none; width: 100%; max-width: 100%; height: 45vh; border-left: none; border-top: 1px solid var(--border); }
+    .pdf-controls { flex-wrap: wrap; justify-content: center; }
+}
 </style>
 </head>
 <body>
@@ -121,7 +131,7 @@ canvas { display: block; border-radius: 4px; }
     <p>Directly click and edit text on any PDF. Features built-in Bengali font support.</p>
   </div>
   <div class="upload-box">
-    <div class="upload-zone">
+    <div class="upload-zone" onclick="document.getElementById('pdfInput').click()">
       <span class="icon">📂</span>
       <h2>Upload PDF to Edit</h2>
       <p>Click here or drag a PDF file</p>
