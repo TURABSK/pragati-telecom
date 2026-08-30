@@ -1,0 +1,12 @@
+# Pragati Telecom - Robots.txt
+# Sitemaps and crawler access for all indexable public pages
+
+User-agent: *
+Allow: /
+Allow: /tools/
+Allow: /guides/
+Allow: /css/
+Allow: /js/
+
+# Sitemap location (Update if custom domain is attached)
+Sitemap: https://turabsk.github.io/pragati-telecom/sitemap.xml

@@ -1,0 +1,520 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Visual PDF Editor | Edit PDF Text &amp; Bengali Fonts | Pragati Telecom</title>
+<meta name="description" content="Directly click and edit text on PDF documents in your browser. Features whiteout text replacement, embedded Bengali &amp; English fonts, and client-side OCR fallback.">
+  <link rel="canonical" href="https://turabsk.github.io/pragati-telecom/tools/pdf-editor.html">
+
+
+<!-- Open Graph / Social Sharing -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://turabsk.github.io/pragati-telecom/tools/pdf-editor.html">
+<meta property="og:title" content="Smart Visual PDF Editor | Edit PDF Text &amp; Bengali Unicode">
+<meta property="og:description" content="Click any text on your PDF to modify values, names, or numbers with embedded Noto Sans Bengali and Helvetica fonts. 100% in-browser processing.">
+<meta property="og:site_name" content="Pragati Telecom">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Smart Visual PDF Editor | Edit PDF Text">
+<meta name="twitter:description" content="Click and edit text on any PDF with built-in Bengali font support and OCR fallback.">
+
+<!-- Schema.org JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Smart Visual PDF Editor",
+  "url": "https://turabsk.github.io/pragati-telecom/tools/pdf-editor.html",
+  "description": "Interactive browser PDF editor for clicking text bounding boxes, visual whiteout replacement, and embedding custom Bengali Unicode fonts.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "All modern web browsers",
+  "browserRequirements": "HTML5 Canvas, PDF.js, and JavaScript enabled"
+}
+</script>
+
+<!-- Standard script tags -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+
+<!-- Premium Font Matches Home Page -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+
+<style>
+:root {
+  --ink: #0f172a; --ink2: #475569; --muted: #64748b; 
+  --border: #e2e8f0; --bg: #f8fafc; --card: #ffffff;
+  --primary: #2563eb; --primary-light: #0ea5e9;
+  --green: #10b981; --red: #ef4444; --radius: 16px;
+}
+* { box-sizing: border-box; margin:0; padding:0; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; color: var(--ink); display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+
+/* Breadcrumb Sub-Header */
+.studio-top-bar { background: #ffffff; border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; z-index: 10; flex-shrink: 0;}
+.studio-breadcrumbs { font-size: 0.9rem; color: var(--muted); font-weight: 600;}
+.studio-breadcrumbs a { color: var(--primary); font-weight: 700; text-decoration: none;}
+
+.toolbar-right { display: flex; align-items: center; gap: 10px; }
+.badge { font-size: 11px; padding: 4px 10px; border-radius: 12px; background: #fff3cd; color: #856404; border: 1px solid #ffc107; font-weight: 700; }
+.badge.ok  { background: #dcfce7; color: #166534; border-color: #86efac; }
+.badge.err { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+
+.btn-save { background: linear-gradient(135deg, #34d399, var(--green)); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 800; cursor: pointer; display: none; font-family: inherit; font-size: 13px; box-shadow: 0 4px 10px rgba(16,185,129,0.2); transition: 0.2s;}
+.btn-save:hover { transform: translateY(-1px); box-shadow: 0 6px 15px rgba(16,185,129,0.3); }
+
+/* Upload Stage */
+#upload-stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; background: var(--bg); min-height: 60vh; }
+.title { text-align: center; margin-bottom: 30px; }
+.title h1 { margin:0 0 8px; font-size:32px; font-weight: 900; color:var(--ink); }
+.title p { margin:0; color:var(--muted); font-size:15px; font-weight: 500; }
+
+.upload-box { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px; text-align: center; width: 100%; max-width: 600px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+.upload-zone { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 50px 20px; background: #f8fafc; cursor: pointer; transition: 0.2s; position: relative; }
+.upload-zone:hover { border-color: var(--primary); background: #eff6ff; }
+.upload-zone .icon { font-size: 45px; margin-bottom: 15px; display: block; }
+.upload-zone h2 { font-weight: 800; font-size: 20px; color: var(--ink); margin-bottom: 8px; }
+.upload-zone p { color: var(--muted); font-size: 14px; font-weight: 600; }
+.upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+
+.upload-note { margin-top: 20px; font-size: 13px; color: var(--muted); font-weight: 500; background: #f1f5f9; padding: 12px; border-radius: 8px; border: 1px solid var(--border); }
+
+/* Workspace Stage */
+#workspace-stage { display: none; flex: 1; background: #e2e8f0; align-items: stretch; min-height: 80vh; }
+.left-panel { flex: 2; padding: 20px; display: flex; flex-direction: column; align-items: center; position: relative; }
+.pdf-controls { display: flex; gap: 8px; margin-bottom: 20px; background: white; padding: 8px 16px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); align-items: center; position: sticky; top: 90px; z-index: 50; border: 1px solid var(--border); }
+.pdf-controls .btn { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-weight: 800; color: var(--ink); transition: 0.2s; font-family: inherit; }
+.pdf-controls .btn:hover { background: #e2e8f0; color: var(--primary); }
+#zoom-wrapper { transform-origin: top center; transition: transform 0.15s ease-out; margin-bottom: 40px; }
+#pdf-wrapper { position: relative; display: inline-block; box-shadow: 0 10px 30px rgba(0,0,0,0.15); background: white; border-radius: 4px; }
+canvas { display: block; border-radius: 4px; }
+
+#ocr-badge { display: none; position: absolute; top: 10px; right: 10px; z-index: 30; background: var(--primary); color: white; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 12px; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); }
+
+#highlight-layer { position: absolute; inset: 0; pointer-events: none; z-index: 10; }
+.highlight-box { position: absolute; border: 1px solid rgba(14,165,233,0.5); background: rgba(14,165,233,0.06); cursor: pointer; pointer-events: auto; transition: all 0.15s; border-radius: 2px; }
+.highlight-box:hover { border-color: #0ea5e9; background: rgba(14,165,233,0.15); }
+.highlight-box.active { border: 2px solid var(--red); background: rgba(239,68,68,0.15); z-index: 20; }
+.highlight-box.modified { border: 2px dashed #f59e0b; background: rgba(245,158,11,0.1); }
+
+/* Right Panel */
+.right-panel { flex: 1; min-width: 320px; max-width: 450px; background: #fff; border-left: 1px solid var(--border); display: flex; flex-direction: column; box-shadow: -4px 0 20px rgba(0,0,0,0.03); z-index: 100; }
+.right-header { padding: 15px 20px; background: #f8fafc; border-bottom: 1px solid var(--border); font-weight: 800; color: var(--ink); font-size: 14px; flex-shrink: 0; display: flex; align-items: center; gap: 8px; position: sticky; top: 80px; z-index: 10;}
+.text-list { flex: 1; padding: 15px; background: #f1f5f9; }
+.text-item { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 12px; transition: 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+.text-item.active { border-color: var(--primary); box-shadow: 0 4px 15px rgba(37,99,235,0.1); transform: translateX(-4px); border-left: 4px solid var(--primary); }
+.orig-text { font-size: 13px; color: var(--ink2); margin-bottom: 8px; background: #f8fafc; padding: 6px 10px; border-radius: 6px; font-family: monospace; word-break: break-word; display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; border: 1px solid #e2e8f0; }
+.modified-badge { display: none; font-size: 11px; background: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 4px; font-weight: 800; white-space: nowrap; }
+.new-text-input { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; transition: 0.2s; font-family: inherit; font-weight: 600; color: var(--ink); }
+.new-text-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+.empty-state { text-align: center; padding: 60px 20px; color: var(--muted); font-weight: 600; }
+
+/* Loading & Modals */
+#loading { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.95); z-index: 2000; align-items: center; justify-content: center; flex-direction: column; font-size: 18px; font-weight: 800; color: var(--primary); backdrop-filter: blur(4px); }
+.spinner { width: 50px; height: 50px; border: 4px solid #e2e8f0; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 15px; }
+@keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+#loading-sub { font-size: 14px; color: var(--muted); margin-top: 8px; font-weight: 600; }
+.prog-wrap { width: 280px; background: #e2e8f0; border-radius: 99px; height: 8px; margin-top: 15px; overflow: hidden; display: none; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--primary-light), var(--primary)); border-radius: 99px; transition: width 0.3s; }
+
+.toast { display: none; color: white; padding: 12px 24px; border-radius: 30px; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 3000; font-weight: 800; box-shadow: 0 10px 25px rgba(0,0,0,0.2); white-space: nowrap; font-size: 14px; }
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.7); z-index: 4000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+.modal-box { background: white; border-radius: 16px; padding: 35px; max-width: 450px; width: 90%; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); border: 1px solid var(--border); }
+.modal-box h3 { margin-top: 0; color: var(--red); font-size: 22px; font-weight: 900; margin-bottom: 15px; }
+.modal-box p { color: var(--ink2); font-size: 15px; line-height: 1.6; font-weight: 500; margin-bottom: 20px; }
+.modal-box .modal-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 800; font-size: 15px; width: 100%; font-family: inherit; transition: 0.2s; }
+.modal-box .modal-btn:hover { background: #1d4ed8; }
+
+/* Responsive adjustments */
+@media(max-width: 900px) {
+    #workspace-stage { flex-direction: column; }
+    .left-panel { flex: 1; width: 100%; padding: 10px; }
+    .right-panel { flex: none; width: 100%; max-width: 100%; border-left: none; border-top: 1px solid var(--border); }
+    .pdf-controls { flex-wrap: wrap; justify-content: center; top: 10px;}
+}
+</style>
+</head>
+<body>
+
+<script src="../js/shared-layout.js"></script>
+
+<div class="studio-top-bar">
+  <div class="studio-breadcrumbs">
+    <a href="../index.html">🏠 Home</a> <span style="margin:0 8px;color:#cbd5e1">/</span> <span>Smart Visual PDF Editor</span>
+  </div>
+  <div class="toolbar-right">
+    <span class="badge" id="fontBadge">⏳ Font...</span>
+    <span class="badge" id="pdfBadge" style="display:none"></span>
+    <button class="btn-save" id="saveBtn" onclick="savePdf()">💾 Save Edited PDF</button>
+  </div>
+</div>
+
+<div id="upload-stage">
+  <div class="title">
+    <h1>✏️ Smart Visual PDF Editor</h1>
+    <p>Directly click and edit text on any PDF. Features built-in Bengali font support.</p>
+  </div>
+  <div class="upload-box">
+    <div class="upload-zone" onclick="document.getElementById('pdfInput').click()">
+      <span class="icon">📂</span>
+      <h2>Upload PDF to Edit</h2>
+      <p>Click here or drag a PDF file</p>
+      <input type="file" id="pdfInput" accept="application/pdf">
+    </div>
+    <div class="upload-note">
+      🔤 Text PDF → instant &nbsp;|&nbsp; 🖼️ Image/Scanned PDF → OCR auto<br>
+      📄 Photoshop PDF, iText PDF → ✅ supported
+    </div>
+  </div>
+</div>
+
+<div id="workspace-stage">
+  <div class="left-panel">
+    <div class="pdf-controls">
+      <button class="btn" onclick="prevPage()">⬅️ Prev</button>
+      <span id="pageInfo" style="font-weight:800;color:var(--ink);font-size:14px;margin:0 10px;">Page 1/1</span>
+      <button class="btn" onclick="nextPage()">Next ➡️</button>
+      <div style="width:2px;height:20px;background:#cbd5e1;margin:0 10px;"></div>
+      <button class="btn" onclick="zoomOut()">−</button>
+      <span id="zoomLevel" style="font-size:14px;font-weight:800;width:50px;text-align:center;color:var(--primary);">100%</span>
+      <button class="btn" onclick="zoomIn()">+</button>
+    </div>
+    <div id="zoom-wrapper">
+      <div id="pdf-wrapper">
+        <canvas id="pdfCanvas"></canvas>
+        <div id="highlight-layer"></div>
+        <div id="ocr-badge">🔍 OCR Mode</div>
+      </div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="right-header">📝 Click text on PDF to Edit</div>
+    <div class="text-list" id="textList"></div>
+  </div>
+</div>
+
+<!-- ======================================================================= -->
+<!-- TOOL DOCUMENTATION & INFORMATION CONTAINER (Below Interactive Workspace) -->
+<!-- ======================================================================= -->
+
+<section class="home-content-section" style="max-width: 1100px; margin-top: 3.5rem;">
+  
+  <article class="home-article-card">
+    <h2 class="home-section-title">✏️ How Smart Visual PDF Editor Works</h2>
+    <p class="home-section-desc">
+      Editing text inside read-only PDF documents usually requires expensive desktop software. <strong>Smart Visual PDF Editor</strong> offers an intuitive, browser-based solution: it renders the PDF document, detects text coordinate boxes (or runs in-browser Tesseract.js OCR for scanned pages), and lets you click any line to replace names, dates, amounts, or misspelled words.
+    </p>
+
+    <div class="features-grid-3col">
+      <div class="feature-box">
+        <div class="feature-box-icon">🎯</div>
+        <h3>Interactive Bounding Boxes</h3>
+        <p>Hover over or click any text element on the rendered canvas to automatically highlight and open its edit field in the sidebar.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-icon">🇧🇩</div>
+        <h3>Bengali &amp; English Font Embed</h3>
+        <p>Includes built-in Google Noto Sans Bengali fontkit embedding, allowing flawless Bengali Unicode rendering alongside standard Latin text.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-icon">🔍</div>
+        <h3>Auto OCR for Scanned Documents</h3>
+        <p>If a page contains scanned raster images with fewer than 15 characters, in-browser Tesseract OCR triggers automatically to extract words.</p>
+      </div>
+    </div>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">⚙️ Whiteout Replacement Mechanism &amp; Limitations</h2>
+    <p class="home-section-desc">
+      It is important to understand how the visual replacement technique functions technically:
+    </p>
+    <ul>
+      <li><strong>Visual Whiteout Layer:</strong> When you replace a string, the engine draws an opaque white bounding rectangle (<code>page.drawRectangle({ color: rgb(1,1,1) })</code>) over the original text coordinates and renders your new string directly on top.</li>
+      <li><strong>Fixed Layout (No Vector Reflow):</strong> PDFs have absolute coordinate layouts. Changing a 4-letter word into a 20-letter sentence will not automatically reflow or push down subsequent paragraphs. Keep replacement text roughly proportional to the available space.</li>
+      <li><strong>Background Color:</strong> Whiteout replacement is designed for documents with clean white backgrounds (standard invoices, applications, certificates).</li>
+    </ul>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">📋 Step-by-Step Editing Guide</h2>
+    <ol style="margin-left: 1.5rem; color: var(--text-secondary); line-height: 1.8; font-size: 0.95rem;">
+      <li style="margin-bottom: 0.5rem;"><strong>Upload PDF:</strong> Click the upload zone and select the PDF file you need to modify.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Select Text:</strong> Click directly on any blue highlight box on the document or select the line from the right-side list.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Type Replacement:</strong> Enter your new text in English or Bengali in the input field. A yellow <em>"✏️ Changed"</em> badge appears.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Save PDF:</strong> Click the green <em>"💾 Save Edited PDF"</em> button in the top bar to download the modified document.</li>
+    </ol>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">🔒 Privacy &amp; Local Processing Disclosure</h2>
+    <div class="legal-alert success">
+      <p>
+        <strong>100% Client-Side In-Browser Execution:</strong> PDF parsing (via PDF.js), client-side OCR (via Tesseract.js), and font injection (via PDF-Lib) run entirely inside your browser's memory (RAM). <strong>Your files are never transmitted to Pragati Telecom servers.</strong>
+      </p>
+    </div>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">❓ Frequently Asked Questions (PDF Editor)</h2>
+    <div class="faq-container">
+      <details class="faq-item">
+        <summary class="faq-question">Can I write Bengali words inside the PDF?</summary>
+        <div class="faq-answer">
+          Yes. The editor automatically registers and embeds the <strong>Noto Sans Bengali</strong> fontkit, ensuring that complex Bengali conjuncts and vowels render cleanly in the saved PDF.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Why does the OCR mode activate on some pages?</summary>
+        <div class="faq-answer">
+          If a PDF page is a scanned photo or image without selectable digital text (less than 15 native characters), the tool automatically switches to in-browser OCR mode to detect word coordinates.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Can I move paragraphs or delete entire pages?</summary>
+        <div class="faq-answer">
+          This tool is specialized for targeted text modifications and corrections. For rearranging, adding, or merging full pages, use our <a href="pdf-maker.html">Drag &amp; Drop PDF Maker</a>.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Will the edited PDF open normally in Adobe Acrobat and Chrome?</summary>
+        <div class="faq-answer">
+          Yes. The output is a standard PDF 1.7 document compatible with all standard PDF viewers, browsers, and mobile devices.
+        </div>
+      </details>
+    </div>
+
+    <!-- Related Tools & Guides Navigation -->
+    <div class="quick-links-bar" style="margin-top: 2rem;">
+      <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Related Utilities &amp; Guides:</span>
+      <a href="../guides/edit-text-in-pdf.html" class="quick-link-pill" style="background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe;">📖 PDF Text Editing Guide</a>
+      <a href="searchable-pdf.html" class="quick-link-pill">🔎 Searchable PDF Maker (AI OCR)</a>
+      <a href="pdf-compressor.html" class="quick-link-pill">🗜️ Custom PDF Compressor</a>
+      <a href="pdf-maker.html" class="quick-link-pill">📑 Drag &amp; Drop PDF Maker</a>
+    </div>
+  </article>
+
+</section>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <span id="loadingText">⚙️ Processing...</span>
+  <div id="loading-sub"></div>
+  <div class="prog-wrap" id="progWrap">
+    <div class="prog-fill" id="progFill" style="width:0%"></div>
+  </div>
+</div>
+
+<div class="toast" id="toastMsg"></div>
+
+<div class="modal-overlay" id="errModal">
+  <div class="modal-box">
+    <h3>⚠️ PDF Load Warning</h3>
+    <p id="errModalMsg"></p>
+    <button class="modal-btn" onclick="document.getElementById('errModal').style.display='none'">OK, Continue</button>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// Standard JS Setup (No module import needed)
+// ─────────────────────────────────────────────
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const RENDER_SCALE = 1.5;
+const ASCII_ONLY   = /^[\x20-\x7E\s]*$/;
+const OCR_THRESHOLD = 15; 
+const FONT_URLS = [
+    'https://cdn.jsdelivr.net/gh/notofonts/notofonts.github.io/fonts/NotoSansBengali/hinted/ttf/NotoSansBengali-Regular.ttf',
+    'https://github.com/googlefonts/noto-fonts/raw/main/hinted/ttf/NotoSansBengali/NotoSansBengali-Regular.ttf',
+];
+
+let pdfDocJS = null; let originalPdfBytes = null; let currentPageNum = 1; let fileName = "document.pdf";
+let unicodeFontBytes = null; let currentZoom = 1.0; let pageData = {}; let pageIsOcr = {};
+
+const canvas = document.getElementById('pdfCanvas'); const ctx = canvas.getContext('2d');
+const textList = document.getElementById('textList'); const highlightLayer = document.getElementById('highlight-layer');
+const zoomWrapper = document.getElementById('zoom-wrapper'); const fontBadge = document.getElementById('fontBadge');
+const pdfBadge = document.getElementById('pdfBadge'); const ocrBadge = document.getElementById('ocr-badge');
+
+(async () => {
+    for (const url of FONT_URLS) {
+        try {
+            const res = await fetch(url, { mode: 'cors' });
+            if (!res.ok) continue;
+            const buf = await res.arrayBuffer();
+            if (buf.byteLength > 50000) {
+                unicodeFontBytes = buf; fontBadge.textContent = '✅ Bengali'; fontBadge.className = 'badge ok'; return;
+            }
+        } catch(e) {}
+    }
+    fontBadge.textContent = '⚠️ Latin only'; fontBadge.className = 'badge err';
+})();
+
+function applyZoom() { zoomWrapper.style.transform = `scale(${currentZoom})`; document.getElementById('zoomLevel').innerText = Math.round(currentZoom*100) + '%'; }
+window.zoomIn  = () => { if(currentZoom<3.0){currentZoom=+(currentZoom+0.2).toFixed(1);applyZoom();} };
+window.zoomOut = () => { if(currentZoom>0.4){currentZoom=+(currentZoom-0.2).toFixed(1);applyZoom();} };
+
+document.getElementById('pdfInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0]; if (!file) return; fileName = file.name; originalPdfBytes = await file.arrayBuffer();
+    document.getElementById('upload-stage').style.display = 'none'; showLoading('📂 Loading PDF...');
+
+    let loaded = false;
+    try {
+        pdfDocJS = await pdfjsLib.getDocument({ data: originalPdfBytes.slice(0), disableAutoFetch: false, disableStream: false, isEvalSupported: false }).promise;
+        loaded = true; pdfBadge.textContent = '✅ PDF OK'; pdfBadge.className = 'badge ok'; pdfBadge.style.display = 'inline-block';
+    } catch(err1) {
+        try {
+            pdfDocJS = await pdfjsLib.getDocument({ data: originalPdfBytes.slice(0), stopAtErrors: false, ignoreErrors: true }).promise;
+            loaded = true; pdfBadge.textContent = '⚠️ Partial load'; pdfBadge.className = 'badge'; pdfBadge.style.display = 'inline-block';
+            showModal('PDF loaded with some warnings. Some content may not display perfectly, but you can still edit and save.');
+        } catch(err2) {
+            pdfBadge.textContent = '🔍 OCR mode'; pdfBadge.className = 'badge'; pdfBadge.style.display = 'inline-block';
+            showModal('PDF could not be parsed normally. Switching to full OCR mode — all pages will be OCR-processed.');
+            try {
+                pdfDocJS = await pdfjsLib.getDocument({ data: originalPdfBytes.slice(0), stopAtErrors: false }).promise;
+                loaded = true;
+            } catch(err3) {
+                hideLoading(); alert('❌ Could not load this PDF at all.\n\nError: ' + (err3.message || err3)); location.reload(); return;
+            }
+        }
+    }
+    if (loaded) {
+        document.getElementById('workspace-stage').style.display = 'flex';
+        document.getElementById('saveBtn').style.display = 'inline-flex';
+        currentZoom = 1.0; applyZoom(); await renderPage(1);
+    }
+    hideLoading();
+});
+
+async function renderPage(num) {
+    currentPageNum = num; showLoading(`📄 Rendering page ${num}...`);
+    let page, viewport;
+    try {
+        page = await pdfDocJS.getPage(num); viewport = page.getViewport({ scale: RENDER_SCALE });
+        canvas.width = viewport.width; canvas.height = viewport.height;
+        await page.render({ canvasContext: ctx, viewport }).promise;
+    } catch(renderErr) {
+        canvas.width = 595 * RENDER_SCALE; canvas.height = 842 * RENDER_SCALE;
+        ctx.fillStyle = '#f8f8f8'; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = '#999'; ctx.font = '20px sans-serif'; ctx.fillText('Could not render page ' + num, 30, 80);
+        viewport = { width: canvas.width, height: canvas.height, scale: RENDER_SCALE };
+    }
+    document.getElementById('pageInfo').innerText = `Page ${num}/${pdfDocJS.numPages}`;
+    if (!pageData[num]) { await extractPage(num, page, viewport); }
+    renderSidebar(); ocrBadge.style.display = pageIsOcr[num] ? 'block' : 'none'; hideLoading();
+}
+
+async function extractPage(num, page, viewport) {
+    if (!page) { pageIsOcr[num]=true; pageData[num]=await ocrPage(num,viewport); return; }
+    let totalChars = 0; let textContent;
+    try { textContent = await page.getTextContent(); totalChars = textContent.items.reduce((s,it) => s + (it.str||'').trim().length, 0); } catch(e) { totalChars = 0; }
+    if (totalChars < OCR_THRESHOLD) { pageIsOcr[num] = true; pageData[num] = await ocrPage(num, viewport); } 
+    else { pageIsOcr[num] = false; pageData[num] = extractNativeText(num, textContent, viewport); }
+}
+
+function extractNativeText(num, textContent, viewport) {
+    const items = [];
+    textContent.items.forEach((item, idx) => {
+        const str = (item.str||'').trim(); if (!str) return;
+        const a = item.transform[0], b = item.transform[1];
+        const fontSize = Math.max(Math.sqrt(a*a + b*b), 4);
+        const pdfX = item.transform[4]; const pdfY = item.transform[5];
+        const rawW = (item.width > 0) ? item.width : str.length * fontSize * 0.55;
+        const rawH = (item.height > 0) ? item.height : fontSize;
+        const cssX = pdfX * RENDER_SCALE; const cssY = viewport.height - (pdfY + fontSize) * RENDER_SCALE;
+        if (cssY < -5 || cssY > viewport.height + 5) return;
+        items.push({ id: `p${num}_${idx}`, origText: str, newText: str, pdfX, pdfY, fontSize, width: rawW, height: rawH, cssX, cssY, cssW: rawW * RENDER_SCALE, cssH: Math.max(rawH * RENDER_SCALE, fontSize * RENDER_SCALE), isOcr: false, });
+    });
+    return items;
+}
+
+async function ocrPage(pageNum, viewport) {
+    showLoading(`🔍 OCR on page ${pageNum}... (10–30s)`); showProg(0);
+    const ocrScale = 2.5; const tmpCanvas = document.createElement('canvas'); let page2;
+    try {
+        page2 = await pdfDocJS.getPage(pageNum); const vp2 = page2.getViewport({ scale: ocrScale });
+        tmpCanvas.width = vp2.width; tmpCanvas.height = vp2.height; const tmpCtx = tmpCanvas.getContext('2d');
+        await page2.render({ canvasContext: tmpCtx, viewport: vp2 }).promise;
+    } catch(e) { tmpCanvas.width = canvas.width; tmpCanvas.height = canvas.height; const tmpCtx = tmpCanvas.getContext('2d'); tmpCtx.drawImage(canvas, 0, 0); }
+    const worker = await Tesseract.createWorker('ben+eng', 1, { logger: m => { if (m.status === 'recognizing text') showProg(Math.round(m.progress*100)); } });
+    await worker.setParameters({ tessedit_pageseg_mode: Tesseract.PSM.AUTO });
+    const result = await worker.recognize(tmpCanvas); await worker.terminate(); hideProg();
+    
+    const scaleOcrToPdf = 72 / 96; const canvasToPdf = (viewport.width / RENDER_SCALE) / tmpCanvas.width;
+    const items = [];
+    (result.data.words||[]).forEach((w, idx) => {
+        const str = (w.text||'').trim(); if (!str || w.confidence < 25) return;
+        const bb = w.bbox; const pdfX = bb.x0 * canvasToPdf; const pdfY = (viewport.height/RENDER_SCALE) - bb.y1 * canvasToPdf; 
+        const wPdf = (bb.x1 - bb.x0) * canvasToPdf; const hPdf = (bb.y1 - bb.y0) * canvasToPdf; const fontSize = Math.max(hPdf * 0.75, 6);
+        const cssX = bb.x0 * (canvas.width / tmpCanvas.width); const cssY = bb.y0 * (canvas.height / tmpCanvas.height);
+        const cssW = (bb.x1 - bb.x0) * (canvas.width / tmpCanvas.width); const cssH = (bb.y1 - bb.y0) * (canvas.height / tmpCanvas.height);
+        items.push({ id: `p${pageNum}_ocr${idx}`, origText: str, newText: str, pdfX, pdfY, fontSize, width: wPdf, height: hPdf, cssX, cssY, cssW, cssH, isOcr: true, });
+    });
+    return items;
+}
+
+function renderSidebar() {
+    textList.innerHTML = ''; highlightLayer.innerHTML = ''; const items = pageData[currentPageNum];
+    if (!items || items.length === 0) { textList.innerHTML = '<div class="empty-state"><div style="font-size:40px; margin-bottom:10px;">🔍</div><div>No text found.<br><small>Try a higher quality scan.</small></div></div>'; return; }
+    items.forEach(item => {
+        const isModified = item.newText !== item.origText;
+        const div = document.createElement('div'); div.className = 'text-item'; div.id = `si_${item.id}`;
+        div.innerHTML = `<div class="orig-text"><span style="flex:1;word-break:break-word">${esc(item.origText)}</span><span class="modified-badge" style="display:${isModified?'inline':'none'}">✏️ Changed</span></div><input type="text" class="new-text-input" value="${esc(item.newText)}" placeholder="Replacement text...">`;
+        const box = document.createElement('div'); box.className = 'highlight-box' + (isModified?' modified':''); box.id = `bx_${item.id}`; box.style.cssText = `left:${item.cssX}px;top:${item.cssY}px;width:${item.cssW+4}px;height:${item.cssH+2}px;`;
+        const activate = () => { document.querySelectorAll('.text-item').forEach(el=>el.classList.remove('active')); document.querySelectorAll('.highlight-box').forEach(el=>el.classList.remove('active')); div.classList.add('active'); box.classList.add('active'); div.scrollIntoView({ behavior:'smooth', block:'nearest' }); div.querySelector('input').focus(); };
+        box.addEventListener('click', activate); div.addEventListener('click', activate);
+        const inp = div.querySelector('input'); inp.addEventListener('focus', activate); inp.addEventListener('input', function() { item.newText = this.value; const badge = div.querySelector('.modified-badge'); const changed = item.newText !== item.origText; badge.style.display = changed ? 'inline' : 'none'; box.classList.toggle('modified', changed); });
+        textList.appendChild(div); highlightLayer.appendChild(box);
+    });
+}
+
+window.prevPage = () => { if(currentPageNum>1) renderPage(currentPageNum-1); };
+window.nextPage = () => { if(pdfDocJS && currentPageNum<pdfDocJS.numPages) renderPage(currentPageNum+1); };
+
+window.savePdf = async () => {
+    showLoading('⚙️ Applying changes...'); let skipped = 0;
+    try {
+        const { PDFDocument, rgb, StandardFonts } = PDFLib;
+        const pdfDoc = await PDFDocument.load(originalPdfBytes.slice(0), { ignoreEncryption: true });
+        const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica); let customFont = null;
+        if (unicodeFontBytes) { try { pdfDoc.registerFontkit(window.fontkit); customFont = await pdfDoc.embedFont(unicodeFontBytes, { subset: true }); } catch(fe) { } }
+        const pages = pdfDoc.getPages();
+        for (const [pageStr, items] of Object.entries(pageData)) {
+            const pNum = parseInt(pageStr); const page = pages[pNum - 1]; if (!page) continue; const { width: pW, height: pH } = page.getSize();
+            for (const item of items) {
+                if (item.newText === item.origText || !item.newText.trim()) continue;
+                try {
+                    const wh = Math.max(item.height, item.fontSize) * 1.5; const wy = Math.max(0, item.pdfY - item.fontSize * 0.3); const ww = Math.max(item.width + 8, item.fontSize * item.origText.length * 0.6);
+                    page.drawRectangle({ x: Math.max(0, item.pdfX - 2), y: Math.max(0, wy), width: Math.min(ww, pW - item.pdfX), height: Math.min(wh, pH - wy), color: rgb(1,1,1), });
+                    const isAscii = ASCII_ONLY.test(item.newText); const font = (!isAscii && customFont) ? customFont : helvetica;
+                    let safeText = item.newText; if (!isAscii && !customFont) { safeText = item.newText.replace(/[^\x20-\x7E]/g, '?'); }
+                    const drawY = Math.max(2, Math.min(item.pdfY, pH - item.fontSize - 2)); const lines = safeText.split('\n');
+                    lines.forEach((line, li) => { if (!line.trim()) return; const ly = drawY - li * item.fontSize * 1.3; if (ly < 2) return; try { page.drawText(line, { x: item.pdfX, y: ly, size: Math.max(item.fontSize, 6), font, color: rgb(0,0,0), maxWidth: Math.max(item.width, 30), }); } catch(le) { skipped++; } });
+                } catch(ie) { skipped++; }
+            }
+        }
+        const bytes = await pdfDoc.save(); const blob = new Blob([bytes], { type:'application/pdf' }); const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'Edited_' + fileName; a.click(); setTimeout(() => URL.revokeObjectURL(url), 8000);
+        showToast(skipped > 0 ? `⚠️ Saved (${skipped} item(s) skipped)` : '✅ PDF Saved!', skipped > 0 ? '#d69e2e' : '#10b981');
+    } catch(err) { alert('❌ Save failed: ' + err.message); }
+    hideLoading();
+};
+
+function showLoading(msg, sub='') { document.getElementById('loading').style.display='flex'; document.getElementById('loadingText').textContent=msg; document.getElementById('loading-sub').textContent=sub; }
+function hideLoading() { document.getElementById('loading').style.display='none'; hideProg(); }
+function showProg(pct) { document.getElementById('progWrap').style.display='block'; document.getElementById('progFill').style.width=pct+'%'; }
+function hideProg()    { document.getElementById('progWrap').style.display='none'; }
+function showToast(msg,color='#10b981') { const t=document.getElementById('toastMsg'); t.textContent=msg; t.style.background=color; t.style.display='block'; setTimeout(()=>t.style.display='none',5000); }
+function showModal(msg) { document.getElementById('errModalMsg').textContent=msg; document.getElementById('errModal').style.display='flex'; }
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+</script>
+</body>
+</html>
