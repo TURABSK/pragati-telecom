@@ -1,0 +1,217 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to Compress a PDF to a Target File Size | Pragati Telecom</title>
+  <meta name="description" content="Learn how to compress PDF documents to exact target kilobyte limits (such as under 100 KB or 200 KB) for online recruitment portals without making text unreadable.">
+  <link rel="canonical" href="https://turabsk.github.io/pragati-telecom/guides/compress-pdf-target-size.html">
+
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://turabsk.github.io/pragati-telecom/guides/compress-pdf-target-size.html">
+  <meta property="og:title" content="How to Compress a PDF to a Target File Size (KB Guide)">
+  <meta property="og:description" content="Step-by-step practical guide to reducing PDF sizes for government job portals, scholarship forms, and exam uploads using in-browser binary search compression.">
+  <meta property="og:site_name" content="Pragati Telecom">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="How to Compress a PDF to a Target File Size">
+  <meta name="twitter:description" content="Learn how to shrink PDF certificates and marksheets to exact KB limits in your browser.">
+
+  <!-- Schema.org Article & Breadcrumbs -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        "headline": "How to Compress a PDF to a Target File Size",
+        "description": "Practical guide on shrinking PDF files to match strict online portal upload limits using client-side binary search compression.",
+        "author": {
+          "@type": "Organization",
+          "name": "Pragati Telecom Editorial Team"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Pragati Telecom",
+          "url": "https://turabsk.github.io/pragati-telecom/index.html"
+        },
+        "datePublished": "2026-08-30",
+        "dateModified": "2026-08-30"
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://turabsk.github.io/pragati-telecom/index.html"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Knowledge Base",
+            "item": "https://turabsk.github.io/pragati-telecom/guides/index.html"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Compress PDF to Target Size"
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <script src="../js/shared-layout.js"></script>
+
+  <div class="studio-top-bar">
+    <div class="studio-breadcrumbs">
+      <a href="../index.html">🏠 Home</a> <span style="margin:0 8px;color:#cbd5e1">/</span> <a href="index.html">Guides</a> <span style="margin:0 8px;color:#cbd5e1">/</span> <span>Compress PDF to Target KB</span>
+    </div>
+    <div style="font-size: 0.82rem; font-weight: 700; color: #64748b;">
+      ⏱️ 5 min read
+    </div>
+  </div>
+
+  <main class="guide-article-wrapper">
+    
+    <header class="guide-article-header">
+      <div class="guide-meta-row">
+        <span class="guide-category-badge">PDF &amp; Document Workflows</span>
+        <span>•</span>
+        <span>Published: August 2026</span>
+        <span>•</span>
+        <span>Reviewed by Pragati Telecom Desk</span>
+      </div>
+      <h1 class="guide-article-title">How to Compress a PDF to an Exact Target File Size (KB)</h1>
+      <p class="guide-article-lead">
+        A step-by-step practical guide to understanding PDF compression, meeting strict online portal upload limits (such as under 100 KB or 200 KB), and avoiding the common mistake of making text unreadable.
+      </p>
+    </header>
+
+    <!-- Quick Summary Box -->
+    <div class="guide-quick-summary">
+      <h4>⚡ Quick Summary</h4>
+      <p>
+        To compress a PDF to a specific file size without losing readability: use an in-browser tool like <a href="../tools/pdf-compressor.html" style="color: #166534; font-weight: 800; text-decoration: underline;">Custom PDF Compressor</a>, set your target slider (e.g. 150 KB for a 200 KB portal limit), and let the binary search algorithm find the sharpest resolution and JPEG quality balance that fits strictly below your ceiling.
+      </p>
+    </div>
+
+    <div class="guide-content-body">
+      
+      <h2>Why Do Online Application Portals Impose Strict File-Size Limits?</h2>
+      <p>
+        If you have ever applied for an Indian government recruitment exam (such as WBPSC, SSC, Railway RRB, or UPSC), college admission, or state scholarship portal, you have likely encountered strict file requirements like:
+      </p>
+      <ul>
+        <li><em>"Upload Madhyamik Admit Card / Birth Certificate in PDF (Size: 50 KB to 200 KB)"</em></li>
+        <li><em>"Upload Caste / EWS Certificate (Max file size: 100 KB)"</em></li>
+        <li><em>"Upload Marksheet (PDF format, not exceeding 300 KB)"</em></li>
+      </ul>
+      <p>
+        Central and state government servers process millions of applicant submissions simultaneously. Restricting PDF files to a compact size (typically 100 KB to 300 KB) minimizes database bandwidth, prevents server crashes during deadline surges, and ensures document verification officers can open submissions quickly on government intranet connections.
+      </p>
+
+      <h2>What Does PDF Compression Actually Mean?</h2>
+      <p>
+        A PDF file can contain two types of elements:
+      </p>
+      <ol>
+        <li><strong>Vector Text and Shapes:</strong> Mathematical instructions for drawing fonts and line boundaries. These are naturally compact.</li>
+        <li><strong>Embedded Scanned Images:</strong> High-resolution raster bitmaps created by flatbed scanners or smartphone cameras. A 300 DPI multi-color scan can easily be 3 MB to 8 MB.</li>
+      </ol>
+      <p>
+        When you compress a PDF, the compressor re-encodes embedded images using more efficient JPEG quantization tables and scales down excessive image dimensions to fit standard screen reading resolutions (72 to 150 DPI) without sacrificing legible characters.
+      </p>
+
+      <!-- Tool CTA Banner -->
+      <div class="guide-tool-cta">
+        <div class="guide-tool-cta-text">
+          <h4>Need to Compress a PDF Right Now?</h4>
+          <p>Use our free in-browser compressor with an exact Target KB slider.</p>
+        </div>
+        <a href="../tools/pdf-compressor.html" class="guide-tool-cta-btn">Launch PDF Compressor →</a>
+      </div>
+
+      <h2>How Target-KB Binary Search Compression Works</h2>
+      <p>
+        Generic compression utilities only offer coarse options like "Low / Medium / High" compression. You might compress a 1.2 MB certificate with "High" compression and end up with 220 KB—still failing an upload portal that enforces a 200 KB maximum.
+      </p>
+      <p>
+        Pragati Telecom's <strong>Custom PDF Compressor</strong> uses a client-side binary search algorithm:
+      </p>
+      <ul>
+        <li><strong>Outer Scale Passes (6 iterations):</strong> Evaluates page rendering resolutions from 0.15× up to 1.8× canvas scale.</li>
+        <li><strong>Inner Quality Tuning (6 iterations):</strong> Re-encodes JPEG stream quality between 5% and 92% to hit the maximum possible clarity that remains strictly under your chosen KB limit.</li>
+        <li><strong>Text-Safety Guard:</strong> If the PDF is already a compact text-only document, the tool detects this and avoids rasterization to prevent increasing the file size.</li>
+      </ul>
+
+      <h2>Step-by-Step Instructions to Compress Your Document</h2>
+      <ol>
+        <li><strong>Open the Tool:</strong> Navigate to <a href="../tools/pdf-compressor.html">Custom PDF Compressor</a>.</li>
+        <li><strong>Upload the File:</strong> Click <em>"Upload PDF File"</em> and select your certificate or marksheet.</li>
+        <li><strong>Check Original Size:</strong> Review the original size displayed in the file information table.</li>
+        <li><strong>Set Target KB:</strong> Move the slider to your desired threshold. <em>Tip: If the portal limit is 200 KB, set the slider to 180 KB or 190 KB to maintain a safe buffer.</em></li>
+        <li><strong>Click Compress:</strong> Click <em>"Reduce Size to Target KB"</em>. The in-browser engine will iterate through compression passes.</li>
+        <li><strong>Review &amp; Download:</strong> Verify the final size in green and click <em>"Download Compressed PDF"</em>.</li>
+      </ol>
+
+      <h2>Common Mistakes &amp; Practical Tips</h2>
+      <ul>
+        <li><strong>Targeting Impossibly Low Sizes on Multi-Page Files:</strong> Requesting a 30 KB file for a 5-page marksheet booklet will force aggressive JPEG compression, making small printed numbers blurry. Aim for at least 30–50 KB per page.</li>
+        <li><strong>Cropping Empty White Margins First:</strong> Before compressing, crop unnecessary white margins or dark scan borders. Less image area means more kilobytes are allocated to readable text.</li>
+        <li><strong>Avoid Double Compression:</strong> Compressing an already heavily compressed, pixelated scan will result in severe visual artifacts. Always start from the cleanest original scan available.</li>
+      </ul>
+
+      <h2>🔒 Privacy &amp; Local Processing Guarantee</h2>
+      <div class="legal-alert success">
+        <p>
+          <strong>100% Client-Side In-Browser Execution:</strong> Our PDF compression algorithm runs entirely in your web browser using HTML5 Canvas and PDF-Lib in your computer's RAM. <strong>Your marksheet, certificates, and identity documents are never uploaded to any server.</strong>
+        </p>
+      </div>
+
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-container">
+        <details class="faq-item">
+          <summary class="faq-question">Why did the compressed PDF turn out slightly smaller than my target?</summary>
+          <div class="faq-answer">
+            The algorithm guarantees that the resulting file never exceeds your chosen limit. If your target is 200 KB, ending up at 185 KB or 192 KB ensures the portal will not reject your submission.
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question">Can I compress scanned marksheets and caste certificates?</summary>
+          <div class="faq-answer">
+            Yes. Scanned certificates and marksheets respond exceptionally well to resolution scaling and JPEG compression.
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question">Will the text remain clear enough for verification?</summary>
+          <div class="faq-answer">
+            For standard targets between 100 KB and 300 KB on single-page documents, numbers, student names, and official stamps remain sharp and clearly legible.
+          </div>
+        </details>
+      </div>
+
+      <!-- Related Guides & Internal Links -->
+      <div class="quick-links-bar" style="margin-top: 3rem;">
+        <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Explore Related Guides:</span>
+        <a href="convert-images-to-pdf.html" class="quick-link-pill">📑 Convert Images to PDF</a>
+        <a href="what-is-searchable-pdf.html" class="quick-link-pill">🔎 What Is a Searchable PDF?</a>
+        <a href="edit-text-in-pdf.html" class="quick-link-pill">✏️ Edit Text in a PDF</a>
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>

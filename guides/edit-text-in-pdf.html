@@ -1,0 +1,189 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to Edit Text in a PDF: Visual Whiteout &amp; Font Replacement Guide | Pragati Telecom</title>
+  <meta name="description" content="Learn how in-browser PDF editing works, how visual whiteout rectangles replace text, how Bengali fonts are embedded, and the technical limitations of PDF editing.">
+  <link rel="canonical" href="https://turabsk.github.io/pragati-telecom/guides/edit-text-in-pdf.html">
+
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://turabsk.github.io/pragati-telecom/guides/edit-text-in-pdf.html">
+  <meta property="og:title" content="How to Edit Text in a PDF: Visual Whiteout &amp; Font Replacement Guide">
+  <meta property="og:description" content="An honest technical guide on editing names, numbers, and dates inside PDFs using visual whiteout layers and Bengali Unicode font embedding.">
+  <meta property="og:site_name" content="Pragati Telecom">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="How to Edit Text in a PDF">
+  <meta name="twitter:description" content="Learn how visual whiteout text replacement works in browser-based PDF editing tools.">
+
+  <!-- Schema.org Article & Breadcrumbs -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        "headline": "How to Edit Text in a PDF: Visual Whiteout & Font Replacement Guide",
+        "description": "Educational guide on PDF object structures, visual whiteout text replacement, Bengali font embedding, and layout constraints.",
+        "author": {
+          "@type": "Organization",
+          "name": "Pragati Telecom Editorial Team"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Pragati Telecom",
+          "url": "https://turabsk.github.io/pragati-telecom/index.html"
+        },
+        "datePublished": "2026-08-30",
+        "dateModified": "2026-08-30"
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://turabsk.github.io/pragati-telecom/index.html"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Knowledge Base",
+            "item": "https://turabsk.github.io/pragati-telecom/guides/index.html"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Edit Text in a PDF"
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <script src="../js/shared-layout.js"></script>
+
+  <div class="studio-top-bar">
+    <div class="studio-breadcrumbs">
+      <a href="../index.html">🏠 Home</a> <span style="margin:0 8px;color:#cbd5e1">/</span> <a href="index.html">Guides</a> <span style="margin:0 8px;color:#cbd5e1">/</span> <span>Edit Text in a PDF</span>
+    </div>
+    <div style="font-size: 0.82rem; font-weight: 700; color: #64748b;">
+      ⏱️ 6 min read
+    </div>
+  </div>
+
+  <main class="guide-article-wrapper">
+    
+    <header class="guide-article-header">
+      <div class="guide-meta-row">
+        <span class="guide-category-badge">PDF Editing &amp; Fonts</span>
+        <span>•</span>
+        <span>Published: August 2026</span>
+        <span>•</span>
+        <span>Reviewed by Pragati Telecom Desk</span>
+      </div>
+      <h1 class="guide-article-title">How to Edit Text in a PDF: Visual Whiteout &amp; Font Replacement Guide</h1>
+      <p class="guide-article-lead">
+        PDF documents were designed in 1993 as a digital paper format to look identical everywhere—not as editable word processor files. Here is an honest technical explanation of how in-browser PDF editors allow you to replace words, and why understanding their limitations is crucial.
+      </p>
+    </header>
+
+    <!-- Quick Summary Box -->
+    <div class="guide-quick-summary">
+      <h4>⚡ Quick Summary</h4>
+      <p>
+        In-browser PDF editors like <a href="../tools/pdf-editor.html" style="color: #166534; font-weight: 800; text-decoration: underline;">Smart Visual PDF Editor</a> work by detecting text coordinates on the rendered page, covering the original word with an opaque white bounding rectangle (<code>whiteout</code>), and rendering your new string (in English or embedded Noto Sans Bengali font) directly on top at the exact coordinates.
+      </p>
+    </div>
+
+    <div class="guide-content-body">
+      
+      <h2>Why Are PDFs Hard to Edit Like Word Documents?</h2>
+      <p>
+        In Microsoft Word or Google Docs, text is stored as continuous reflowing paragraphs. If you add three words, the remaining text automatically shifts downward.
+      </p>
+      <p>
+        In a PDF, every character or word is positioned using absolute Cartesian coordinates (e.g. <em>"Draw character 'A' at X: 72pt, Y: 540pt"</em>). There are no native "paragraph margins" to push down subsequent lines.
+      </p>
+
+      <h2>How Visual Whiteout Text Replacement Works</h2>
+      <p>
+        Rather than attempting to decompile and reconstruct complex vector stream objects (which frequently corrupts PDF layouts), our editor uses a precise visual overlay pipeline:
+      </p>
+      <ol>
+        <li><strong>Text Detection:</strong> PDF.js extracts the spatial bounding box (<code>pdfX, pdfY, fontSize, width, height</code>) of each line on the page.</li>
+        <li><strong>Whiteout Overlay:</strong> When you replace a word, PDF-Lib draws an opaque pure white rectangle (<code>page.drawRectangle({ color: rgb(1,1,1) })</code>) over the original text coordinates.</li>
+        <li><strong>New Text Injection:</strong> Your new text is drawn on top using the matching font size.</li>
+      </ol>
+
+      <!-- Tool CTA Banner -->
+      <div class="guide-tool-cta">
+        <div class="guide-tool-cta-text">
+          <h4>Make Text Corrections on Your PDF</h4>
+          <p>Click any line on your document to edit names, dates, or amounts.</p>
+        </div>
+        <a href="../tools/pdf-editor.html" class="guide-tool-cta-btn">Open Smart Visual PDF Editor →</a>
+      </div>
+
+      <h2>Embedded Bengali &amp; Latin Fontkit Support</h2>
+      <p>
+        Standard PDF readers only support 14 built-in Western Latin fonts (such as Helvetica, Times-Roman, and Courier). If you attempt to type Bengali Unicode characters (বাংলা অক্ষর) without embedding a font, the viewer will display empty question marks (????) or square boxes.
+      </p>
+      <p>
+        <a href="../tools/pdf-editor.html">Smart Visual PDF Editor</a> embeds the Google <strong>Noto Sans Bengali</strong> fontkit directly into the saved PDF file, ensuring Bengali vowels, conjuncts, and numerals render cleanly across all third-party PDF viewers.
+      </p>
+
+      <h2>Important Limitations of Visual PDF Editing</h2>
+      <ul>
+        <li><strong>No Automatic Reflow:</strong> If you replace a short 5-letter word with a 50-letter paragraph, the new text will overflow into adjacent columns. Keep replacements roughly proportional to the original space.</li>
+        <li><strong>Background Color Sensitivity:</strong> Whiteout replacement is designed for documents with clean white paper backgrounds. Editing text on textured, colored, or gradient backgrounds will leave a visible white patch.</li>
+        <li><strong>Scanned Document Fallback:</strong> If a page is a flat scanned image (<15 digital characters), in-browser Tesseract OCR runs to estimate word positions before editing.</li>
+      </ul>
+
+      <h2>🔒 Privacy &amp; Local Processing Guarantee</h2>
+      <div class="legal-alert success">
+        <p>
+          <strong>100% In-Browser Sandbox Execution:</strong> Text coordinate extraction (PDF.js), local OCR (Tesseract.js), and font embedding (PDF-Lib) run entirely in your browser's memory. <strong>Your confidential documents and invoices are never sent to external servers.</strong>
+        </p>
+      </div>
+
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-container">
+        <details class="faq-item">
+          <summary class="faq-question">Can I delete text completely without replacing it?</summary>
+          <div class="faq-answer">
+            If you leave the replacement field blank, the tool preserves the original content. To blank out an area, replace the text with a space or appropriate placeholder.
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question">Will the edited PDF work on mobile devices and printers?</summary>
+          <div class="faq-answer">
+            Yes. The generated file is a standard PDF 1.7 document with fully embedded font subsets, ensuring perfect cross-platform rendering and crisp printing.
+          </div>
+        </details>
+      </div>
+
+      <!-- Related Guides & Internal Links -->
+      <div class="quick-links-bar" style="margin-top: 3rem;">
+        <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Explore Related Guides:</span>
+        <a href="what-is-searchable-pdf.html" class="quick-link-pill">🔎 What Is a Searchable PDF?</a>
+        <a href="how-ocr-works-scanned-documents.html" class="quick-link-pill">🔬 How OCR Works on Scans</a>
+        <a href="compress-pdf-target-size.html" class="quick-link-pill">🗜️ Compress PDF to Target Size</a>
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>
