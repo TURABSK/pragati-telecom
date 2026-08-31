@@ -8,5 +8,5 @@ Allow: /guides/
 Allow: /css/
 Allow: /js/
 
-# Sitemap location (Update if custom domain is attached)
+# Sitemap location
 Sitemap: https://turabsk.github.io/pragati-telecom/sitemap.xml
