@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Searchable PDF Maker (AI OCR) | Bengali &amp; Multi-Column Scanner | Pragati Telecom</title>
+<meta name="description" content="Convert scanned documents, voter lists, and land records into searchable PDFs with selectable Bengali and English text using Google Gemini AI OCR and jsPDF.">
+  <link rel="canonical" href="https://turabsk.github.io/pragati-telecom/tools/searchable-pdf.html">
+
+
+<!-- Open Graph / Social Sharing -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://turabsk.github.io/pragati-telecom/tools/searchable-pdf.html">
+<meta property="og:title" content="Searchable PDF Maker (AI OCR) | Bengali &amp; English Document Scanner">
+<meta property="og:description" content="Extract multi-column Bengali and English text from scanned voter lists and receipts into selectable, searchable PDF files.">
+<meta property="og:site_name" content="Pragati Telecom">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Searchable PDF Maker (AI OCR) | Pragati Telecom">
+<meta name="twitter:description" content="Create searchable PDFs with selectable text layers from scanned images and voter lists.">
+
+<!-- Schema.org JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Searchable PDF Maker (AI OCR)",
+  "url": "https://turabsk.github.io/pragati-telecom/tools/searchable-pdf.html",
+  "description": "Multi-column Bengali and English OCR scanner for converting scanned document images into searchable PDFs with selectable text layers.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "All modern web browsers",
+  "browserRequirements": "HTML5 Canvas, JavaScript, and user-provided Google Gemini API key"
+}
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+
+<!-- Premium Font Matches Home Page -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+
+<style>
+:root {
+  --ink: var(--text-main); --ink2: var(--text-secondary); --muted: var(--text-muted); 
+  --border: var(--border-light); --bg: var(--bg-main); --card: var(--bg-card);
+  --primary: var(--brand-primary); --primary-light: var(--brand-primary-light);
+  --green: #10b981; --red: #ef4444; --radius: 14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body {font-family:'Plus Jakarta Sans', sans-serif; background:var(--bg-main); color:var(--text-main); min-height:100vh; display:flex; flex-direction:column; width: 100%;}
+
+/* Breadcrumb sub-header */
+.studio-top-bar { background: var(--bg-card-subtle); border-bottom: 1px solid var(--border-light); padding: 0.75rem clamp(1rem, 3vw, 2.5rem); display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.studio-breadcrumbs { font-size: 0.88rem; color: var(--text-muted); font-weight: 600;}
+.studio-breadcrumbs a { color: var(--brand-primary); font-weight: 700; text-decoration: none;}
+
+.hidden{display:none!important}
+
+.pdf-app-wrapper { width: 100%; max-width: 100%; margin: 1.5rem auto 3rem; padding: 0 clamp(1rem, 3vw, 2.5rem); flex: 1; }
+
+.title{text-align:center; margin-bottom:25px}
+.title h1{margin:0 0 6px; font-size:clamp(1.6rem, 3vw, 2.2rem); font-weight: 900; color:var(--text-main);}
+.title p{margin:0; color:var(--text-muted); font-size:14px; font-weight: 500;}
+
+.card{background:var(--bg-card); border:1px solid var(--border-light); border-radius:var(--radius); box-shadow:var(--shadow-xs);}
+
+/* Login Modal */
+.login{position:fixed; inset:0; background:rgba(15,23,42,0.7); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; z-index:2500; padding:20px}
+.loginbox{background:var(--bg-surface); padding:35px 25px; border-radius:var(--radius); width:min(450px,100%); text-align:center; box-shadow: var(--shadow-xl); border: 1px solid var(--border-light);}
+.loginbox h2{font-weight: 800; color: var(--text-main); margin-bottom: 8px;}
+input[type=password]{width:100%; padding:12px; border:1.5px solid var(--border-light); border-radius:10px; margin:16px 0; font-size:15px; outline:none; font-family: inherit; font-weight: 600; background: var(--bg-input); color: var(--text-main);}
+input[type=password]:focus{border-color: var(--brand-primary); background: var(--bg-input-focus);}
+
+button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:800; cursor:pointer; font-family: inherit; font-size: 14px; transition: 0.2s;}
+.primary{width:100%; background:linear-gradient(135deg, var(--brand-primary-light), var(--brand-primary)); color:#fff; box-shadow: 0 4px 15px rgba(37,99,235,0.2);}
+.primary:hover{transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37,99,235,0.3);}
+
+/* Upload Zone */
+.upload{padding:50px 20px; text-align:center; max-width:720px; margin:auto; border: 2px dashed var(--border-light); background: var(--bg-card-subtle);}
+.upload:hover{border-color: var(--brand-primary); background: rgba(37,99,235,0.06);}
+.upload label{display:inline-block; padding:15px 28px; background:linear-gradient(135deg, var(--brand-primary-light), var(--brand-primary)); color:#fff; border-radius:12px; font-size:16px; font-weight:800; cursor:pointer; box-shadow: 0 4px 15px rgba(37,99,235,0.2);}
+.upload label:hover{transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37,99,235,0.3);}
+.upload input{display:none}
+
+/* Workspace */
+.workspace{display:grid; grid-template-columns:1fr 360px; gap:20px}
+.gridcard{padding:25px}
+.gridcard h3{margin-bottom: 16px; font-weight: 800; color: var(--text-main);}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:16px}
+.item{position:relative; background:var(--bg-card); border:1px solid var(--border-light); border-radius:12px; padding:10px; cursor:grab; box-shadow: var(--shadow-xs);}
+.preview{height:160px; background:var(--bg-card-subtle); border-radius:8px; display:flex; align-items:center; justify-content:center; overflow:hidden}
+.preview img{max-width:100%; max-height:100%; object-fit:contain}
+.num{position:absolute; top:-8px; left:-8px; background:var(--brand-primary); color:white; border-radius:50%; width:26px; height:26px; display:grid; place-items:center; font-size:12px; font-weight:800; box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
+.remove{position:absolute; right:-8px; top:-8px; background:var(--bg-card); color:var(--red); border:1px solid rgba(239,68,68,0.3); border-radius:50%; width:26px; height:26px; padding:0; font-weight:bold; cursor:pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+.name{text-align:center; font-size:12px; font-weight: 600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:10px; color: var(--text-main);}
+
+/* Sidebar */
+.sidebar{padding:20px; height:max-content}
+.group{margin-bottom:20px}
+.group label{font-weight:800; display:block; margin-bottom:8px; color: var(--text-main); font-size: 14px;}
+.range{width:100%; accent-color: var(--brand-primary); height: 6px; background: var(--border-light); border-radius: 4px; cursor: pointer;}
+.val{text-align:center; font-size:24px; font-weight:900; color:var(--brand-primary); margin-bottom: 8px;}
+.toggle{display:flex; gap:10px; align-items:flex-start; background:var(--bg-card-subtle); padding:14px; border-radius:12px; border: 1px solid var(--border-light);}
+.toggle b{font-size: 14px; color: var(--text-main);}
+
+.progressbox{display:none; text-align:center; padding:40px 20px; max-width:650px; margin:auto}
+.progressbox h2{font-weight: 900; color: var(--text-main);}
+.barwrap{height:12px; background:var(--border-light); border-radius:10px; overflow:hidden; margin:20px 0}
+.bar{height:100%; width:0; background:linear-gradient(90deg, var(--brand-primary-light), var(--brand-primary)); transition:.2s}
+.success{display:none; text-align:center; padding:40px 20px; max-width:650px; margin:auto}
+.success h1{font-weight: 900; color: var(--green);}
+.download{display:inline-block; background:linear-gradient(135deg, #34d399, var(--green)); color:#fff; text-decoration:none; margin-top:18px; padding:14px 28px; border-radius:12px; font-size:16px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2); transition: 0.2s;}
+.download:hover{transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);}
+.error{background:rgba(239,68,68,0.1); color:#dc2626; border:1px solid rgba(239,68,68,0.25); border-radius:10px; padding:12px; margin-top:16px; text-align:left; font-size:13px; font-weight: 600;}
+
+@media(max-width:900px){.workspace{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- SHARED NAV -->
+<script src="../js/shared-layout.js"></script>
+
+<div class="studio-top-bar">
+  <div class="studio-breadcrumbs">
+    <a href="../index.html">🏠 Home</a> <span style="margin:0 6px;color:var(--text-light)">/</span> <span>Searchable PDF Maker</span>
+  </div>
+  <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); background: var(--bg-card); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-light);">
+    📍 Kalupur Middle Para, Murshidabad
+  </div>
+</div>
+
+<div id="loginModal" class="login">
+  <div class="loginbox">
+    <h2>Pragati AI Tools 🚀</h2>
+    <p style="font-size:14px;color:var(--muted);margin-top:6px;font-weight: 500;">Please enter your Gemini API Key to use OCR features. Stored safely in your browser.</p>
+    <input id="apiKeyInput" type="password" placeholder="Paste Gemini API Key here...">
+    <button class="primary" onclick="saveKey()">Login &amp; Save Securely</button>
+    <div id="loginError"></div>
+  </div>
+</div>
+
+<div class="pdf-app-wrapper">
+  <div id="title" class="title">
+    <h1>📄 Smart Searchable PDF Maker</h1>
+    <p>Universal Multi-Column Layout Scanner — Creates 100% selectable text from any document or voter list.</p>
+  </div>
+
+  <div id="upload" class="upload card">
+    <label>📂 Select Images / PDF Pages
+      <input id="fileInput" type="file" multiple accept="application/pdf,image/png,image/jpeg,image/webp">
+    </label>
+    <p style="font-size:14px;color:var(--muted);margin-top:16px;font-weight: 600;">Supports: JPG, PNG, Scanned Voter PDFs, Land Records</p>
+  </div>
+
+  <div id="workspace" class="workspace hidden">
+    <div class="gridcard card">
+      <h3>🖱️ Workspace — Drag &amp; Drop to Reorder Pages</h3>
+      <div id="grid" class="grid"></div>
+      <div style="margin-top:25px; text-align: center;">
+        <label style="display:inline-block;padding:14px 24px;border:2px dashed #cbd5e1;background:#f8fafc;border-radius:12px;cursor:pointer;font-weight:700;color:var(--primary); transition: 0.2s;">
+          + Add More Files
+          <input id="moreInput" type="file" multiple accept="application/pdf,image/png,image/jpeg,image/webp" style="display:none">
+        </label>
+      </div>
+    </div>
+
+    <aside class="sidebar card">
+      <div class="group">
+        <label>🎯 Target PDF Size (Compression)</label>
+        <div class="val"><span id="sizeText">500</span> KB</div>
+        <input id="sizeSlider" class="range" type="range" min="100" max="5000" step="50" value="500">
+        <p style="font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 8px;">Quality automatically adjusts to match target size.</p>
+      </div>
+
+      <div class="group">
+        <div class="toggle">
+          <input id="ocr" type="checkbox" checked style="width: 18px; height: 18px; accent-color: var(--primary); margin-top: 2px;">
+          <div><b>🔎 Make Searchable (AI OCR)</b><br>
+          <p style="font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 4px;">Accurately scans both Bengali &amp; English text columns.</p></div>
+        </div>
+      </div>
+
+      <button id="generate" class="primary" style="font-size:16px;padding:16px;">⚙️ Generate Searchable PDF</button>
+      <button onclick="clearKey()" style="width:100%;margin-top:12px;background:#f1f5f9;color:var(--red);border:1px solid #fecaca; font-size: 13px;">Logout / Clear API Key</button>
+    </aside>
+  </div>
+
+  <div id="progress" class="progressbox card">
+    <h2>Processing Document...</h2>
+    <p id="status" style="font-weight: 600; color: var(--muted); font-size: 15px;">Starting AI Engine...</p>
+    <div class="barwrap"><div id="bar" class="bar"></div></div>
+    <div id="error" class="error hidden"></div>
+  </div>
+
+  <div id="success" class="success card">
+    <h2 style="font-weight: 900; color: var(--green); margin-bottom: 10px;">✅ Task Completed</h2>
+    <p id="result" style="font-size:16px;margin:20px 0; font-weight: 600; color: var(--ink2);"></p>
+    <a id="download" class="download">📥 Download Searchable PDF</a>
+    <br><br>
+    <button onclick="location.reload()" style="background:#f1f5f9;color:var(--ink);border:1px solid var(--border); padding: 12px 20px; font-weight: 700; border-radius: 10px; margin-top: 15px; cursor: pointer;">🔄 Create Another PDF</button>
+  </div>
+</div>
+
+<!-- ======================================================================= -->
+<!-- TOOL DOCUMENTATION & INFORMATION CONTAINER (Below Interactive Workspace) -->
+<!-- ======================================================================= -->
+
+<section class="home-content-section" style="margin-top: 3rem;">
+  
+  <article class="home-article-card">
+    <h2 class="home-section-title">🔎 How Searchable PDF Maker Works</h2>
+    <p class="home-section-desc">
+      A <strong>Searchable PDF</strong> contains an invisible, selectable text layer positioned exactly behind the visual scan image. When searching with <strong>Ctrl+F</strong> in Adobe Reader, Chrome, or mobile viewers, the viewer searches and highlights this invisible text while preserving the authentic visual appearance of the original paper document.
+    </p>
+    <p class="home-section-desc">
+      This tool is specifically optimized for complex regional documents such as <strong>3-column Bengali electoral voter rolls</strong>, land deeds (khatian/porcha), court decrees, and municipal records.
+    </p>
+
+    <div class="features-grid-3col">
+      <div class="feature-box">
+        <div class="feature-box-icon">📑</div>
+        <h3>Multi-Column Layout Slicing</h3>
+        <p>Intelligently segments multi-column scanned tables into vertical slices to avoid reading order confusion across voter boxes.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-icon">🇧🇩</div>
+        <h3>Bengali &amp; English Dual OCR</h3>
+        <p>Uses vision neural networks capable of recognizing Bengali conjunct characters, English names, and voter card alphanumeric serials.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-icon">👻</div>
+        <h3>Zero-Opacity Invisible Text Layer</h3>
+        <p>Injects text with 0% opacity (<code>opacity: 0</code>) aligned with original bounding box coordinates for seamless copy-pasting.</p>
+      </div>
+    </div>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">🤖 AI OCR Setup &amp; Google Gemini API Key Requirement</h2>
+    <p class="home-section-desc">
+      To perform vision-based optical character recognition without expensive server subscriptions, Searchable PDF Maker connects directly to Google's official Gemini API:
+    </p>
+    <ol style="margin-left: 1.5rem; color: var(--text-secondary); line-height: 1.8; font-size: 0.95rem;">
+      <li style="margin-bottom: 0.5rem;"><strong>Obtain a Gemini API Key:</strong> Get a free personal API key from <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" style="color: var(--primary); font-weight: 700; text-decoration: underline;">Google AI Studio</a>.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Paste &amp; Save:</strong> Enter your key in the secure login modal. It is saved locally in your browser's private <code>localStorage</code>.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Direct HTTPS Communication:</strong> During processing, your browser transmits image slices directly to Google's official API endpoint (<code>generativelanguage.googleapis.com</code>) over encrypted HTTPS.</li>
+    </ol>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">⚠️ OCR Accuracy Limitations &amp; Quality Notes</h2>
+    <p class="home-section-desc">
+      While modern AI OCR is exceptionally capable, optical recognition is never 100% error-free:
+    </p>
+    <ul>
+      <li><strong>Scan Resolution:</strong> Clear 200–300 DPI scans yield the highest recognition accuracy. Blurred photos, distorted angles, or extreme shadows may lead to misread characters.</li>
+      <li><strong>Verification Recommended:</strong> Critical legal documents, voter serial numbers, and financial records should always be verified against the visual scan.</li>
+      <li><strong>API Rate Limits:</strong> When processing multi-page documents, the engine includes automatic cooldown pauses to respect API rate limits.</li>
+    </ul>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">🔒 Privacy &amp; Data Transmission Notice</h2>
+    <div class="legal-alert warning">
+      <p>
+        <strong>Third-Party API Data Flow Notice:</strong> When using the AI OCR feature, image slices of your selected documents are transmitted over HTTPS directly to Google's Generative Language API using your personal API key. <strong>Pragati Telecom does not intercept, store, or log your files or API keys.</strong>
+      </p>
+    </div>
+  </article>
+
+  <article class="home-article-card">
+    <h2 class="home-section-title">❓ Frequently Asked Questions (Searchable PDF)</h2>
+    <div class="faq-container">
+      <details class="faq-item">
+        <summary class="faq-question">What does "Searchable PDF" mean?</summary>
+        <div class="faq-answer">
+          A searchable PDF looks identical to a photographed paper document, but allows you to press Ctrl+F (or Cmd+F) to search for specific words or copy text directly to your clipboard.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Can I search Bengali names inside scanned voter lists?</summary>
+        <div class="faq-answer">
+          Yes. The OCR model recognizes Bengali Unicode characters and embeds the Noto Sans Bengali font so you can search for voter names, relative names, and house numbers.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">Is Google Gemini API key free to obtain?</summary>
+        <div class="faq-answer">
+          Google provides free API quotas for individual developers and personal projects through Google AI Studio.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">How can I remove my saved API key?</summary>
+        <div class="faq-answer">
+          Click the <em>"Logout / Clear API Key"</em> button in the right-hand sidebar. This instantly clears the key from your browser's local storage.
+        </div>
+      </details>
+    </div>
+
+    <!-- Related Tools & Guides Navigation -->
+    <div class="quick-links-bar" style="margin-top: 2rem;">
+      <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Related Utilities &amp; Guides:</span>
+      <a href="../guides/what-is-searchable-pdf.html" class="quick-link-pill" style="background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe;">📖 Searchable PDF Guide</a>
+      <a href="../guides/how-ocr-works-scanned-documents.html" class="quick-link-pill" style="background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe;">🔬 OCR Mechanics Guide</a>
+      <a href="pdf-maker.html" class="quick-link-pill">📑 Drag &amp; Drop PDF Maker</a>
+      <a href="pdf-editor.html" class="quick-link-pill">✏️ Smart Visual PDF Editor</a>
+      <a href="pdf-compressor.html" class="quick-link-pill">🗜️ Custom PDF Compressor</a>
+    </div>
+  </article>
+
+</section>
+
+<script>
+// Logic remains identical to your original searchable PDF tool.
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+const KEY_NAME="pragati_gemini_key";
+const state={files:[],pages:[],originalKB:0};
+const $=id=>document.getElementById(id);
+const setStatus=(t,p)=>{$("status").textContent=t;if(p!==undefined)$("bar").style.width=p+"%"};
+
+window.addEventListener("load",()=>{ if(localStorage.getItem(KEY_NAME)) $("loginModal").classList.add("hidden"); });
+function saveKey(){ const key=$("apiKeyInput").value.trim(); if(!key){$("loginError").innerHTML='<div class="error">API Key দিন।</div>';return} localStorage.setItem(KEY_NAME,key); $("loginModal").classList.add("hidden"); }
+function clearKey(){localStorage.removeItem(KEY_NAME);location.reload()}
+
+$("sizeSlider").oninput=e=>$("sizeText").textContent=e.target.value;
+$("fileInput").onchange=e=>addFiles([...e.target.files]);
+$("moreInput").onchange=e=>addFiles([...e.target.files]);
+
+new Sortable($("grid",{ animation:150, onEnd:()=>{ const ids=[...$("grid").children].map(x=>x.dataset.id); state.pages.sort((a,b)=>ids.indexOf(a.id)-ids.indexOf(b.id)); renumber(); } }));
+
+async function addFiles(files){
+  if(!files.length)return;
+  $("upload").classList.add("hidden"); $("workspace").classList.remove("hidden");
+  for(const file of files){
+    if(!["application/pdf","image/png","image/jpeg","image/webp"].includes(file.type)) continue;
+    const id="p_"+Date.now()+"_"+Math.random().toString(36).slice(2);
+    const obj={id,file,name:file.name,type:file.type};
+    state.files.push(obj); state.originalKB+=file.size/1024; addGrid(obj);
+  }
+  $("fileInput").value=""; $("moreInput").value="";
+  if(state.originalKB>0){ $("sizeSlider").value=Math.max(100,Math.min(5000,Math.round(Math.min(500,state.originalKB)))); $("sizeText").textContent=$("sizeSlider").value; }
+}
+
+function addGrid(obj){
+  const div=document.createElement("div"); div.className="item"; div.dataset.id=obj.id;
+  const preview=obj.type.startsWith("image/") ? `<img src="${URL.createObjectURL(obj.file)}">` : `<div style="font-size:55px">📑</div>`;
+  div.innerHTML=`<div class="num"></div><button class="remove">✕</button><div class="preview">${preview}</div><div class="name" title="${obj.name}">${obj.name}</div>`;
+  div.querySelector(".remove").onclick=()=>{ state.files=state.files.filter(x=>x.id!==obj.id); div.remove(); renumber(); if(!state.files.length){$("workspace").classList.add("hidden");$("upload").classList.remove("hidden");} };
+  $("grid").appendChild(div); renumber();
+}
+function renumber(){[...$("grid").children].forEach((x,i)=>x.querySelector(".num").textContent=i+1)}
+
+async function imageToCanvas(file,maxDim=2200){
+ const url=URL.createObjectURL(file);
+ const img=await new Promise((resolve,reject)=>{ const i=new Image();i.onload=()=>resolve(i);i.onerror=reject;i.src=url; });
+ let w=img.naturalWidth,h=img.naturalHeight; const scale=Math.min(1,maxDim/Math.max(w,h));w=Math.round(w*scale);h=Math.round(h*scale);
+ const c=document.createElement("canvas");c.width=w;c.height=h;
+ const ctx=c.getContext("2d",{alpha:false});ctx.fillStyle="#fff";ctx.fillRect(0,0,w,h);ctx.drawImage(img,0,0,w,h);
+ URL.revokeObjectURL(url);return c;
+}
+
+async function loadPages(){
+ const pages=[];
+ for(let i=0;i<state.files.length;i++){
+   const f=state.files[i]; setStatus(`Loading ${i+1}/${state.files.length}: ${f.name}`,5+Math.round(i/state.files.length*20));
+   if(f.type.startsWith("image/")){ const c=await imageToCanvas(f.file,2200); pages.push({canvas:c,w:c.width,h:c.height,blocks:[]}); }else{
+     const buf=await f.file.arrayBuffer(); const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+     for(let p=1;p<=pdf.numPages;p++){
+       const page=await pdf.getPage(p); const base=page.getViewport({scale:1});
+       const scale=Math.min(2.4,2200/Math.max(base.width,base.height)); const vp=page.getViewport({scale});
+       const c=document.createElement("canvas");c.width=Math.ceil(vp.width);c.height=Math.ceil(vp.height);
+       await page.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;
+       pages.push({canvas:c,w:c.width,h:c.height,blocks:[]});
+     }
+   }
+ }
+ return pages;
+}
+
+function enhanceForOCR(canvas){ const c=document.createElement("canvas"); c.width=canvas.width; c.height=canvas.height; const ctx=c.getContext("2d"); ctx.filter="contrast(1.18) brightness(1.04) saturate(0.9)"; ctx.drawImage(canvas,0,0); return c; }
+function canvasSlice(canvas, fromRatio, toRatio){ const w=canvas.width, h=canvas.height; const sy=Math.round(fromRatio*h); const sh=Math.max(1, Math.round((toRatio-fromRatio)*h)); const c=document.createElement("canvas"); c.width=w; c.height=sh; c.getContext("2d").drawImage(canvas,0,sy,w,sh,0,0,w,sh); return c; }
+
+const OCR_PROMPT = `You are an expert multi-column OCR engine for Bengali and English documents. Extract EVERY visible line of text exactly. Return ONLY a valid JSON array of objects, no markdown. Example: [{"text": "নাম: সাজেমান", "box": [120, 350, 140, 600]}]`;
+
+async function fetchWithRetry(url, options, pageIndex, totalPages, maxRetries = 3) {
+    for (let i = 0; i < maxRetries; i++) {
+        const response = await fetch(url, options);
+        if (response.status === 429) { setStatus(`Rate Limit Hit! Waiting 15s... (Attempt ${i+1}/${maxRetries})`, 30+(pageIndex/totalPages)*40); await new Promise(r => setTimeout(r, 15000)); continue; }
+        return response;
+    } throw new Error("Google API limit exceeded.");
+}
+
+async function geminiOCRRaw(canvas, pageIndex, totalPages){
+ const apiKey=localStorage.getItem(KEY_NAME); if(!apiKey)throw new Error("Gemini API Key missing.");
+ const ocrCanvas=enhanceForOCR(canvas); const base64=ocrCanvas.toDataURL("image/jpeg",0.95).split(",")[1];
+ const url="https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key="+encodeURIComponent(apiKey);
+ const response = await fetchWithRetry(url, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ contents:[{parts:[{text:OCR_PROMPT},{inline_data:{mime_type:"image/jpeg",data:base64}}]}], generationConfig:{ temperature:0, maxOutputTokens:8192, responseMimeType:"application/json" } }) }, pageIndex, totalPages);
+ const raw=await response.text(); if(!response.ok) throw new Error(`Gemini Error: ${raw.slice(0,150)}`);
+ let data; try{data=JSON.parse(raw)}catch{ return {blocks:[], truncated:false}; }
+ const candidate=data?.candidates?.[0]; const truncated = candidate?.finishReason==="MAX_TOKENS"; const text=candidate?.content?.parts?.map(p=>p.text||"").join("")||"";
+ let jsonSlice=text.trim(); const first=jsonSlice.indexOf("["), last=jsonSlice.lastIndexOf("]"); if(first!==-1 && last!==-1 && last>first) jsonSlice=jsonSlice.slice(first,last+1);
+ try{ const parsed=JSON.parse(jsonSlice); if(!Array.isArray(parsed)) return {blocks:[], truncated}; const blocks=parsed.filter(b=>b && typeof b.text==="string" && Array.isArray(b.box) && b.box.length===4).map(b=>({...b, text:b.text.normalize("NFC")})); return {blocks, truncated}; }catch(e){ return {blocks:[], truncated}; }
+}
+
+function dedupeBlocks(blocks){ const seen=[]; const out=[]; for(const b of blocks){ const key=b.text.trim(); const dup=seen.find(s=>s.text===key && Math.abs(s.y-b.box[0])<25); if(dup) continue; seen.push({text:key, y:b.box[0]}); out.push(b); } return out; }
+
+async function geminiOCR(canvas, pageIndex, totalPages, yFrom=0, yTo=1, depth=0){
+  const slice = (yFrom===0 && yTo===1) ? canvas : canvasSlice(canvas, yFrom, yTo);
+  const {blocks, truncated} = await geminiOCRRaw(slice, pageIndex, totalPages);
+  const remapped = blocks.map(b=>({ text:b.text, box:[ yFrom*1000 + b.box[0]*(yTo-yFrom), b.box[1], yFrom*1000 + b.box[2]*(yTo-yFrom), b.box[3] ] }));
+  if(truncated && depth<2 && (yTo-yFrom)>0.15){
+    const mid=(yFrom+yTo)/2; const overlap=0.02;
+    const topHalf=await geminiOCR(canvas, pageIndex, totalPages, yFrom, Math.min(1,mid+overlap), depth+1);
+    const botHalf=await geminiOCR(canvas, pageIndex, totalPages, Math.max(0,mid-overlap), yTo, depth+1);
+    return dedupeBlocks([...topHalf, ...botHalf]);
+  } return remapped;
+}
+
+async function createPDF(pages, quality, ocr) {
+  const { jsPDF } = window.jspdf; const first = pages[0];
+  const doc = new jsPDF({ orientation: first.w > first.h ? 'landscape' : 'portrait', unit: 'px', format: [first.w, first.h] });
+  if (ocr) {
+      setStatus("Preparing Bengali Font...", 80);
+      try {
+          const fontURLs = [ "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notosansbengali/NotoSansBengali-Regular.ttf" ];
+          let fontBuffer=null;
+          for(const fontURL of fontURLs){ try{ const fontRes = await fetch(fontURL); if (fontRes.ok) { fontBuffer = await fontRes.arrayBuffer(); break; } }catch(e){} }
+          if(fontBuffer) {
+              let binary = ''; const bytes = new Uint8Array(fontBuffer);
+              for (let i = 0; i < bytes.byteLength; i++) { binary += String.fromCharCode(bytes[i]); }
+              doc.addFileToVFS("Bengali.ttf", btoa(binary)); doc.addFont("Bengali.ttf", "Bengali", "normal");
+          }
+      } catch(err) {}
+  }
+  for (let i = 0; i < pages.length; i++) {
+      const pageData = pages[i];
+      if (i > 0) doc.addPage([pageData.w, pageData.h], pageData.w > pageData.h ? 'landscape' : 'portrait');
+      if (ocr && pageData.blocks && pageData.blocks.length > 0) {
+          try { doc.setFont("Bengali"); } catch(e) {}
+          doc.setGState(new doc.GState({opacity: 0}));
+          for (const block of pageData.blocks) {
+              try {
+                  const box = block.box; if(!box || box.length !== 4) continue;
+                  const yMin = (box[0] / 1000) * pageData.h; const xMin = (box[1] / 1000) * pageData.w; const yMax = (box[2] / 1000) * pageData.h;
+                  let fontSize = Math.max(10, (yMax - yMin) * 0.85); doc.setFontSize(fontSize);
+                  doc.text(block.text, xMin, yMin + fontSize * 0.8);
+              } catch(e) {}
+          }
+          doc.setGState(new doc.GState({opacity: 1}));
+      }
+      doc.addImage(pageData.canvas.toDataURL('image/jpeg', quality), 'JPEG', 0, 0, pageData.w, pageData.h);
+  }
+  return doc.output('arraybuffer');
+}
+
+async function makePDFWithTarget(pages, targetKB, ocr) {
+  let quality = 0.85, best = null, bestDiff = Infinity;
+  const attempts = [0.85, 0.70, 0.50, 0.35]; 
+  for (let i = 0; i < attempts.length; i++) {
+    quality = attempts[i]; setStatus(`Creating PDF — pass ${i + 1}/${attempts.length}`, 85 + i * 4);
+    const bytes = await createPDF(pages, quality, ocr);
+    const kb = bytes.byteLength / 1024; const diff = Math.abs(kb - targetKB);
+    if (diff < bestDiff) { best = bytes; bestDiff = diff; }
+    if (kb <= targetKB) return bytes;
+  } return best;
+}
+
+$("generate").onclick=async()=>{
+ if(!state.files.length)return;
+ const ocr=$("ocr").checked; if(ocr&&!localStorage.getItem(KEY_NAME)){alert("Gemini API Key দিন।");return}
+ $("workspace").classList.add("hidden"); $("progress").style.display="block"; $("error").classList.add("hidden");
+ try{
+   const pages=await loadPages(); if(!pages.length)throw new Error("কোনো page পাওয়া যায়নি।");
+   if(ocr){
+     for(let i=0;i<pages.length;i++){
+       setStatus(`AI Multi-Column Scanning — page ${i+1}/${pages.length}`,30+(i/pages.length)*40);
+       pages[i].blocks=await geminiOCR(pages[i].canvas, i, pages.length);
+       if(i < pages.length - 1) { setStatus(`Cooling down API... (${i+1}/${pages.length})`, 30+(i/pages.length)*40); await new Promise(resolve => setTimeout(resolve, 4000)); }
+     }
+   }
+   const target=Number($("sizeSlider").value);
+   const bytes=await makePDFWithTarget(pages, target, ocr);
+   const kb=bytes.byteLength/1024;
+   const blob=new Blob([bytes],{type:"application/pdf"}); const url=URL.createObjectURL(blob);
+   $("download").href=url; $("download").download="Pragati_Smart_PDF_" + Date.now() + ".pdf";
+   $("result").innerHTML=`${pages.length} page তৈরি হয়েছে। Final size: <b>${kb.toFixed(1)} KB</b> (Target: ${target} KB)`;
+   $("progress").style.display="none"; $("success").style.display="block";
+ }catch(err){
+   console.error(err); $("error").textContent="❌ "+(err?.message||String(err)); $("error").classList.remove("hidden");
+   $("status").textContent="Processing failed"; $("bar").style.width="100%";
+ }
+};
+</script>
+</body>
+</html>
