@@ -1,6 +1,6 @@
 /**
- * Pragati Telecom - Modular Shared Layout System (Updated for 7 Premium Tools & Legal Pages)
- * Dynamically injects identical frosted-glass Header & dark glowing Footer across all pages.
+ * Pragati Telecom - Modular Shared Layout & Theme System
+ * Injects responsive full-width Header, Theme Switcher (Dark/Light), Mobile Drawer, and Footer.
  */
 
 (function () {
@@ -9,7 +9,42 @@
   const isInsideSubdir = currentPath.includes('/tools/') || currentPath.includes('/guides/') || currentPath.endsWith('/tools') || currentPath.endsWith('/guides') || window.location.href.includes('/tools/') || window.location.href.includes('/guides/');
   const basePath = isInsideSubdir ? '../' : './';
 
-  // 2. Ensure CSS is loaded
+  // 2. Initialize Theme System immediately to avoid flash of wrong theme
+  function initTheme() {
+    const savedTheme = localStorage.getItem('pragati_theme');
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  }
+
+  initTheme();
+
+  // 3. Toggle Theme function
+  window.togglePragatiTheme = function () {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('pragati_theme', newTheme);
+    updateThemeToggleIcons(newTheme);
+  };
+
+  function updateThemeToggleIcons(theme) {
+    const icons = document.querySelectorAll('.theme-toggle-icon');
+    icons.forEach(el => {
+      el.textContent = theme === 'dark' ? '☀️' : '🌙';
+    });
+    const btns = document.querySelectorAll('.btn-theme-toggle');
+    btns.forEach(btn => {
+      btn.setAttribute('title', theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode');
+      btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode');
+    });
+  }
+
+  // 4. Ensure CSS is loaded
   function ensureStylesheet() {
     const cssHref = basePath + 'css/style.css';
     const existing = document.querySelector(`link[href*="style.css"]`);
@@ -21,34 +56,57 @@
     }
   }
 
-  // 3. Header HTML Template
+  // 5. Ensure Favicon is present to prevent browser 404
+  function ensureFavicon() {
+    let favicon = document.querySelector("link[rel*='icon']");
+    if (!favicon) {
+      favicon = document.createElement('link');
+      favicon.rel = 'icon';
+      favicon.href = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>";
+      document.head.appendChild(favicon);
+    }
+  }
+
+  // 5. Header HTML Template
   function getHeaderHTML() {
     const isHome = !isInsideSubdir && (currentPath.endsWith('index.html') || currentPath.endsWith('/') || currentPath === '');
     const isPhotoStudio = currentPath.includes('photo-studio.html');
     const isSmartCard = currentPath.includes('smart-card.html');
-    const isPdfMaker = currentPath.includes('pdf-maker.html') || currentPath.includes('pdf-compressor.html') || currentPath.includes('searchable-pdf.html') || currentPath.includes('pdf-editor.html');
+    const isPdfSuite = currentPath.includes('pdf-') || currentPath.includes('searchable-pdf');
     const isGuides = currentPath.includes('/guides/');
     const isAbout = currentPath.includes('about.html');
     const isContact = currentPath.includes('contact.html');
 
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const themeIcon = currentTheme === 'dark' ? '☀️' : '🌙';
+
     return `
     <div class="nav-container">
-      <!-- Brand Logo -->
-      <a href="${basePath}index.html" class="brand-logo" title="Pragati Telecom Home">
+      <!-- Left: Brand Logo & Title -->
+      <a href="${basePath}index.html" class="brand-logo" title="Pragati Telecom Portal">
         <div class="brand-icon-wrap">
           <span>⚡</span>
         </div>
         <div class="brand-text">
           <div class="brand-title">PRAGATI <span class="accent">TELECOM</span></div>
-          <div class="brand-tagline">Digital Utilities &amp; Tool Portal</div>
+          <div class="brand-tagline">Smart Digital Utilities Portal</div>
         </div>
       </a>
+
+      <!-- Center: Quick Search Trigger -->
+      <div class="nav-center">
+        <div class="nav-quick-search" id="topNavSearchBtn" title="Press / or Ctrl+K to Search Tools">
+          <span>🔍</span>
+          <input type="text" placeholder="Quick search tools (/ or Ctrl+K)..." readonly aria-label="Search tools">
+          <span class="kbd-shortcut">/</span>
+        </div>
+      </div>
 
       <!-- Desktop Nav Links -->
       <ul class="nav-links">
         <li>
           <a href="${basePath}index.html" class="nav-link ${isHome ? 'active' : ''}">
-            <span>🏠</span> Home
+            <span>🏠</span> Dashboard
           </a>
         </li>
         <li>
@@ -62,7 +120,7 @@
           </a>
         </li>
         <li>
-          <a href="${basePath}index.html#search-bar" class="nav-link ${isPdfMaker ? 'active' : ''}">
+          <a href="${basePath}index.html#search-bar" class="nav-link ${isPdfSuite ? 'active' : ''}">
             <span>📄</span> PDF Suite
           </a>
         </li>
@@ -71,26 +129,21 @@
             <span>📚</span> Guides
           </a>
         </li>
-        <li>
-          <a href="${basePath}about.html" class="nav-link ${isAbout ? 'active' : ''}">
-            <span>ℹ️</span> About
-          </a>
-        </li>
-        <li>
-          <a href="${basePath}contact.html" class="nav-link ${isContact ? 'active' : ''}">
-            <span>📞</span> Contact
-          </a>
-        </li>
       </ul>
 
-      <!-- Nav Actions -->
+      <!-- Right: Actions, Theme Switch & WhatsApp -->
       <div class="nav-actions">
-        <a href="${basePath}index.html#search-bar" class="btn-nav-search" id="topNavSearchBtn" title="Quick Search Tools">
-          <span>🔍</span> Search <span class="kbd-shortcut">/</span>
+        <!-- Theme Toggle Button -->
+        <button class="btn-theme-toggle" id="themeToggleBtn" onclick="togglePragatiTheme()" title="${currentTheme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}" aria-label="Toggle Dark/Light Mode">
+          <span class="theme-toggle-icon">${themeIcon}</span>
+        </button>
+
+        <!-- WhatsApp Support Link -->
+        <a href="https://wa.me/919775096842?text=Hello%20Pragati%20Telecom" target="_blank" rel="noopener" class="btn-nav-whatsapp" title="WhatsApp Support">
+          <span>💬</span> <span>WhatsApp</span>
         </a>
-        <a href="https://wa.me/919775096842?text=Hello%20Pragati%20Telecom" target="_blank" rel="noopener" class="btn-nav-whatsapp">
-          <span>💬</span> WhatsApp
-        </a>
+
+        <!-- Mobile Drawer Toggle -->
         <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle Mobile Navigation">
           ☰
         </button>
@@ -105,27 +158,30 @@
           <div class="brand-icon-wrap" style="width: 36px; height: 36px; font-size: 1.1rem;">⚡</div>
           <div class="brand-text">
             <div class="brand-title" style="font-size: 1.05rem;">PRAGATI <span class="accent">TELECOM</span></div>
-            <div class="brand-tagline" style="font-size: 0.65rem;">Digital Seva Center</div>
+            <div class="brand-tagline" style="font-size: 0.65rem;">Digital Tools Portal</div>
           </div>
         </div>
         <button class="drawer-close-btn" id="mobileDrawerClose">✕</button>
       </div>
       <ul class="drawer-links">
-        <li><a href="${basePath}index.html" class="nav-link ${isHome ? 'active' : ''}"><span>🏠</span> Home</a></li>
+        <li><a href="${basePath}index.html" class="nav-link ${isHome ? 'active' : ''}"><span>🏠</span> Dashboard</a></li>
         <li><a href="${basePath}tools/photo-studio.html" class="nav-link ${isPhotoStudio ? 'active' : ''}"><span>📸</span> AI Photo Studio Pro</a></li>
         <li><a href="${basePath}tools/smart-card.html" class="nav-link ${isSmartCard ? 'active' : ''}"><span>💳</span> Smart Multi-Card Studio</a></li>
-        <li><a href="${basePath}index.html#search-bar" class="nav-link ${isPdfMaker ? 'active' : ''}"><span>📄</span> PDF Suite &amp; Tools</a></li>
+        <li><a href="${basePath}tools/searchable-pdf.html" class="nav-link"><span>🔎</span> Searchable PDF (OCR)</a></li>
+        <li><a href="${basePath}tools/pdf-compressor.html" class="nav-link"><span>🗜️</span> Custom PDF Compressor</a></li>
+        <li><a href="${basePath}tools/pdf-editor.html" class="nav-link"><span>✏️</span> Smart Visual PDF Editor</a></li>
+        <li><a href="${basePath}tools/pdf-maker.html" class="nav-link"><span>📑</span> Drag &amp; Drop PDF Maker</a></li>
         <li><a href="${basePath}guides/index.html" class="nav-link ${isGuides ? 'active' : ''}"><span>📚</span> Knowledge Base &amp; Guides</a></li>
         <li><a href="${basePath}about.html" class="nav-link ${isAbout ? 'active' : ''}"><span>ℹ️</span> About Us</a></li>
-        <li><a href="${basePath}contact.html" class="nav-link ${isContact ? 'active' : ''}"><span>📞</span> Contact Us</a></li>
+        <li><a href="${basePath}contact.html" class="nav-link ${isContact ? 'active' : ''}"><span>📞</span> Contact Support</a></li>
         <li><a href="${basePath}privacy-policy.html" class="nav-link"><span>🔒</span> Privacy Policy</a></li>
         <li><a href="${basePath}terms.html" class="nav-link"><span>📜</span> Terms &amp; Conditions</a></li>
         <li><a href="${basePath}disclaimer.html" class="nav-link"><span>⚠️</span> Disclaimer</a></li>
       </ul>
       <div style="margin-top: auto; padding-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
-        <a href="tel:9775096842" class="btn-nav-whatsapp" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); justify-content: center;">
-          <span>📞</span> Call: +91 9775096842
-        </a>
+        <button onclick="togglePragatiTheme()" class="nav-link" style="justify-content: center; background: var(--bg-card-subtle); border: 1px solid var(--border-light); cursor: pointer;">
+          <span class="theme-toggle-icon">${themeIcon}</span> Switch Appearance
+        </button>
         <a href="https://wa.me/919775096842" target="_blank" rel="noopener" class="btn-nav-whatsapp" style="justify-content: center;">
           <span>💬</span> Chat on WhatsApp
         </a>
@@ -134,7 +190,7 @@
     `;
   }
 
-  // 4. Footer HTML Template
+  // 6. Footer HTML Template
   function getFooterHTML() {
     const currentYear = new Date().getFullYear();
 
@@ -148,7 +204,7 @@
             <span style="color: var(--brand-primary-light);">⚡</span> PRAGATI TELECOM
           </div>
           <p class="footer-bio">
-            Independent local digital tools and utility suite based in Murshidabad. Providing browser-based passport photo cropping, searchable OCR PDF generation, PVC smart card formatting, and daily cash calculation tools.
+            Independent local digital tools and utility portal based in Murshidabad. Providing fast browser-based passport photo cropping, searchable OCR PDF generation, PVC smart card formatting, and daily cash calculation tools.
           </p>
           <div class="business-info-card">
             <div class="business-info-row">
@@ -158,10 +214,6 @@
             <div class="business-info-row">
               <span class="business-info-icon">📞</span>
               <div><strong>Care &amp; Support:</strong> <a href="tel:9775096842" style="color: #60a5fa; font-weight:700;">+91 9775096842</a></div>
-            </div>
-            <div class="business-info-row">
-              <span class="business-info-icon">✉️</span>
-              <div><strong>Email:</strong> <span style="color: #cbd5e1;">support@pragatitelecom.local (Owner to update)</span></div>
             </div>
           </div>
         </div>
@@ -199,7 +251,7 @@
             <li><a href="${basePath}disclaimer.html" class="footer-link">⚠️ Non-Government Disclaimer</a></li>
           </ul>
 
-          <div class="social-icons-row" style="margin-top: 1.2rem;">
+          <div class="social-icons-row">
             <!-- WhatsApp -->
             <a href="https://wa.me/919775096842?text=Hello%20Pragati%20Telecom" target="_blank" rel="noopener" class="social-icon-btn whatsapp" title="Chat on WhatsApp" aria-label="WhatsApp">
               <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.031 0C5.394 0 0 5.394 0 12.031c0 2.122.553 4.184 1.602 6.008L.069 23.931l6.059-1.589a11.97 11.97 0 005.903 1.543h.005c6.632 0 12.026-5.394 12.026-12.031A12.03 12.03 0 0012.031 0zm-.005 21.884h-.004a9.96 9.96 0 01-5.074-1.39l-.364-.216-3.771.989 1.006-3.676-.237-.377a9.982 9.982 0 01-1.536-5.183c0-5.508 4.48-9.988 9.99-9.988 2.668 0 5.176 1.039 7.062 2.926a9.932 9.932 0 012.921 7.063c0 5.508-4.48 9.988-9.988 9.988z"/></svg>
@@ -217,8 +269,8 @@
       </div>
 
       <!-- Legal Disclaimer Note -->
-      <div style="padding: 1.2rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: var(--radius-md); font-size: 0.8rem; color: var(--text-light); line-height: 1.5; margin-bottom: 2rem;">
-        <strong>⚠️ Non-Government Affiliation Disclaimer:</strong> Pragati Telecom is an independent digital tool and productivity platform designed for local computer operators, cyber cafes, CSC operators, and students. We are <em>not</em> affiliated with, associated with, authorized by, endorsed by, or in any way officially connected with any government department, agency, or authority (including UIDAI, PM-JAY, NSDL, or Election Commission of India).
+      <div style="padding: 1rem 1.25rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: var(--radius-md); font-size: 0.8rem; color: #94a3b8; line-height: 1.5; margin-bottom: 1.5rem;">
+        <strong>⚠️ Non-Government Affiliation Disclaimer:</strong> Pragati Telecom is an independent digital tool and productivity platform designed for local computer operators, cyber cafes, CSC operators, and students. We are <em>not</em> affiliated with, associated with, authorized by, endorsed by, or in any way officially connected with any government department, agency, or authority.
       </div>
 
       <!-- Footer Bottom Copyright & Legal Quick Links -->
@@ -238,16 +290,20 @@
     `;
   }
 
-  // 5. Initialize and inject layout
+  // 7. Initialize and inject layout
   function initSharedLayout() {
     ensureStylesheet();
+    ensureFavicon();
 
     // Inject Header
     let headerEl = document.getElementById('site-header');
     if (!headerEl) {
       headerEl = document.createElement('header');
       headerEl.id = 'site-header';
+      headerEl.className = 'site-header';
       document.body.prepend(headerEl);
+    } else {
+      headerEl.classList.add('site-header');
     }
     headerEl.innerHTML = getHeaderHTML();
 
@@ -256,14 +312,17 @@
     if (!footerEl) {
       footerEl = document.createElement('footer');
       footerEl.id = 'site-footer';
+      footerEl.className = 'site-footer';
       document.body.appendChild(footerEl);
+    } else {
+      footerEl.classList.add('site-footer');
     }
     footerEl.innerHTML = getFooterHTML();
 
     setupLayoutEvents();
   }
 
-  // 6. Mobile Drawer & Global Keyboard Events
+  // 8. Mobile Drawer & Global Keyboard Events
   function setupLayoutEvents() {
     const toggleBtn = document.getElementById('mobileNavToggle');
     const closeBtn = document.getElementById('mobileDrawerClose');
@@ -298,30 +357,26 @@
     }
 
     function focusSearchInput() {
-      const searchInput = document.getElementById('toolSearchInput') || document.getElementById('topSearchInput');
+      const searchInput = document.getElementById('toolSearchInput');
       if (searchInput) {
         searchInput.focus();
         searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else if (isInsideSubdir) {
+        window.location.href = basePath + 'index.html#search-bar';
       }
     }
 
-    if (searchNavBtn && !isInsideTools) {
+    if (searchNavBtn) {
       searchNavBtn.addEventListener('click', function(e) {
-        const searchInput = document.getElementById('toolSearchInput') || document.getElementById('topSearchInput');
-        if (searchInput) {
-          e.preventDefault();
-          focusSearchInput();
-        }
+        e.preventDefault();
+        focusSearchInput();
       });
     }
 
     window.addEventListener('keydown', function (e) {
       if ((e.key === '/' || (e.ctrlKey && e.key === 'k')) && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
-        const searchInput = document.getElementById('toolSearchInput') || document.getElementById('topSearchInput');
-        if (searchInput) {
-          e.preventDefault();
-          focusSearchInput();
-        }
+        e.preventDefault();
+        focusSearchInput();
       }
     });
   }

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
@@ -41,51 +41,51 @@
 
 <style>
 :root {
-  --ink: #0f172a; --ink2: #475569; --muted: #64748b; 
-  --border: #e2e8f0; --bg: #f8fafc; --card: #ffffff;
-  --primary: #2563eb; --primary-light: #0ea5e9;
-  --green: #10b981; --red: #ef4444; --radius: 16px;
+  --ink: var(--text-main); --ink2: var(--text-secondary); --muted: var(--text-muted); 
+  --border: var(--border-light); --bg: var(--bg-main); --card: var(--bg-card);
+  --primary: var(--brand-primary); --primary-light: var(--brand-primary-light);
+  --green: #10b981; --red: #ef4444; --radius: 14px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body {font-family:'Plus Jakarta Sans', sans-serif; background:#f1f5f9; color:var(--ink); min-height:100vh; display:flex; flex-direction:column;}
+body {font-family:'Plus Jakarta Sans', sans-serif; background:var(--bg-main); color:var(--text-main); min-height:100vh; display:flex; flex-direction:column; width:100%;}
 
-.studio-top-bar { background: #ffffff; border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
-.studio-breadcrumbs { font-size: 0.9rem; color: var(--muted); font-weight: 600;}
-.studio-breadcrumbs a { color: var(--primary); font-weight: 700; text-decoration: none;}
+.studio-top-bar { background: var(--bg-card-subtle); border-bottom: 1px solid var(--border-light); padding: 0.75rem clamp(1rem, 3vw, 2.5rem); display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.studio-breadcrumbs { font-size: 0.88rem; color: var(--text-muted); font-weight: 600;}
+.studio-breadcrumbs a { color: var(--brand-primary); font-weight: 700; text-decoration: none;}
 
-.pdf-app-wrapper { max-width: 900px; margin: 2rem auto 3rem; padding: 0 1.5rem; width: 100%; flex: 1; display:flex; flex-direction:column; align-items:center; }
+.pdf-app-wrapper { width: 100%; max-width: 860px; margin: 1.5rem auto 3rem; padding: 0 clamp(1rem, 3vw, 2rem); flex: 1; display:flex; flex-direction:column; align-items:center; }
 
-.title{text-align:center; margin-bottom:30px; width: 100%;}
-.title h1{margin:0 0 8px; font-size:32px; font-weight: 900; color:var(--ink);}
-.title p{margin:0; color:var(--muted); font-size:15px; font-weight: 500;}
+.title{text-align:center; margin-bottom:25px; width: 100%;}
+.title h1{margin:0 0 6px; font-size:clamp(1.6rem, 3vw, 2.2rem); font-weight: 900; color:var(--text-main);}
+.title p{margin:0; color:var(--text-muted); font-size:14px; font-weight: 500;}
 
-.card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 4px 20px rgba(0,0,0,0.03); width: 100%; padding: 30px;}
+.card{background:var(--bg-card); border:1px solid var(--border-light); border-radius:var(--radius); box-shadow:var(--shadow-md); width: 100%; padding: clamp(1.25rem, 3vw, 2rem);}
 
-.upload-zone{text-align:center; padding: 50px 20px; border: 2px dashed #cbd5e1; background: #f8fafc; border-radius: 12px; cursor: pointer; transition: 0.2s; margin-bottom: 20px;}
-.upload-zone:hover{border-color: var(--primary); background: #eff6ff;}
-.upload-zone .icon{font-size: 45px; margin-bottom: 15px; display: block;}
-.upload-zone h2{font-weight: 800; font-size: 20px; color: var(--ink); margin-bottom: 8px;}
-.upload-zone p{color: var(--muted); font-size: 14px; font-weight: 600;}
+.upload-zone{text-align:center; padding: 45px 20px; border: 2px dashed var(--border-light); background: var(--bg-card-subtle); border-radius: 12px; cursor: pointer; transition: 0.2s; margin-bottom: 18px;}
+.upload-zone:hover{border-color: var(--brand-primary); background: rgba(37,99,235,0.06);}
+.upload-zone .icon{font-size: 42px; margin-bottom: 12px; display: block;}
+.upload-zone h2{font-weight: 800; font-size: 19px; color: var(--text-main); margin-bottom: 6px;}
+.upload-zone p{color: var(--text-muted); font-size: 13px; font-weight: 600;}
 
-.slider-container { background: #f8fafc; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid var(--border); }
-.slider-header { display: flex; justify-content: space-between; font-weight: 800; margin-bottom: 15px; font-size: 16px; color: var(--ink); }
-.target-display { color: var(--primary); font-size: 22px; font-weight: 900; }
-input[type="range"] { width: 100%; cursor: pointer; height: 6px; background: #cbd5e1; border-radius: 4px; outline: none; accent-color: var(--primary); }
+.slider-container { background: var(--bg-card-subtle); padding: 18px; border-radius: 12px; margin-top: 18px; border: 1px solid var(--border-light); }
+.slider-header { display: flex; justify-content: space-between; font-weight: 800; margin-bottom: 12px; font-size: 15px; color: var(--text-main); }
+.target-display { color: var(--brand-primary); font-size: 20px; font-weight: 900; }
+input[type="range"] { width: 100%; cursor: pointer; height: 6px; background: var(--border-light); border-radius: 4px; outline: none; accent-color: var(--brand-primary); }
 
-.info-table { width: 100%; border-collapse: collapse; margin: 25px 0; display: none; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
-.info-table th, .info-table td { padding: 15px; text-align: left; font-size: 15px; font-weight: 600; }
-.info-table th { background-color: #f1f5f9; color: var(--ink); border-bottom: 1px solid var(--border); }
-.info-table td { background-color: #ffffff; border-bottom: 1px solid var(--border); color: var(--ink2); }
+.info-table { width: 100%; border-collapse: collapse; margin: 20px 0; display: none; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-light); }
+.info-table th, .info-table td { padding: 12px 15px; text-align: left; font-size: 14px; font-weight: 600; }
+.info-table th { background-color: var(--bg-card-subtle); color: var(--text-main); border-bottom: 1px solid var(--border-light); }
+.info-table td { background-color: var(--bg-card); border-bottom: 1px solid var(--border-light); color: var(--text-secondary); }
 
-.btn { width: 100%; padding: 16px 24px; font-size: 16px; font-weight: 800; color: white; border: none; border-radius: 12px; cursor: pointer; transition: 0.2s; text-align: center; display: none; text-decoration: none; margin-top: 15px; font-family: inherit;}
+.btn { width: 100%; padding: 14px 20px; font-size: 15px; font-weight: 800; color: white; border: none; border-radius: 10px; cursor: pointer; transition: 0.2s; text-align: center; display: none; text-decoration: none; margin-top: 12px; font-family: inherit;}
 .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
-.btn-compress { background: linear-gradient(135deg, var(--primary-light), var(--primary)); }
+.btn-compress { background: linear-gradient(135deg, var(--brand-primary-light), var(--brand-primary)); }
 .btn-download { background: linear-gradient(135deg, #34d399, var(--green)); }
 
-.loading { display: none; color: var(--primary); font-weight: 800; margin-top: 25px; font-size: 16px; text-align: center; animation: pulse 1.5s infinite; }
+.loading { display: none; color: var(--brand-primary); font-weight: 800; margin-top: 20px; font-size: 15px; text-align: center; animation: pulse 1.5s infinite; }
 @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
-.status-box { margin: 20px 0; padding: 16px; border-radius: 12px; font-size: 15px; display: none; background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-weight: 700; text-align: center; }
+.status-box { margin: 18px 0; padding: 14px; border-radius: 10px; font-size: 14px; display: none; background: rgba(37,99,235,0.08); border: 1px solid rgba(37,99,235,0.25); color: var(--brand-primary); font-weight: 700; text-align: center; }
 </style>
 </head>
 <body>
@@ -94,10 +94,10 @@ input[type="range"] { width: 100%; cursor: pointer; height: 6px; background: #cb
 
 <div class="studio-top-bar">
   <div class="studio-breadcrumbs">
-    <a href="../index.html">🏠 Home</a> <span style="margin:0 8px;color:#cbd5e1">/</span> <span>Custom PDF Compressor</span>
+    <a href="../index.html">🏠 Home</a> <span style="margin:0 6px;color:var(--text-light)">/</span> <span>Custom PDF Compressor</span>
   </div>
-  <div style="font-size: 0.85rem; font-weight: 700; color: #64748b; background: #f1f5f9; padding: 6px 12px; border-radius: 8px;">
-    📍 Kalupur Middle Para
+  <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); background: var(--bg-card); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-light);">
+    📍 Kalupur Middle Para, Murshidabad
   </div>
 </div>
 
@@ -156,7 +156,7 @@ input[type="range"] { width: 100%; cursor: pointer; height: 6px; background: #cb
 <!-- TOOL DOCUMENTATION & INFORMATION CONTAINER (Below Interactive Workspace) -->
 <!-- ======================================================================= -->
 
-<section class="home-content-section" style="max-width: 1000px; margin-top: 2rem;">
+<section class="home-content-section" style="margin-top: 2rem;">
   
   <article class="home-article-card">
     <h2 class="home-section-title">🗜️ How Custom PDF Compressor Works</h2>

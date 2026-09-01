@@ -58,299 +58,377 @@
   <!-- SHARED NAVIGATION BAR -->
   <script src="js/shared-layout.js"></script>
 
-  <main>
-    <!-- HERO SECTION -->
-    <section class="hero-section">
-      <div class="hero-container">
-        <h1 class="hero-title">
-          Smart Digital Utilities &amp; <span style="color: #2563eb;">Productivity Portal</span>
-        </h1>
-        <p class="hero-subtitle">
-          Practical browser-based tools designed for cyber cafes, CSC centers, students, and citizens. Instant <strong>Passport Photo Cropping</strong>, <strong>Smart PVC Card Layouts</strong>, <strong>Target-KB PDF Compression</strong>, and <strong>Daily Cash Tallies</strong>.
-        </p>
-
-        <!-- SEARCH & CATEGORY FILTER BAR -->
-        <div class="search-filter-wrapper" id="search-bar">
-          <div class="search-bar-container">
-            <span class="search-icon-inside">🔍</span>
-            <input type="text" class="main-search-input" id="toolSearchInput" placeholder="Search any tool (e.g. passport, cash, ocr, pvc, compress, merge)..." autocomplete="off" aria-label="Search tools">
-            <button class="search-clear-btn" id="searchClearBtn" aria-label="Clear Search">✕</button>
-          </div>
-
-          <div class="category-filter-list" id="categoryFilterList">
-            <button class="filter-btn active" data-category="all">🌟 All Tools</button>
-            <button class="filter-btn" data-category="ai-photo">📸 Photo &amp; Cards</button>
-            <button class="filter-btn" data-category="pdf-doc">📄 PDF Suite</button>
-            <button class="filter-btn" data-category="calc-utility">🧮 Utilities</button>
-          </div>
-        </div>
+  <div class="dashboard-layout">
+    <!-- COLLAPSIBLE DASHBOARD SIDEBAR -->
+    <aside class="app-sidebar" id="dashboardSidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-title">⚡ Tool Navigation</span>
+        <button class="sidebar-collapse-toggle" id="sidebarCollapseBtn" title="Toggle Sidebar (Ctrl+B)" aria-label="Toggle Sidebar">
+          ◀
+        </button>
       </div>
-    </section>
 
-    <!-- SPONSOR NOTICE BANNER -->
-    <div class="sponsor-ad-container no-print">
-      <div class="sponsor-ad-box">
-        <div class="ad-label">Partner &amp; Support Notice</div>
-        <a href="https://wa.me/919775096842" target="_blank" rel="noopener noreferrer">
-          <div style="padding: 18px 10px; background: linear-gradient(135deg, #eff6ff, #f0fdf4); border-radius: 8px; font-weight: 700; color: #1e40af; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
-            <span>⚡ <strong>Pragati Telecom Digital Desk:</strong> Kalupur Middle Para, Murshidabad. Need help with card printing or document formatting?</span>
-            <span style="background: #2563eb; color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 0.8rem;">Connect on WhatsApp →</span>
-          </div>
+      <!-- Quick Access Group -->
+      <div class="sidebar-nav-group">
+        <div class="sidebar-group-label">Quick Access</div>
+        <a href="#search-bar" class="sidebar-item active" data-category-filter="all" data-tooltip="Dashboard Overview">
+          <div class="sidebar-item-icon" style="background: rgba(37,99,235,0.12); color: #2563eb;">⚡</div>
+          <span class="sidebar-item-text">All Tools Suite</span>
+          <span class="sidebar-badge" style="background: rgba(37,99,235,0.1); color: #2563eb;">7 Tools</span>
+        </a>
+        <a href="#" class="sidebar-item" id="sidebarCashTallyBtn" data-tooltip="Daily Cash Tally">
+          <div class="sidebar-item-icon" style="background: rgba(16,185,129,0.12); color: #059669;">💵</div>
+          <span class="sidebar-item-text">Cash Denomination</span>
+          <span class="sidebar-badge" style="background: rgba(16,185,129,0.1); color: #059669;">Daily</span>
         </a>
       </div>
-    </div>
 
-    <!-- 7 RESPONSIVE TOOL CARDS GRID -->
-    <section class="tools-section">
-      <div class="tools-grid" id="toolsGrid">
-        <!-- Cards dynamically rendered via JavaScript -->
+      <!-- Photo & Card Tools -->
+      <div class="sidebar-nav-group">
+        <div class="sidebar-group-label">Photo &amp; Cards</div>
+        <a href="tools/photo-studio.html" class="sidebar-item" data-tooltip="AI Photo Studio Pro">
+          <div class="sidebar-item-icon" style="background: rgba(139,92,246,0.12); color: #8b5cf6;">📸</div>
+          <span class="sidebar-item-text">AI Photo Studio</span>
+          <span class="sidebar-badge" style="background: rgba(139,92,246,0.1); color: #8b5cf6;">35x45</span>
+        </a>
+        <a href="tools/smart-card.html" class="sidebar-item" data-tooltip="Smart Multi-Card Studio">
+          <div class="sidebar-item-icon" style="background: rgba(99,102,241,0.12); color: #6366f1;">💳</div>
+          <span class="sidebar-item-text">Smart Card Studio</span>
+          <span class="sidebar-badge" style="background: rgba(99,102,241,0.1); color: #6366f1;">PVC Tray</span>
+        </a>
       </div>
-    </section>
 
-    <!-- =================================================================== -->
-    <!-- COMPREHENSIVE HOMEPAGE CONTENT & INFORMATIONAL SECTIONS             -->
-    <!-- =================================================================== -->
+      <!-- PDF Suite Group -->
+      <div class="sidebar-nav-group">
+        <div class="sidebar-group-label">PDF Suite</div>
+        <a href="tools/searchable-pdf.html" class="sidebar-item" data-tooltip="Searchable PDF Maker">
+          <div class="sidebar-item-icon" style="background: rgba(219,39,119,0.12); color: #db2777;">🔎</div>
+          <span class="sidebar-item-text">Searchable PDF (OCR)</span>
+        </a>
+        <a href="tools/pdf-compressor.html" class="sidebar-item" data-tooltip="Custom PDF Compressor">
+          <div class="sidebar-item-icon" style="background: rgba(217,119,6,0.12); color: #d97706;">🗜️</div>
+          <span class="sidebar-item-text">Target PDF Compressor</span>
+        </a>
+        <a href="tools/pdf-editor.html" class="sidebar-item" data-tooltip="Smart Visual PDF Editor">
+          <div class="sidebar-item-icon" style="background: rgba(13,148,136,0.12); color: #0d9488;">✏️</div>
+          <span class="sidebar-item-text">Visual PDF Editor</span>
+        </a>
+        <a href="tools/pdf-maker.html" class="sidebar-item" data-tooltip="Drag & Drop PDF Maker">
+          <div class="sidebar-item-icon" style="background: rgba(71,85,105,0.12); color: #475569;">📑</div>
+          <span class="sidebar-item-text">Drag &amp; Drop PDF Maker</span>
+        </a>
+      </div>
 
-    <section class="home-content-section">
-      
-      <!-- 1. About Pragati Telecom Overview -->
-      <article class="home-article-card">
-        <h2 class="home-section-title">🌐 About Pragati Telecom &amp; Our Digital Mission</h2>
-        <p class="home-section-desc">
-          <strong>Pragati Telecom</strong> is an independent digital tools portal based in <strong>Kalupur Middle Para, Murshidabad, West Bengal</strong>. Developed out of practical, day-to-day experience running a local digital service center, this platform simplifies repetitive document preparation tasks. Whether resizing a candidate's signature for an online examination portal or formatting double-sided identity cards for PVC tray printing, our utilities eliminate the need for cumbersome desktop software.
-        </p>
+      <!-- Knowledge & Legal Group -->
+      <div class="sidebar-nav-group" style="margin-top: auto;">
+        <div class="sidebar-group-label">Resources</div>
+        <a href="guides/index.html" class="sidebar-item" data-tooltip="Operator Guides">
+          <div class="sidebar-item-icon" style="background: rgba(37,99,235,0.12); color: #2563eb;">📚</div>
+          <span class="sidebar-item-text">Knowledge Base</span>
+        </a>
+        <a href="about.html" class="sidebar-item" data-tooltip="About Pragati Telecom">
+          <div class="sidebar-item-icon" style="background: rgba(100,116,139,0.12); color: #64748b;">ℹ️</div>
+          <span class="sidebar-item-text">About &amp; Support</span>
+        </a>
+      </div>
+    </aside>
 
-        <div class="features-grid-3col">
-          <div class="feature-box">
-            <div class="feature-box-icon">⚡</div>
-            <h3>Zero Software Installation</h3>
-            <p>Every tool runs directly inside your web browser. No plugins, heavy desktop software, or paid subscriptions required.</p>
-          </div>
-          <div class="feature-box">
-            <div class="feature-box-icon">🔒</div>
-            <h3>Local Client-Side Privacy</h3>
-            <p>Document resizing, passport cropping, and PDF compression occur locally in your device's memory without server uploads.</p>
-          </div>
-          <div class="feature-box">
-            <div class="feature-box-icon">🎯</div>
-            <h3>Built for Real Portals</h3>
-            <p>Presets match standard Indian recruitment portal requirements, 35×45mm passport dimensions, and standard PVC card trays.</p>
+    <!-- MAIN DASHBOARD CONTENT (FULL-SCREEN FLUID VIEWPORT) -->
+    <main class="dashboard-main-content">
+      <!-- HERO & COMMAND CENTER -->
+      <section class="hero-section">
+        <div class="hero-container">
+          <div class="hero-badge">⚡ Commercial-Grade Digital Desk Portal</div>
+          <h1 class="hero-title">
+            Smart Digital Utilities &amp; <span style="color: var(--brand-primary);">Productivity Suite</span>
+          </h1>
+          <p class="hero-subtitle">
+            Client-side browser utilities engineered for Cyber Cafes, CSC operators, students, and citizens. Instant <strong>Passport Photo Cropping</strong>, <strong>PVC Smart Card Layouts</strong>, <strong>Target-KB PDF Compression</strong>, and <strong>Daily Cash Reconciliation</strong>.
+          </p>
+
+          <!-- SEARCH & CATEGORY FILTER BAR -->
+          <div class="search-filter-wrapper" id="search-bar">
+            <div class="search-bar-container">
+              <span class="search-icon-inside">🔍</span>
+              <input type="text" class="main-search-input" id="toolSearchInput" placeholder="Search any tool (e.g. passport, cash, ocr, pvc, compress, merge)..." autocomplete="off" aria-label="Search tools">
+              <button class="search-clear-btn" id="searchClearBtn" aria-label="Clear Search">✕</button>
+            </div>
+
+            <div class="category-filter-list" id="categoryFilterList">
+              <button class="filter-btn active" data-category="all">🌟 All Tools (7)</button>
+              <button class="filter-btn" data-category="ai-photo">📸 Photo &amp; PVC Cards</button>
+              <button class="filter-btn" data-category="pdf-doc">📄 Smart PDF Suite</button>
+              <button class="filter-btn" data-category="calc-utility">🧮 Daily Utilities</button>
+            </div>
           </div>
         </div>
-      </article>
+      </section>
 
-      <!-- 2. Who Can Use These Tools? -->
-      <article class="home-article-card">
-        <h2 class="home-section-title">👥 Who Can Benefit From Our Platform?</h2>
-        <p class="home-section-desc">
-          Our browser utilities are engineered for anyone requiring fast, reliable document formatting without technical complexity:
-        </p>
-
-        <div class="features-grid-3col">
-          <div class="feature-box">
-            <div class="feature-box-icon">🏪</div>
-            <h3>CSC &amp; Cyber Cafe Operators</h3>
-            <p>Quickly prepare Aadhaar, PAN, and Ration card cutouts for PVC tray printing, crop passport photos on 4×6 photo sheets, and tally evening counter cash registers.</p>
-          </div>
-          <div class="feature-box">
-            <div class="feature-box-icon">🎓</div>
-            <h3>Students &amp; Job Seekers</h3>
-            <p>Compress application PDFs to precise kilobyte limits (e.g. under 100 KB or 200 KB) and format official passport photographs with exact white or colored backgrounds.</p>
-          </div>
-          <div class="feature-box">
-            <div class="feature-box-icon">🏢</div>
-            <h3>Small Businesses &amp; Retailers</h3>
-            <p>Merge invoice images into a single PDF, extract text from scanned Bengali/English receipts, and count daily physical cash denominations accurately.</p>
-          </div>
+      <!-- SPONSOR NOTICE BANNER -->
+      <div class="sponsor-ad-container no-print">
+        <div class="sponsor-ad-box">
+          <div class="ad-label">Partner &amp; Support Desk</div>
+          <a href="https://wa.me/919775096842" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+            <div class="sponsor-banner-inner">
+              <span>⚡ <strong>Pragati Telecom Digital Desk:</strong> Kalupur Middle Para, Murshidabad. Need assistance with card printing or document formatting?</span>
+              <span class="sponsor-badge-btn">Connect on WhatsApp →</span>
+            </div>
+          </a>
         </div>
-      </article>
+      </div>
 
-      <!-- 3. How the Tools Work: Processing Models -->
-      <article class="home-article-card">
-        <h2 class="home-section-title">⚙️ How Our Tools Work: Client-Side vs. AI OCR Processing</h2>
-        <p class="home-section-desc">
-          To maintain transparency, we clearly separate how your files are handled based on the tool you select:
-        </p>
+      <!-- 7 RESPONSIVE COMPACT TOOL CARDS GRID -->
+      <section class="tools-section">
+        <div class="tools-grid" id="toolsGrid">
+          <!-- Cards dynamically rendered via JavaScript -->
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- COMPREHENSIVE HOMEPAGE CONTENT & INFORMATIONAL SECTIONS             -->
+      <!-- =================================================================== -->
+
+      <section class="home-content-section">
         
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
-          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 1.5rem;">
-            <div style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: #166534; margin-bottom: 0.5rem;">Model 1: 100% In-Browser Local Tools</div>
-            <h3 style="font-size: 1.15rem; font-weight: 800; color: #14532d; margin-bottom: 0.6rem;">Local Client Processing</h3>
-            <p style="font-size: 0.9rem; color: #166534; line-height: 1.6; margin-bottom: 0.8rem;">
-              The <strong>Photo Studio</strong>, <strong>Smart Multi-Card Studio</strong>, <strong>PDF Compressor</strong>, <strong>Visual PDF Editor</strong>, and <strong>Cash Tally</strong> run entirely inside your browser using HTML5 Canvas, PDF-Lib, Tesseract.js Web Workers, and WebAssembly.
-            </p>
-            <div style="font-size: 0.85rem; font-weight: 700; color: #15803d;">✔ Files never leave your computer or phone.</div>
+        <!-- 1. About Pragati Telecom Overview -->
+        <article class="home-article-card">
+          <h2 class="home-section-title">🌐 About Pragati Telecom &amp; Our Digital Mission</h2>
+          <p class="home-section-desc">
+            <strong>Pragati Telecom</strong> is an independent digital tools portal based in <strong>Kalupur Middle Para, Murshidabad, West Bengal</strong>. Developed out of practical, day-to-day experience running a local digital service center, this platform simplifies repetitive document preparation tasks. Whether resizing a candidate's signature for an online examination portal or formatting double-sided identity cards for PVC tray printing, our utilities eliminate the need for cumbersome desktop software.
+          </p>
+
+          <div class="features-grid-3col">
+            <div class="feature-box">
+              <div class="feature-box-icon">⚡</div>
+              <h3>Zero Software Installation</h3>
+              <p>Every tool runs directly inside your web browser. No plugins, heavy desktop software, or paid subscriptions required.</p>
+            </div>
+            <div class="feature-box">
+              <div class="feature-box-icon">🔒</div>
+              <h3>Local Client-Side Privacy</h3>
+              <p>Document resizing, passport cropping, and PDF compression occur locally in device memory without server uploads.</p>
+            </div>
+            <div class="feature-box">
+              <div class="feature-box-icon">🎯</div>
+              <h3>Built for Real Portals</h3>
+              <p>Presets match standard Indian recruitment portal requirements, 35×45mm passport dimensions, and standard PVC card trays.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- 2. Who Can Use These Tools? -->
+        <article class="home-article-card">
+          <h2 class="home-section-title">👥 Who Can Benefit From Our Platform?</h2>
+          <p class="home-section-desc">
+            Our browser utilities are engineered for anyone requiring fast, reliable document formatting without technical complexity:
+          </p>
+
+          <div class="features-grid-3col">
+            <div class="feature-box">
+              <div class="feature-box-icon">🏪</div>
+              <h3>CSC &amp; Cyber Cafe Operators</h3>
+              <p>Quickly prepare Aadhaar, PAN, and Ration card cutouts for PVC tray printing, crop passport photos on 4×6 photo sheets, and tally evening counter cash registers.</p>
+            </div>
+            <div class="feature-box">
+              <div class="feature-box-icon">🎓</div>
+              <h3>Students &amp; Job Seekers</h3>
+              <p>Compress application PDFs to precise kilobyte limits (e.g. under 100 KB or 200 KB) and format official passport photographs with exact white or colored backgrounds.</p>
+            </div>
+            <div class="feature-box">
+              <div class="feature-box-icon">🏢</div>
+              <h3>Small Businesses &amp; Retailers</h3>
+              <p>Merge invoice images into a single PDF, extract text from scanned Bengali/English receipts, and count daily physical cash denominations accurately.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- 3. How the Tools Work: Processing Models -->
+        <article class="home-article-card">
+          <h2 class="home-section-title">⚙️ How Our Tools Work: Client-Side vs. AI OCR Processing</h2>
+          <p class="home-section-desc">
+            To maintain transparency, we clearly separate how your files are handled based on the tool you select:
+          </p>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-top: 1rem;">
+            <div style="background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); border-radius: 12px; padding: 1.4rem;">
+              <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #059669; margin-bottom: 0.4rem;">Model 1: 100% In-Browser Local Tools</div>
+              <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">Local Client Processing</h3>
+              <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.75rem;">
+                The <strong>Photo Studio</strong>, <strong>Smart Multi-Card Studio</strong>, <strong>PDF Compressor</strong>, <strong>Visual PDF Editor</strong>, and <strong>Cash Tally</strong> run entirely inside your browser using HTML5 Canvas, PDF-Lib, Tesseract.js Web Workers, and WebAssembly.
+              </p>
+              <div style="font-size: 0.82rem; font-weight: 700; color: #059669;">✔ Files never leave your computer or phone.</div>
+            </div>
+
+            <div style="background: rgba(37,99,235,0.08); border: 1px solid rgba(37,99,235,0.25); border-radius: 12px; padding: 1.4rem;">
+              <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #2563eb; margin-bottom: 0.4rem;">Model 2: Optional Cloud OCR</div>
+              <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">Optional Google Gemini OCR</h3>
+              <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.75rem;">
+                When creating multi-column searchable PDFs from scanned documents in <strong>Searchable PDF Maker</strong>, you can optionally provide your own Google Gemini API key to recognize text via Google's official API over HTTPS.
+              </p>
+              <div style="font-size: 0.82rem; font-weight: 700; color: #2563eb;">✔ Controlled directly by your personal API key.</div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 4. Privacy & Security Summary -->
+        <article class="home-article-card">
+          <h2 class="home-section-title">🔒 Privacy, File Handling &amp; Security</h2>
+          <p class="home-section-desc">
+            Pragati Telecom does not operate a file-storage cloud backend or retain user documents. Once you close your browser tab, all temporary memory buffers (blobs and canvas contexts) are immediately freed by your browser. For comprehensive information regarding API keys and local storage, please review our full <a href="privacy-policy.html" style="color: var(--brand-primary); font-weight: 700; text-decoration: underline;">Privacy Policy</a>.
+          </p>
+        </article>
+
+        <!-- 5. Independent Platform Disclaimer Box -->
+        <div class="legal-alert warning" style="margin-bottom: 1.75rem;">
+          <h3 style="font-size: 1rem; font-weight: 800; color: #d97706; margin-bottom: 0.4rem;">⚠️ Important Independent Notice</h3>
+          <p style="font-size: 0.88rem; line-height: 1.6;">
+            <strong>Pragati Telecom is an independent digital tools website.</strong> We are not affiliated with, authorized by, associated with, or representing any government department, ministry, or statutory authority (such as UIDAI, PM-JAY, NSDL, or Election Commission of India). Our tools assist with graphic alignment, resizing, and physical printing preparation of lawfully obtained electronic documents. For full details, please consult our <a href="disclaimer.html" style="color: var(--brand-primary); font-weight: 800; text-decoration: underline;">Disclaimer</a>.
+          </p>
+        </div>
+
+        <!-- 6. Cash Denomination Tally Guide -->
+        <article class="home-article-card">
+          <h2 class="home-section-title">💵 Cash Denomination Tally &amp; Daily Reconciliation Guide</h2>
+          <p class="home-section-desc">
+            Managing a customer-facing CSC kiosk, retail counter, or cyber cafe requires precise daily cash register balancing. The built-in <strong>Cash Denomination Tally</strong> utility allows operators to input counts for all active Indian currency notes (₹500, ₹200, ₹100, ₹50, ₹20, and ₹10) to instantly calculate total cash balances and total note counts for evening closing accounts.
+          </p>
+
+          <div class="features-grid-3col">
+            <div class="feature-box">
+              <div class="feature-box-icon">⚡</div>
+              <h3>Instant Arithmetic</h3>
+              <p>Calculates denomination totals and piece quantities simultaneously with zero page reloads or latency.</p>
+            </div>
+            <div class="feature-box">
+              <div class="feature-box-icon">🔒</div>
+              <h3>100% Client-Side Privacy</h3>
+              <p>Financial numbers and currency counts are never sent over the internet or saved to external databases.</p>
+            </div>
+            <div class="feature-box">
+              <div class="feature-box-icon">🧾</div>
+              <h3>Direct Counter Helper</h3>
+              <p>Matches standard Indian cash register denominations for quick evening reconciliation and bank deposit slips.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- 7. Knowledge Base & Operator Guides Spotlight -->
+        <article class="home-article-card">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+            <h2 class="home-section-title" style="margin-bottom: 0;">📚 Knowledge Base &amp; Operator Guides</h2>
+            <a href="guides/index.html" class="filter-btn active" style="text-decoration: none; padding: 6px 14px;">View All Guides →</a>
+          </div>
+          <p class="home-section-desc">
+            Practical, step-by-step documentation created for cyber cafes, CSC operators, and students. Learn in-browser document compression, PVC printing, and privacy hygiene:
+          </p>
+
+          <div class="features-grid-3col">
+            <a href="guides/compress-pdf-target-size.html" class="feature-box" style="text-decoration: none; color: inherit; display: block;">
+              <div class="feature-box-icon">🗜️</div>
+              <h3 style="color: var(--brand-primary);">Compress PDF to Target KB</h3>
+              <p>Master binary search resolution scaling to fit under strict 100 KB or 200 KB job portal upload limits.</p>
+            </a>
+            <a href="guides/what-is-searchable-pdf.html" class="feature-box" style="text-decoration: none; color: inherit; display: block;">
+              <div class="feature-box-icon">🔎</div>
+              <h3 style="color: var(--brand-primary);">What Is a Searchable PDF?</h3>
+              <p>Understand dual-layer OCR text embedding to enable instant Ctrl+F word searches inside voter lists and deeds.</p>
+            </a>
+            <a href="guides/arrange-print-pvc-cards.html" class="feature-box" style="text-decoration: none; color: inherit; display: block;">
+              <div class="feature-box-icon">💳</div>
+              <h3 style="color: var(--brand-primary);">Arrange &amp; Print PVC Cards</h3>
+              <p>CR80 dimensions (85.6×54mm), decrypting e-Aadhaar PDFs, side-by-side alignment, and printer tray scaling.</p>
+            </a>
+          </div>
+        </article>
+
+        <!-- 8. Frequently Asked Questions (FAQ Accordion) -->
+        <article class="home-article-card">
+          <h2 class="home-section-title">❓ Frequently Asked Questions (FAQ)</h2>
+          <p class="home-section-desc">
+            Find quick, honest answers to common questions about our platform, features, and processing methods:
+          </p>
+
+          <div class="faq-container">
+            <details class="faq-item">
+              <summary class="faq-question">Are the tools on Pragati Telecom free to use?</summary>
+              <div class="faq-answer">
+                Yes. All 7 digital tools on Pragati Telecom are freely accessible directly through your web browser without paywalls or mandatory account registrations.
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-question">Are my personal files and photos uploaded to Pragati Telecom servers?</summary>
+              <div class="faq-answer">
+                No. Pragati Telecom does not have a server database or file-storage backend. When you use tools like the AI Photo Studio, Smart Multi-Card Studio, or PDF Compressor, all computations occur locally inside your browser's memory (RAM).
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-question">Which tools use the Google Gemini API, and why is an API key needed?</summary>
+              <div class="faq-answer">
+                Only the <em>Searchable PDF Maker</em> and the optional OCR checkbox in the <em>Drag &amp; Drop PDF Maker</em> utilize the Google Gemini API. This feature allows advanced multi-column text extraction from scanned documents. Users supply their own Gemini API key, which is saved locally in their browser and never shared with Pragati Telecom.
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-question">Does every tool require an active internet connection?</summary>
+              <div class="faq-answer">
+                Once the initial web page and libraries (like PDF.js, PDF-Lib, and Cropper) load in your browser, the local tools (Photo Studio cropping, Smart Card alignment, and PDF Compression) can execute entirely offline without sending network requests. Only the AI OCR features require an internet connection to contact Google's API.
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-question">Can I use these tools on mobile devices or tablets?</summary>
+              <div class="faq-answer">
+                Yes. The portal is fully responsive and works on modern mobile browsers (Google Chrome, Safari, Edge, Firefox). However, for multi-card tray printing and precise PDF visual editing, a desktop or laptop with a connected printer offers the optimal experience.
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-question">Can cyber cafe and CSC operators use these tools for customer jobs?</summary>
+              <div class="faq-answer">
+                Yes. Operators are welcome to use our layout and cropping tools to streamline customer print jobs, passport photo sheets, and document resizing, provided the documents processed are legitimate and handled with customer consent.
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-question">Is Pragati Telecom an official government portal?</summary>
+              <div class="faq-answer">
+                No. Pragati Telecom is an independent digital tool and productivity website developed in Murshidabad. We are not an official government body and do not issue or certify government credentials.
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-question">Where can I learn more about data handling, privacy, and terms?</summary>
+              <div class="faq-answer">
+                You can read our detailed <a href="privacy-policy.html">Privacy Policy</a>, <a href="terms.html">Terms &amp; Conditions</a>, <a href="disclaimer.html">Disclaimer</a>, and <a href="about.html">About Us</a> pages for comprehensive information.
+              </div>
+            </details>
           </div>
 
-          <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 1.5rem;">
-            <div style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: #1e40af; margin-bottom: 0.5rem;">Model 2: Optional Cloud OCR</div>
-            <h3 style="font-size: 1.15rem; font-weight: 800; color: #1e3a8a; margin-bottom: 0.6rem;">Optional Google Gemini OCR</h3>
-            <p style="font-size: 0.9rem; color: #1e40af; line-height: 1.6; margin-bottom: 0.8rem;">
-              When creating multi-column searchable PDFs from scanned documents in <strong>Searchable PDF Maker</strong>, you can optionally provide your own Google Gemini API key to recognize text via Google's official API over HTTPS.
-            </p>
-            <div style="font-size: 0.85rem; font-weight: 700; color: #2563eb;">✔ Controlled directly by your personal API key.</div>
+          <!-- Quick Links Bar -->
+          <div class="quick-links-bar">
+            <a href="about.html" class="quick-link-pill">ℹ️ About Us</a>
+            <a href="contact.html" class="quick-link-pill">📞 Contact Us</a>
+            <a href="privacy-policy.html" class="quick-link-pill">🔒 Privacy Policy</a>
+            <a href="terms.html" class="quick-link-pill">📜 Terms of Use</a>
+            <a href="disclaimer.html" class="quick-link-pill">⚠️ Disclaimer</a>
           </div>
-        </div>
-      </article>
+        </article>
 
-      <!-- 4. Privacy & Security Summary -->
-      <article class="home-article-card">
-        <h2 class="home-section-title">🔒 Privacy, File Handling &amp; Security</h2>
-        <p class="home-section-desc">
-          Pragati Telecom does not operate a file-storage cloud backend or retain user documents. Once you close your browser tab, all temporary memory buffers (blobs and canvas contexts) are immediately freed by your browser. For comprehensive information regarding API keys and local storage, please review our full <a href="privacy-policy.html" style="color: var(--brand-primary); font-weight: 700; text-decoration: underline;">Privacy Policy</a>.
-        </p>
-      </article>
-
-      <!-- 5. Independent Platform Disclaimer Box -->
-      <div class="legal-alert warning" style="margin-bottom: 2rem;">
-        <h3 style="font-size: 1.05rem; font-weight: 800; color: #92400e; margin-bottom: 0.4rem;">⚠️ Important Independent Notice</h3>
-        <p style="font-size: 0.92rem; color: #78350f; line-height: 1.6;">
-          <strong>Pragati Telecom is an independent digital tools website.</strong> We are not affiliated with, authorized by, associated with, or representing any government department, ministry, or statutory authority (such as UIDAI, PM-JAY, NSDL, or Election Commission of India). Our tools assist with graphic alignment, resizing, and physical printing preparation of lawfully obtained electronic documents. For full details, please consult our <a href="disclaimer.html" style="color: #92400e; font-weight: 800; text-decoration: underline;">Disclaimer</a>.
-        </p>
-      </div>
-
-      <!-- 6. Cash Denomination Tally Guide -->
-      <article class="home-article-card">
-        <h2 class="home-section-title">💵 Cash Denomination Tally &amp; Daily Reconciliation Guide</h2>
-        <p class="home-section-desc">
-          Managing a customer-facing CSC kiosk, retail counter, or cyber cafe requires precise daily cash register balancing. The built-in <strong>Cash Denomination Tally</strong> utility allows operators to input counts for all active Indian currency notes (₹500, ₹200, ₹100, ₹50, ₹20, and ₹10) to instantly calculate total cash balances and total note counts for evening closing accounts.
-        </p>
-
-        <div class="features-grid-3col">
-          <div class="feature-box">
-            <div class="feature-box-icon">⚡</div>
-            <h3>Instant JavaScript Arithmetic</h3>
-            <p>Calculates denomination totals and piece quantities simultaneously with zero page reloads or latency.</p>
-          </div>
-          <div class="feature-box">
-            <div class="feature-box-icon">🔒</div>
-            <h3>100% Client-Side Privacy</h3>
-            <p>Financial numbers and currency counts are never sent over the internet or saved to external databases.</p>
-          </div>
-          <div class="feature-box">
-            <div class="feature-box-icon">🧾</div>
-            <h3>Direct Counter Helper</h3>
-            <p>Matches standard Indian cash register denominations for quick evening reconciliation and bank deposit slips.</p>
-          </div>
-        </div>
-      </article>
-
-      <!-- 7. Knowledge Base & Operator Guides Spotlight -->
-      <article class="home-article-card">
-        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
-          <h2 class="home-section-title" style="margin-bottom: 0;">📚 Knowledge Base &amp; Operator Guides</h2>
-          <a href="guides/index.html" class="btn-primary" style="padding: 8px 16px; font-size: 0.88rem; text-decoration: none; border-radius: var(--radius-md);">View All 8 Guides →</a>
-        </div>
-        <p class="home-section-desc">
-          Practical, step-by-step documentation created for cyber cafes, CSC operators, and students. Learn in-browser document compression, PVC printing, and privacy hygiene:
-        </p>
-
-        <div class="features-grid-3col">
-          <a href="guides/compress-pdf-target-size.html" class="feature-box" style="text-decoration: none; color: inherit; transition: transform 0.2s ease;">
-            <div class="feature-box-icon">🗜️</div>
-            <h3 style="color: var(--brand-primary);">Compress PDF to Target KB</h3>
-            <p>Master binary search resolution scaling to fit under strict 100 KB or 200 KB job portal upload limits.</p>
-          </a>
-          <a href="guides/what-is-searchable-pdf.html" class="feature-box" style="text-decoration: none; color: inherit; transition: transform 0.2s ease;">
-            <div class="feature-box-icon">🔎</div>
-            <h3 style="color: var(--brand-primary);">What Is a Searchable PDF?</h3>
-            <p>Understand dual-layer OCR text embedding to enable instant Ctrl+F word searches inside voter lists and deeds.</p>
-          </a>
-          <a href="guides/arrange-print-pvc-cards.html" class="feature-box" style="text-decoration: none; color: inherit; transition: transform 0.2s ease;">
-            <div class="feature-box-icon">💳</div>
-            <h3 style="color: var(--brand-primary);">Arrange &amp; Print PVC Cards</h3>
-            <p>CR80 dimensions (85.6×54mm), decrypting e-Aadhaar PDFs, side-by-side alignment, and printer tray scaling.</p>
-          </a>
-        </div>
-      </article>
-
-      <!-- 8. Frequently Asked Questions (FAQ Accordion) -->
-      <article class="home-article-card">
-        <h2 class="home-section-title">❓ Frequently Asked Questions (FAQ)</h2>
-        <p class="home-section-desc">
-          Find quick, honest answers to common questions about our platform, features, and processing methods:
-        </p>
-
-        <div class="faq-container">
-          <details class="faq-item">
-            <summary class="faq-question">Are the tools on Pragati Telecom free to use?</summary>
-            <div class="faq-answer">
-              Yes. All 7 digital tools on Pragati Telecom are freely accessible directly through your web browser without paywalls or mandatory account registrations.
-            </div>
-          </details>
-
-          <details class="faq-item">
-            <summary class="faq-question">Are my personal files and photos uploaded to Pragati Telecom servers?</summary>
-            <div class="faq-answer">
-              No. Pragati Telecom does not have a server database or file-storage backend. When you use tools like the AI Photo Studio, Smart Multi-Card Studio, or PDF Compressor, all computations occur locally inside your browser's memory (RAM).
-            </div>
-          </details>
-
-          <details class="faq-item">
-            <summary class="faq-question">Which tools use the Google Gemini API, and why is an API key needed?</summary>
-            <div class="faq-answer">
-              Only the <em>Searchable PDF Maker</em> and the optional OCR checkbox in the <em>Drag &amp; Drop PDF Maker</em> utilize the Google Gemini API. This feature allows advanced multi-column text extraction from scanned documents. Users supply their own Gemini API key, which is saved locally in their browser and never shared with Pragati Telecom.
-            </div>
-          </details>
-
-          <details class="faq-item">
-            <summary class="faq-question">Does every tool require an active internet connection?</summary>
-            <div class="faq-answer">
-              Once the initial web page and libraries (like PDF.js, PDF-Lib, and Cropper) load in your browser, the local tools (Photo Studio cropping, Smart Card alignment, and PDF Compression) can execute entirely offline without sending network requests. Only the AI OCR features require an internet connection to contact Google's API.
-            </div>
-          </details>
-
-          <details class="faq-item">
-            <summary class="faq-question">Can I use these tools on mobile devices or tablets?</summary>
-            <div class="faq-answer">
-              Yes. The portal is fully responsive and works on modern mobile browsers (Google Chrome, Safari, Edge, Firefox). However, for multi-card tray printing and precise PDF visual editing, a desktop or laptop with a connected printer offers the optimal experience.
-            </div>
-          </details>
-
-          <details class="faq-item">
-            <summary class="faq-question">Can cyber cafe and CSC operators use these tools for customer jobs?</summary>
-            <div class="faq-answer">
-              Yes. Operators are welcome to use our layout and cropping tools to streamline customer print jobs, passport photo sheets, and document resizing, provided the documents processed are legitimate and handled with customer consent.
-            </div>
-          </details>
-
-          <details class="faq-item">
-            <summary class="faq-question">Is Pragati Telecom an official government portal?</summary>
-            <div class="faq-answer">
-              No. Pragati Telecom is an independent digital tool and productivity website developed in Murshidabad. We are not an official government body and do not issue or certify government credentials.
-            </div>
-          </details>
-
-          <details class="faq-item">
-            <summary class="faq-question">Where can I learn more about data handling, privacy, and terms?</summary>
-            <div class="faq-answer">
-              You can read our detailed <a href="privacy-policy.html">Privacy Policy</a>, <a href="terms.html">Terms &amp; Conditions</a>, <a href="disclaimer.html">Disclaimer</a>, and <a href="about.html">About Us</a> pages for comprehensive information.
-            </div>
-          </details>
-        </div>
-
-        <!-- Quick Links Bar -->
-        <div class="quick-links-bar">
-          <a href="about.html" class="quick-link-pill">ℹ️ About Us</a>
-          <a href="contact.html" class="quick-link-pill">📞 Contact Us</a>
-          <a href="privacy-policy.html" class="quick-link-pill">🔒 Privacy Policy</a>
-          <a href="terms.html" class="quick-link-pill">📜 Terms of Use</a>
-          <a href="disclaimer.html" class="quick-link-pill">⚠️ Disclaimer</a>
-        </div>
-      </article>
-
-    </section>
-  </main>
+      </section>
+    </main>
+  </div>
 
   <!-- INSTANT UTILITY MODAL (For Cash Tally) -->
   <div class="tool-modal-backdrop" id="toolModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalToolTitle">
     <div class="tool-modal-box">
       <div class="tool-modal-header">
         <div style="display: flex; align-items: center; gap: 0.6rem;">
-          <span id="modalToolIcon" style="font-size: 1.5rem;">⚡</span>
-          <h3 id="modalToolTitle" style="font-size: 1.15rem; font-weight: 900; color: var(--text-main); margin: 0;">Tool Title</h3>
+          <span id="modalToolIcon" style="font-size: 1.4rem;">⚡</span>
+          <h3 id="modalToolTitle" style="font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin: 0;">Tool Title</h3>
         </div>
-        <button id="modalCloseBtn" aria-label="Close modal" style="background: #f1f5f9; border: none; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-weight: bold; color: var(--text-secondary);">✕</button>
+        <button id="modalCloseBtn" aria-label="Close modal" style="background: var(--bg-card-subtle); border: 1px solid var(--border-light); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: bold; color: var(--text-muted); display: flex; align-items: center; justify-content: center;">✕</button>
       </div>
       <div class="tool-modal-body" id="modalToolContent"></div>
     </div>
@@ -364,8 +442,8 @@
         id: "cash-tally",
         title: "Cash Denomination Tally",
         category: "calc-utility",
-        badge: "hot", badgeText: "Daily Cash",
-        icon: "💵", iconBg: "#ecfdf5", iconColor: "#059669", accent: "#059669",
+        badge: "hot", badgeText: "Daily Register",
+        icon: "💵", iconBg: "rgba(16, 185, 129, 0.12)", iconColor: "#059669", accent: "#059669",
         desc: "Count daily currency notes (₹500 to ₹10) with automatic total calculation for evening shop closing.",
         url: "#modal-cash", actionType: "modal", tags: ["cash", "tally", "notes", "money", "calculator"]
       },
@@ -374,7 +452,7 @@
         title: "AI Photo Studio Pro",
         category: "ai-photo",
         badge: "ai", badgeText: "AI Studio",
-        icon: "📸", iconBg: "#eff6ff", iconColor: "#2563eb", accent: "#2563eb",
+        icon: "📸", iconBg: "rgba(37, 99, 235, 0.12)", iconColor: "#2563eb", accent: "#2563eb",
         desc: "Advanced passport cropping (35×45mm), local AI background removal, and 4×6 print sheet maker.",
         url: "tools/photo-studio.html", actionType: "direct", tags: ["passport", "photo", "background", "crop", "print"]
       },
@@ -383,7 +461,7 @@
         title: "Smart Multi-Card Studio",
         category: "ai-photo",
         badge: "csc", badgeText: "PVC Print",
-        icon: "💳", iconBg: "#f5f3ff", iconColor: "#8b5cf6", accent: "#8b5cf6",
+        icon: "💳", iconBg: "rgba(139, 92, 246, 0.12)", iconColor: "#8b5cf6", accent: "#8b5cf6",
         desc: "Auto-detects Aadhaar, PAN, Ration cards. Unlocks passwords and formats perfectly for PVC tray printing.",
         url: "tools/smart-card.html", actionType: "direct", tags: ["pvc", "aadhaar", "pan", "ration", "card", "print"]
       },
@@ -392,7 +470,7 @@
         title: "Searchable PDF Maker (OCR)",
         category: "pdf-doc",
         badge: "ai", badgeText: "Gemini AI",
-        icon: "🔎", iconBg: "#fdf2f8", iconColor: "#db2777", accent: "#db2777",
+        icon: "🔎", iconBg: "rgba(219, 39, 119, 0.12)", iconColor: "#db2777", accent: "#db2777",
         desc: "Universal multi-column Bengali & English OCR scanner. Make images and voter lists searchable instantly.",
         url: "tools/searchable-pdf.html", actionType: "direct", tags: ["pdf", "ocr", "searchable", "bengali", "voter"]
       },
@@ -400,8 +478,8 @@
         id: "pdf-compressor",
         title: "Custom PDF Compressor",
         category: "pdf-doc",
-        badge: "", badgeText: "Size Reducer",
-        icon: "🗜️", iconBg: "#fffbeb", iconColor: "#d97706", accent: "#d97706",
+        badge: "size", badgeText: "Target KB",
+        icon: "🗜️", iconBg: "rgba(217, 119, 6, 0.12)", iconColor: "#d97706", accent: "#d97706",
         desc: "Intelligently shrink your PDF to an exact Target KB size using binary search compression without losing quality.",
         url: "tools/pdf-compressor.html", actionType: "direct", tags: ["pdf", "compress", "size", "reduce", "kb"]
       },
@@ -409,8 +487,8 @@
         id: "pdf-editor",
         title: "Smart Visual PDF Editor",
         category: "pdf-doc",
-        badge: "", badgeText: "Editor",
-        icon: "✏️", iconBg: "#f0fdfa", iconColor: "#0d9488", accent: "#0d9488",
+        badge: "edit", badgeText: "Editor",
+        icon: "✏️", iconBg: "rgba(13, 148, 136, 0.12)", iconColor: "#0d9488", accent: "#0d9488",
         desc: "Directly click and edit text on any PDF. Features built-in Bengali font support and whiteout editing.",
         url: "tools/pdf-editor.html", actionType: "direct", tags: ["pdf", "edit", "text", "bengali", "modify"]
       },
@@ -418,8 +496,8 @@
         id: "pdf-maker",
         title: "Drag & Drop PDF Maker",
         category: "pdf-doc",
-        badge: "", badgeText: "Merge",
-        icon: "📑", iconBg: "#f8fafc", iconColor: "#475569", accent: "#475569",
+        badge: "merge", badgeText: "Merge Doc",
+        icon: "📑", iconBg: "rgba(79, 70, 229, 0.12)", iconColor: "#4f46e5", accent: "#4f46e5",
         desc: "Upload multiple images or PDFs, drag to reorder them, and merge into a single target-sized document.",
         url: "tools/pdf-maker.html", actionType: "direct", tags: ["pdf", "merge", "combine", "drag", "images"]
       }
@@ -433,6 +511,7 @@
 
     // Renders the tool cards based on category and search query
     window.renderTools = function(searchQuery = '') {
+      if (!toolsGrid) return;
       toolsGrid.innerHTML = '';
       const q = (searchQuery || (searchInput ? searchInput.value : '')).toLowerCase().trim();
 
@@ -447,7 +526,7 @@
       });
 
       if (filtered.length === 0) {
-        toolsGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #64748b; border: 1px dashed #cbd5e1; border-radius: 12px; font-weight: 600;">No tools found matching your criteria.</div>`;
+        toolsGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted); border: 1px dashed var(--border-light); border-radius: 14px; font-weight: 600; background: var(--bg-card-subtle);">No tools found matching your criteria.</div>`;
         return;
       }
 
@@ -474,7 +553,7 @@
           </div>
           <div class="tool-card-footer">
             <span>Launch Tool</span>
-            <span style="font-size: 18px;">→</span>
+            <span>→</span>
           </div>
         `;
         toolsGrid.appendChild(card);
@@ -506,6 +585,54 @@
       });
     });
 
+    // Sidebar Category Filter & Shortcut
+    document.querySelectorAll('[data-category-filter]').forEach(item => {
+      item.addEventListener('click', function(e) {
+        e.preventDefault();
+        const cat = this.getAttribute('data-category-filter');
+        const targetBtn = document.querySelector(`.filter-btn[data-category="${cat}"]`);
+        if (targetBtn) {
+          targetBtn.click();
+          targetBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+    });
+
+    // Sidebar Cash Tally trigger
+    const sidebarCashBtn = document.getElementById('sidebarCashTallyBtn');
+    if (sidebarCashBtn) {
+      sidebarCashBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const cashTool = toolsData.find(t => t.id === 'cash-tally');
+        if (cashTool) openToolModal(cashTool);
+      });
+    }
+
+    // Sidebar Collapsing
+    const sidebar = document.getElementById('dashboardSidebar');
+    const sidebarToggleBtn = document.getElementById('sidebarCollapseBtn');
+    if (sidebarToggleBtn && sidebar) {
+      const savedCollapsed = localStorage.getItem('pragati_sidebar_collapsed') === 'true';
+      if (savedCollapsed) {
+        sidebar.classList.add('collapsed');
+        sidebarToggleBtn.textContent = '▶';
+      }
+
+      sidebarToggleBtn.addEventListener('click', () => {
+        const isCollapsed = sidebar.classList.toggle('collapsed');
+        sidebarToggleBtn.textContent = isCollapsed ? '▶' : '◀';
+        localStorage.setItem('pragati_sidebar_collapsed', isCollapsed);
+      });
+
+      // Keyboard shortcut Ctrl+B
+      window.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key.toLowerCase() === 'b') {
+          e.preventDefault();
+          sidebarToggleBtn.click();
+        }
+      });
+    }
+
     // =========================================================================
     // MODAL LOGIC (For Cash Tally)
     // =========================================================================
@@ -516,8 +643,8 @@
       document.getElementById('modalToolIcon').textContent = tool.icon;
       
       const content = `
-        <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1.2rem; font-weight: 600;">Enter number of notes for daily evening closing register:</p>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.1rem; font-weight: 600;">Enter number of notes for daily evening closing register:</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
           <div class="form-group-modal"><label>₹500 ×</label><input type="number" id="n500" value="0" min="0" oninput="calcTotal()"></div>
           <div class="form-group-modal"><label>₹200 ×</label><input type="number" id="n200" value="0" min="0" oninput="calcTotal()"></div>
           <div class="form-group-modal"><label>₹100 ×</label><input type="number" id="n100" value="0" min="0" oninput="calcTotal()"></div>
@@ -525,10 +652,10 @@
           <div class="form-group-modal"><label>₹20 ×</label><input type="number" id="n20" value="0" min="0" oninput="calcTotal()"></div>
           <div class="form-group-modal"><label>₹10 ×</label><input type="number" id="n10" value="0" min="0" oninput="calcTotal()"></div>
         </div>
-        <button style="width: 100%; background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; border: none; padding: 14px; border-radius: 10px; font-weight: 800; cursor: pointer; margin-top: 15px; font-family: inherit; font-size: 15px; box-shadow: 0 4px 15px rgba(37,99,235,0.2);" id="btnTallyCash">Calculate Grand Total</button>
-        <div class="modal-result-box" id="resultCashBox" style="display:block; margin-top: 15px;">
-          <div style="font-size: 1.4rem; font-weight: 900; color: #047857; margin-bottom: 0.35rem;" id="cashTotalDisplay">Total Cash: ₹0</div>
-          <div style="font-size: 0.95rem; color: #166534; font-weight: 600;" id="cashNotesDisplay">Total Notes: <strong>0 pieces</strong></div>
+        <button style="width: 100%; background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 800; cursor: pointer; margin-top: 12px; font-family: inherit; font-size: 14px; box-shadow: 0 4px 15px rgba(37,99,235,0.25);" id="btnTallyCash">Calculate Grand Total</button>
+        <div class="modal-result-box" id="resultCashBox" style="display:block; margin-top: 12px;">
+          <div style="font-size: 1.3rem; font-weight: 900; color: #059669; margin-bottom: 0.25rem;" id="cashTotalDisplay">Total Cash: ₹0</div>
+          <div style="font-size: 0.9rem; color: var(--text-secondary); font-weight: 600;" id="cashNotesDisplay">Total Notes: <strong>0 pieces</strong></div>
         </div>
       `;
       document.getElementById('modalToolContent').innerHTML = content;

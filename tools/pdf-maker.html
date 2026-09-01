@@ -42,69 +42,69 @@
 
 <style>
 :root {
-  --ink: #0f172a; --ink2: #475569; --muted: #64748b; 
-  --border: #e2e8f0; --bg: #f8fafc; --card: #ffffff;
-  --primary: #2563eb; --primary-light: #0ea5e9;
-  --green: #10b981; --red: #ef4444; --radius: 16px;
+  --ink: var(--text-main); --ink2: var(--text-secondary); --muted: var(--text-muted); 
+  --border: var(--border-light); --bg: var(--bg-main); --card: var(--bg-card);
+  --primary: var(--brand-primary); --primary-light: var(--brand-primary-light);
+  --green: #10b981; --red: #ef4444; --radius: 14px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body {font-family:'Plus Jakarta Sans', sans-serif; background:#f1f5f9; color:var(--ink); min-height:100vh; display:flex; flex-direction:column;}
+body {font-family:'Plus Jakarta Sans', sans-serif; background:var(--bg-main); color:var(--text-main); min-height:100vh; display:flex; flex-direction:column; width: 100%;}
 
-.studio-top-bar { background: #ffffff; border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
-.studio-breadcrumbs { font-size: 0.9rem; color: var(--muted); font-weight: 600;}
-.studio-breadcrumbs a { color: var(--primary); font-weight: 700; text-decoration: none;}
+.studio-top-bar { background: var(--bg-card-subtle); border-bottom: 1px solid var(--border-light); padding: 0.75rem clamp(1rem, 3vw, 2.5rem); display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.studio-breadcrumbs { font-size: 0.88rem; color: var(--text-muted); font-weight: 600;}
+.studio-breadcrumbs a { color: var(--brand-primary); font-weight: 700; text-decoration: none;}
 .hidden{display:none!important}
-.pdf-app-wrapper { max-width: 1300px; margin: 2rem auto 3rem; padding: 0 1.5rem; width: 100%; flex: 1; }
+.pdf-app-wrapper { width: 100%; max-width: 100%; margin: 1.5rem auto 3rem; padding: 0 clamp(1rem, 3vw, 2.5rem); flex: 1; }
 
-.title{text-align:center; margin-bottom:30px}
-.title h1{margin:0 0 8px; font-size:32px; font-weight: 900; color:var(--ink);}
-.title p{margin:0; color:var(--muted); font-size:15px; font-weight: 500;}
+.title{text-align:center; margin-bottom:25px}
+.title h1{margin:0 0 6px; font-size:clamp(1.6rem, 3vw, 2.2rem); font-weight: 900; color:var(--text-main);}
+.title p{margin:0; color:var(--text-muted); font-size:14px; font-weight: 500;}
 
-.card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 4px 20px rgba(0,0,0,0.03);}
+.card{background:var(--bg-card); border:1px solid var(--border-light); border-radius:var(--radius); box-shadow:var(--shadow-xs);}
 
-.login{position:fixed; inset:0; background:rgba(15,23,42,0.8); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; z-index:2500; padding:20px}
-.loginbox{background:#fff; padding:40px; border-radius:var(--radius); width:min(450px,100%); text-align:center; box-shadow: 0 20px 40px rgba(0,0,0,0.2);}
-.loginbox h2{font-weight: 800; color: var(--ink); margin-bottom: 10px;}
-input[type=password]{width:100%; padding:14px; border:2px solid #cbd5e1; border-radius:10px; margin:20px 0; font-size:16px; outline:none; font-family: inherit; font-weight: 600;}
-input[type=password]:focus{border-color: var(--primary);}
-button,.download{border:0; border-radius:10px; padding:14px 20px; font-weight:800; cursor:pointer; font-family: inherit; font-size: 15px; transition: 0.2s;}
-.primary{width:100%; background:linear-gradient(135deg, var(--primary-light), var(--primary)); color:#fff; box-shadow: 0 4px 15px rgba(37,99,235,0.2);}
+.login{position:fixed; inset:0; background:rgba(15,23,42,0.7); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; z-index:2500; padding:20px}
+.loginbox{background:var(--bg-surface); padding:35px 25px; border-radius:var(--radius); width:min(450px,100%); text-align:center; box-shadow: var(--shadow-xl); border: 1px solid var(--border-light);}
+.loginbox h2{font-weight: 800; color: var(--text-main); margin-bottom: 8px;}
+input[type=password]{width:100%; padding:12px; border:1.5px solid var(--border-light); border-radius:10px; margin:16px 0; font-size:15px; outline:none; font-family: inherit; font-weight: 600; background: var(--bg-input); color: var(--text-main);}
+input[type=password]:focus{border-color: var(--brand-primary); background: var(--bg-input-focus);}
+button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:800; cursor:pointer; font-family: inherit; font-size: 14px; transition: 0.2s;}
+.primary{width:100%; background:linear-gradient(135deg, var(--brand-primary-light), var(--brand-primary)); color:#fff; box-shadow: 0 4px 15px rgba(37,99,235,0.2);}
 .primary:hover{transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37,99,235,0.3);}
 
-.upload{padding:60px 20px; text-align:center; max-width:720px; margin:auto; border: 2px dashed #cbd5e1; background: #f8fafc;}
-.upload:hover{border-color: var(--primary); background: #eff6ff;}
-.upload label{display:inline-block; padding:18px 30px; background:linear-gradient(135deg, var(--primary-light), var(--primary)); color:#fff; border-radius:12px; font-size:18px; font-weight:800; cursor:pointer; box-shadow: 0 4px 15px rgba(37,99,235,0.2);}
+.upload{padding:50px 20px; text-align:center; max-width:720px; margin:auto; border: 2px dashed var(--border-light); background: var(--bg-card-subtle);}
+.upload:hover{border-color: var(--brand-primary); background: rgba(37,99,235,0.06);}
+.upload label{display:inline-block; padding:15px 28px; background:linear-gradient(135deg, var(--brand-primary-light), var(--brand-primary)); color:#fff; border-radius:12px; font-size:16px; font-weight:800; cursor:pointer; box-shadow: 0 4px 15px rgba(37,99,235,0.2);}
 .upload label:hover{transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37,99,235,0.3);}
 .upload input{display:none}
 
-.workspace{display:grid; grid-template-columns:1fr 380px; gap:25px}
-.gridcard{padding:30px}
-.gridcard h3{margin-bottom: 20px; font-weight: 800; color: var(--ink);}
-.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:20px}
-.item{position:relative; background:#fff; border:1px solid var(--border); border-radius:12px; padding:12px; cursor:grab; box-shadow: 0 2px 8px rgba(0,0,0,0.02);}
-.preview{height:180px; background:#f1f5f9; border-radius:8px; display:flex; align-items:center; justify-content:center; overflow:hidden}
+.workspace{display:grid; grid-template-columns:1fr 360px; gap:20px}
+.gridcard{padding:25px}
+.gridcard h3{margin-bottom: 16px; font-weight: 800; color: var(--text-main);}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:16px}
+.item{position:relative; background:var(--bg-card); border:1px solid var(--border-light); border-radius:12px; padding:10px; cursor:grab; box-shadow: var(--shadow-xs);}
+.preview{height:160px; background:var(--bg-card-subtle); border-radius:8px; display:flex; align-items:center; justify-content:center; overflow:hidden}
 .preview img{max-width:100%; max-height:100%; object-fit:contain}
-.num{position:absolute; top:-10px; left:-10px; background:var(--primary); color:white; border-radius:50%; width:30px; height:30px; display:grid; place-items:center; font-size:13px; font-weight:800; box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
-.remove{position:absolute; right:-10px; top:-10px; background:#fff; color:var(--red); border:1px solid #fca5a5; border-radius:50%; width:30px; height:30px; padding:0; font-weight:bold; cursor:pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
-.name{text-align:center; font-size:13px; font-weight: 600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:12px}
+.num{position:absolute; top:-8px; left:-8px; background:var(--brand-primary); color:white; border-radius:50%; width:26px; height:26px; display:grid; place-items:center; font-size:12px; font-weight:800; box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
+.remove{position:absolute; right:-8px; top:-8px; background:var(--bg-card); color:var(--red); border:1px solid rgba(239,68,68,0.3); border-radius:50%; width:26px; height:26px; padding:0; font-weight:bold; cursor:pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+.name{text-align:center; font-size:12px; font-weight: 600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:10px; color: var(--text-main);}
 
-.sidebar{padding:25px; height:max-content}
-.group{margin-bottom:25px}
-.group label{font-weight:800; display:block; margin-bottom:10px; color: var(--ink); font-size: 15px;}
-.range{width:100%; accent-color: var(--primary); height: 6px; background: #e2e8f0; border-radius: 4px; cursor: pointer;}
-.val{text-align:center; font-size:28px; font-weight:900; color:var(--primary); margin-bottom: 10px;}
-.toggle{display:flex; gap:12px; align-items:flex-start; background:#f8fafc; padding:16px; border-radius:12px; border: 1px solid var(--border);}
-.toggle b{font-size: 15px; color: var(--ink);}
+.sidebar{padding:20px; height:max-content}
+.group{margin-bottom:20px}
+.group label{font-weight:800; display:block; margin-bottom:8px; color: var(--text-main); font-size: 14px;}
+.range{width:100%; accent-color: var(--brand-primary); height: 6px; background: var(--border-light); border-radius: 4px; cursor: pointer;}
+.val{text-align:center; font-size:24px; font-weight:900; color:var(--brand-primary); margin-bottom: 8px;}
+.toggle{display:flex; gap:10px; align-items:flex-start; background:var(--bg-card-subtle); padding:14px; border-radius:12px; border: 1px solid var(--border-light);}
+.toggle b{font-size: 14px; color: var(--text-main);}
 
-.progressbox{display:none; text-align:center; padding:50px; max-width:650px; margin:auto}
-.progressbox h2{font-weight: 900;}
-.barwrap{height:14px; background:#e2e8f0; border-radius:10px; overflow:hidden; margin:25px 0}
-.bar{height:100%; width:0; background:linear-gradient(90deg, var(--primary-light), var(--primary)); transition:.2s}
-.success{display:none; text-align:center; padding:50px; max-width:650px; margin:auto}
+.progressbox{display:none; text-align:center; padding:40px 20px; max-width:650px; margin:auto}
+.progressbox h2{font-weight: 900; color: var(--text-main);}
+.barwrap{height:12px; background:var(--border-light); border-radius:10px; overflow:hidden; margin:20px 0}
+.bar{height:100%; width:0; background:linear-gradient(90deg, var(--brand-primary-light), var(--brand-primary)); transition:.2s}
+.success{display:none; text-align:center; padding:40px 20px; max-width:650px; margin:auto}
 .success h1{font-weight: 900; color: var(--green);}
-.download{display:inline-block; background:linear-gradient(135deg, #34d399, var(--green)); color:#fff; text-decoration:none; margin-top:20px; padding:16px 30px; border-radius:12px; font-size:18px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2); transition: 0.2s;}
+.download{display:inline-block; background:linear-gradient(135deg, #34d399, var(--green)); color:#fff; text-decoration:none; margin-top:18px; padding:14px 28px; border-radius:12px; font-size:16px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2); transition: 0.2s;}
 .download:hover{transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);}
-.error{background:#fef2f2; color:#b91c1c; border:1px solid #fecaca; border-radius:10px; padding:15px; margin-top:20px; text-align:left; font-size:14px; font-weight: 600;}
+.error{background:rgba(239,68,68,0.1); color:#dc2626; border:1px solid rgba(239,68,68,0.25); border-radius:10px; padding:12px; margin-top:16px; text-align:left; font-size:13px; font-weight: 600;}
 @media(max-width:900px){.workspace{grid-template-columns:1fr}}
 </style>
 </head>
@@ -114,10 +114,10 @@ button,.download{border:0; border-radius:10px; padding:14px 20px; font-weight:80
 
 <div class="studio-top-bar">
   <div class="studio-breadcrumbs">
-    <a href="../index.html">🏠 Home</a> <span style="margin:0 8px;color:#cbd5e1">/</span> <span>Drag &amp; Drop PDF Maker</span>
+    <a href="../index.html">🏠 Home</a> <span style="margin:0 6px;color:var(--text-light)">/</span> <span>Drag &amp; Drop PDF Maker</span>
   </div>
-  <div style="font-size: 0.85rem; font-weight: 700; color: #64748b; background: #f1f5f9; padding: 6px 12px; border-radius: 8px;">
-    📍 Kalupur Middle Para
+  <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); background: var(--bg-card); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-light);">
+    📍 Kalupur Middle Para, Murshidabad
   </div>
 </div>
 
@@ -197,7 +197,7 @@ button,.download{border:0; border-radius:10px; padding:14px 20px; font-weight:80
 <!-- TOOL DOCUMENTATION & INFORMATION CONTAINER (Below Interactive Workspace) -->
 <!-- ======================================================================= -->
 
-<section class="home-content-section" style="max-width: 1100px; margin-top: 3.5rem;">
+<section class="home-content-section" style="margin-top: 3rem;">
   
   <article class="home-article-card">
     <h2 class="home-section-title">📑 How Drag &amp; Drop PDF Maker Works</h2>
