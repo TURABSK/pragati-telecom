@@ -119,18 +119,6 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
   <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); background: var(--bg-card); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-light);">
     📍 Kalupur Middle Para, Murshidabad
   </div>
-</div>
-
-<div id="loginModal" class="login">
-  <div class="loginbox">
-    <h2>Pragati AI Tools 🚀</h2>
-    <p style="font-size:14px;color:var(--muted);margin-top:6px;font-weight: 500;">Please enter your Gemini API Key for OCR. Stored safely in your browser.</p>
-    <input id="apiKeyInput" type="password" placeholder="Paste Gemini API Key here...">
-    <button class="primary" onclick="saveKey()">Login &amp; Save Securely</button>
-    <div id="loginError"></div>
-  </div>
-</div>
-
 <div class="pdf-app-wrapper">
   <div id="title" class="title">
     <h1>📑 Drag &amp; Drop PDF Maker</h1>
@@ -173,7 +161,7 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
       </div>
 
       <button id="generate" class="primary" style="font-size:16px;padding:16px;">⚙️ Generate Merged PDF</button>
-      <button onclick="clearKey()" style="width:100%;margin-top:12px;background:#f1f5f9;color:var(--red);border:1px solid #fecaca; font-size: 13px;">Logout / Clear API Key</button>
+      <div style="margin-top:12px; font-size:12px; color:var(--text-muted); text-align:center; font-weight:600;">🔒 Secure Server-Side AI (No API Key Required)</div>
     </aside>
   </div>
 
@@ -241,7 +229,7 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
       <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 1.5rem;">
         <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e3a8a; margin-bottom: 0.5rem;">AI OCR Mode (OCR Checked)</h3>
         <p style="font-size: 0.9rem; color: #1e40af; line-height: 1.6;">
-          <strong>Direct Google API Transmission:</strong> Image canvas slices are transmitted via HTTPS POST to Google's Gemini API using your personal API key stored in <code>localStorage</code>.
+          <strong>Secure Server-Side Transmission:</strong> Image canvas slices are transmitted via encrypted HTTPS POST to Pragati Telecom's Cloudflare Worker endpoint (<code>/api/pdf-ai</code>). No API keys are stored or exposed in your browser.
         </p>
       </div>
     </div>
@@ -253,7 +241,7 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
       <li style="margin-bottom: 0.5rem;"><strong>Upload Pages:</strong> Click <em>"Select Images / PDF Pages"</em> to upload multiple photos (JPG, PNG, WebP) or existing PDFs.</li>
       <li style="margin-bottom: 0.5rem;"><strong>Reorder Pages:</strong> Click and drag any thumbnail card in the grid to place pages in the correct sequence. Delete unwanted pages using the ✕ button.</li>
       <li style="margin-bottom: 0.5rem;"><strong>Set Target Size:</strong> Move the Target Size slider (e.g. 500 KB or 1000 KB).</li>
-      <li style="margin-bottom: 0.5rem;"><strong>Select OCR Preference:</strong> Keep <em>"Make Searchable (AI OCR)"</em> checked if you have entered a Gemini API key, or uncheck it for instant offline local creation.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Select OCR Preference:</strong> Keep <em>"Make Searchable (AI OCR)"</em> checked to automatically embed selectable text via secure server AI, or uncheck it for instant offline local creation.</li>
       <li style="margin-bottom: 0.5rem;"><strong>Generate &amp; Download:</strong> Click <em>"Generate Merged PDF"</em> and download the finalized document.</li>
     </ol>
   </article>
@@ -269,16 +257,16 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
       </details>
 
       <details class="faq-item">
-        <summary class="faq-question">Is the Gemini API key required for creating merged PDFs?</summary>
+        <summary class="faq-question">Is an API key required for creating merged PDFs?</summary>
         <div class="faq-answer">
-          No. The Gemini API key is only required if you check the <em>"Make Searchable (AI OCR)"</em> box. For standard PDF merging and size compression, no API key is necessary.
+          No. All PDF generation and AI OCR operations are completely automated through Pragati Telecom's Cloudflare Worker backend. You never need to supply or manage API keys.
         </div>
       </details>
 
       <details class="faq-item">
-        <summary class="faq-question">Where is my Gemini API key stored?</summary>
+        <summary class="faq-question">Where are my files processed?</summary>
         <div class="faq-answer">
-          Your key is saved locally in your browser's private storage (<code>localStorage</code>) under <code>pragati_gemini_key</code>. It is never transmitted to Pragati Telecom servers.
+          Standard PDF merging occurs 100% locally in your browser memory. When AI OCR is enabled, temporary image slices are streamed directly to our secure Cloudflare Worker to extract text coordinates and immediately discarded.
         </div>
       </details>
 
@@ -310,12 +298,9 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
 </section>
 
 <script>
-// JS logic exactly preserved from source
+// Secure Server-Side Cloudflare Worker Integration
 pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-const KEY_NAME="pragati_gemini_key"; const state={files:[],pages:[],originalKB:0}; const $=id=>document.getElementById(id); const setStatus=(t,p)=>{$("status").textContent=t;if(p!==undefined)$("bar").style.width=p+"%"};
-window.addEventListener("load",()=>{ if(localStorage.getItem(KEY_NAME)) $("loginModal").classList.add("hidden"); });
-function saveKey(){ const key=$("apiKeyInput").value.trim(); if(!key){$("loginError").innerHTML='<div class="error">API Key দিন।</div>';return} localStorage.setItem(KEY_NAME,key); $("loginModal").classList.add("hidden"); }
-function clearKey(){localStorage.removeItem(KEY_NAME);location.reload()}
+const state={files:[],pages:[],originalKB:0}; const $=id=>document.getElementById(id); const setStatus=(t,p)=>{$("status").textContent=t;if(p!==undefined)$("bar").style.width=p+"%"};
 $("sizeSlider").oninput=e=>$("sizeText").textContent=e.target.value; $("fileInput").onchange=e=>addFiles([...e.target.files]); $("moreInput").onchange=e=>addFiles([...e.target.files]);
 new Sortable($("grid",{ animation:150, onEnd:()=>{ const ids=[...$("grid").children].map(x=>x.dataset.id); state.pages.sort((a,b)=>ids.indexOf(a.id)-ids.indexOf(b.id)); renumber(); } }));
 
@@ -373,15 +358,17 @@ async function fetchWithRetry(url, options, pageIndex, totalPages, maxRetries = 
 }
 
 async function geminiOCRRaw(canvas, pageIndex, totalPages){
- const apiKey=localStorage.getItem(KEY_NAME); if(!apiKey)throw new Error("Gemini API Key missing.");
  const ocrCanvas=enhanceForOCR(canvas); const base64=ocrCanvas.toDataURL("image/jpeg",0.95).split(",")[1];
- const url="https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key="+encodeURIComponent(apiKey);
- const response = await fetchWithRetry(url, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ contents:[{parts:[{text:OCR_PROMPT},{inline_data:{mime_type:"image/jpeg",data:base64}}]}], generationConfig:{ temperature:0, maxOutputTokens:8192, responseMimeType:"application/json" } }) }, pageIndex, totalPages);
- const raw=await response.text(); if(!response.ok) throw new Error(`Gemini Error: ${raw.slice(0,150)}`);
- let data; try{data=JSON.parse(raw)}catch{ return {blocks:[], truncated:false}; }
- const candidate=data?.candidates?.[0]; const truncated = candidate?.finishReason==="MAX_TOKENS"; const text=candidate?.content?.parts?.map(p=>p.text||"").join("")||"";
- let jsonSlice=text.trim(); const first=jsonSlice.indexOf("["), last=jsonSlice.lastIndexOf("]"); if(first!==-1 && last!==-1 && last>first) jsonSlice=jsonSlice.slice(first,last+1);
- try{ const parsed=JSON.parse(jsonSlice); if(!Array.isArray(parsed)) return {blocks:[], truncated}; const blocks=parsed.filter(b=>b && typeof b.text==="string" && Array.isArray(b.box) && b.box.length===4).map(b=>({...b, text:b.text.normalize("NFC")})); return {blocks, truncated}; }catch(e){ return {blocks:[], truncated}; }
+ const response = await fetchWithRetry("/api/pdf-ai", {
+   method: "POST",
+   headers: { "Content-Type": "application/json" },
+   body: JSON.stringify({ image: base64, mimeType: "image/jpeg" })
+ }, pageIndex, totalPages);
+ const resData = await response.json().catch(() => ({}));
+ if (!response.ok || !resData.success) {
+   throw new Error(resData.error || "AI OCR processing failed. Please try again.");
+ }
+ return { blocks: resData.blocks || [], truncated: !!resData.truncated };
 }
 
 function dedupeBlocks(blocks){ const seen=[]; const out=[]; for(const b of blocks){ const key=b.text.trim(); const dup=seen.find(s=>s.text===key && Math.abs(s.y-b.box[0])<25); if(dup) continue; seen.push({text:key, y:b.box[0]}); out.push(b); } return out; }
@@ -447,7 +434,7 @@ async function makePDFWithTarget(pages, targetKB, ocr) {
 }
 
 $("generate").onclick=async()=>{
- if(!state.files.length)return; const ocr=$("ocr").checked; if(ocr&&!localStorage.getItem(KEY_NAME)){alert("Gemini API Key দিন।");return}
+ if(!state.files.length)return; const ocr=$("ocr").checked;
  $("workspace").classList.add("hidden"); $("progress").style.display="block"; $("error").classList.add("hidden");
  try{
    const pages=await loadPages(); if(!pages.length)throw new Error("কোনো page পাওয়া যায়নি।");

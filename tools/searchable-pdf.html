@@ -30,7 +30,7 @@
   "description": "Multi-column Bengali and English OCR scanner for converting scanned document images into searchable PDFs with selectable text layers.",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "All modern web browsers",
-  "browserRequirements": "HTML5 Canvas, JavaScript, and user-provided Google Gemini API key"
+  "browserRequirements": "HTML5 Canvas, JavaScript, and Secure Cloudflare Server AI"
 }
 </script>
 
@@ -131,18 +131,6 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
   <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); background: var(--bg-card); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-light);">
     📍 Kalupur Middle Para, Murshidabad
   </div>
-</div>
-
-<div id="loginModal" class="login">
-  <div class="loginbox">
-    <h2>Pragati AI Tools 🚀</h2>
-    <p style="font-size:14px;color:var(--muted);margin-top:6px;font-weight: 500;">Please enter your Gemini API Key to use OCR features. Stored safely in your browser.</p>
-    <input id="apiKeyInput" type="password" placeholder="Paste Gemini API Key here...">
-    <button class="primary" onclick="saveKey()">Login &amp; Save Securely</button>
-    <div id="loginError"></div>
-  </div>
-</div>
-
 <div class="pdf-app-wrapper">
   <div id="title" class="title">
     <h1>📄 Smart Searchable PDF Maker</h1>
@@ -185,7 +173,7 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
       </div>
 
       <button id="generate" class="primary" style="font-size:16px;padding:16px;">⚙️ Generate Searchable PDF</button>
-      <button onclick="clearKey()" style="width:100%;margin-top:12px;background:#f1f5f9;color:var(--red);border:1px solid #fecaca; font-size: 13px;">Logout / Clear API Key</button>
+      <div style="margin-top:12px; font-size:12px; color:var(--text-muted); text-align:center; font-weight:600;">🔒 Secure Server-Side AI (No API Key Required)</div>
     </aside>
   </div>
 
@@ -240,14 +228,14 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
   </article>
 
   <article class="home-article-card">
-    <h2 class="home-section-title">🤖 AI OCR Setup &amp; Google Gemini API Key Requirement</h2>
+    <h2 class="home-section-title">🤖 Secure Server-Side AI OCR Processing</h2>
     <p class="home-section-desc">
-      To perform vision-based optical character recognition without expensive server subscriptions, Searchable PDF Maker connects directly to Google's official Gemini API:
+      Searchable PDF Maker runs on a secure Cloudflare Worker architecture with enterprise-grade protection:
     </p>
     <ol style="margin-left: 1.5rem; color: var(--text-secondary); line-height: 1.8; font-size: 0.95rem;">
-      <li style="margin-bottom: 0.5rem;"><strong>Obtain a Gemini API Key:</strong> Get a free personal API key from <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" style="color: var(--primary); font-weight: 700; text-decoration: underline;">Google AI Studio</a>.</li>
-      <li style="margin-bottom: 0.5rem;"><strong>Paste &amp; Save:</strong> Enter your key in the secure login modal. It is saved locally in your browser's private <code>localStorage</code>.</li>
-      <li style="margin-bottom: 0.5rem;"><strong>Direct HTTPS Communication:</strong> During processing, your browser transmits image slices directly to Google's official API endpoint (<code>generativelanguage.googleapis.com</code>) over encrypted HTTPS.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>No Personal API Keys Required:</strong> You never need to obtain, paste, or manage API keys. Credentials are kept strictly secure within Cloudflare encrypted environment secrets.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>No Browser Credential Storage:</strong> Your browser never stores or handles any API tokens in <code>localStorage</code> or <code>sessionStorage</code>.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Encrypted Server-to-Server Processing:</strong> Requests communicate directly with our Cloudflare Worker endpoint (<code>/api/searchable-pdf-ai</code>), which securely interfaces with AI vision models.</li>
     </ol>
   </article>
 
@@ -259,15 +247,15 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
     <ul>
       <li><strong>Scan Resolution:</strong> Clear 200–300 DPI scans yield the highest recognition accuracy. Blurred photos, distorted angles, or extreme shadows may lead to misread characters.</li>
       <li><strong>Verification Recommended:</strong> Critical legal documents, voter serial numbers, and financial records should always be verified against the visual scan.</li>
-      <li><strong>API Rate Limits:</strong> When processing multi-page documents, the engine includes automatic cooldown pauses to respect API rate limits.</li>
+      <li><strong>Automatic Cooldown:</strong> When processing multi-page documents, the engine includes automatic cooldown pauses to respect API processing rate limits.</li>
     </ul>
   </article>
 
   <article class="home-article-card">
     <h2 class="home-section-title">🔒 Privacy &amp; Data Transmission Notice</h2>
-    <div class="legal-alert warning">
+    <div class="legal-alert success">
       <p>
-        <strong>Third-Party API Data Flow Notice:</strong> When using the AI OCR feature, image slices of your selected documents are transmitted over HTTPS directly to Google's Generative Language API using your personal API key. <strong>Pragati Telecom does not intercept, store, or log your files or API keys.</strong>
+        <strong>Zero-Storage Architecture:</strong> Image slices are processed on-the-fly strictly in memory during OCR extraction. <strong>Pragati Telecom does not retain, store, or log your document contents.</strong> All buffers are automatically discarded once your PDF is compiled.
       </p>
     </div>
   </article>
@@ -290,16 +278,16 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
       </details>
 
       <details class="faq-item">
-        <summary class="faq-question">Is Google Gemini API key free to obtain?</summary>
+        <summary class="faq-question">Do I need to paste my own API key?</summary>
         <div class="faq-answer">
-          Google provides free API quotas for individual developers and personal projects through Google AI Studio.
+          No. All AI OCR operations run securely through Pragati Telecom's serverless Cloudflare Worker API. You do not need to register, configure, or paste any API keys.
         </div>
       </details>
 
       <details class="faq-item">
-        <summary class="faq-question">How can I remove my saved API key?</summary>
+        <summary class="faq-question">Where are my uploaded files stored?</summary>
         <div class="faq-answer">
-          Click the <em>"Logout / Clear API Key"</em> button in the right-hand sidebar. This instantly clears the key from your browser's local storage.
+          Nowhere. Your documents are compiled directly in your browser's local memory into a final downloadable PDF. No files are saved to any permanent disk.
         </div>
       </details>
     </div>
@@ -318,16 +306,11 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
 </section>
 
 <script>
-// Logic remains identical to your original searchable PDF tool.
+// Secure Server-Side Cloudflare Worker Integration
 pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-const KEY_NAME="pragati_gemini_key";
 const state={files:[],pages:[],originalKB:0};
 const $=id=>document.getElementById(id);
 const setStatus=(t,p)=>{$("status").textContent=t;if(p!==undefined)$("bar").style.width=p+"%"};
-
-window.addEventListener("load",()=>{ if(localStorage.getItem(KEY_NAME)) $("loginModal").classList.add("hidden"); });
-function saveKey(){ const key=$("apiKeyInput").value.trim(); if(!key){$("loginError").innerHTML='<div class="error">API Key দিন।</div>';return} localStorage.setItem(KEY_NAME,key); $("loginModal").classList.add("hidden"); }
-function clearKey(){localStorage.removeItem(KEY_NAME);location.reload()}
 
 $("sizeSlider").oninput=e=>$("sizeText").textContent=e.target.value;
 $("fileInput").onchange=e=>addFiles([...e.target.files]);
@@ -398,15 +381,17 @@ async function fetchWithRetry(url, options, pageIndex, totalPages, maxRetries = 
 }
 
 async function geminiOCRRaw(canvas, pageIndex, totalPages){
- const apiKey=localStorage.getItem(KEY_NAME); if(!apiKey)throw new Error("Gemini API Key missing.");
  const ocrCanvas=enhanceForOCR(canvas); const base64=ocrCanvas.toDataURL("image/jpeg",0.95).split(",")[1];
- const url="https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key="+encodeURIComponent(apiKey);
- const response = await fetchWithRetry(url, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ contents:[{parts:[{text:OCR_PROMPT},{inline_data:{mime_type:"image/jpeg",data:base64}}]}], generationConfig:{ temperature:0, maxOutputTokens:8192, responseMimeType:"application/json" } }) }, pageIndex, totalPages);
- const raw=await response.text(); if(!response.ok) throw new Error(`Gemini Error: ${raw.slice(0,150)}`);
- let data; try{data=JSON.parse(raw)}catch{ return {blocks:[], truncated:false}; }
- const candidate=data?.candidates?.[0]; const truncated = candidate?.finishReason==="MAX_TOKENS"; const text=candidate?.content?.parts?.map(p=>p.text||"").join("")||"";
- let jsonSlice=text.trim(); const first=jsonSlice.indexOf("["), last=jsonSlice.lastIndexOf("]"); if(first!==-1 && last!==-1 && last>first) jsonSlice=jsonSlice.slice(first,last+1);
- try{ const parsed=JSON.parse(jsonSlice); if(!Array.isArray(parsed)) return {blocks:[], truncated}; const blocks=parsed.filter(b=>b && typeof b.text==="string" && Array.isArray(b.box) && b.box.length===4).map(b=>({...b, text:b.text.normalize("NFC")})); return {blocks, truncated}; }catch(e){ return {blocks:[], truncated}; }
+ const response = await fetchWithRetry("/api/searchable-pdf-ai", {
+   method: "POST",
+   headers: { "Content-Type": "application/json" },
+   body: JSON.stringify({ image: base64, mimeType: "image/jpeg" })
+ }, pageIndex, totalPages);
+ const resData = await response.json().catch(() => ({}));
+ if (!response.ok || !resData.success) {
+   throw new Error(resData.error || "AI OCR processing failed. Please try again.");
+ }
+ return { blocks: resData.blocks || [], truncated: !!resData.truncated };
 }
 
 function dedupeBlocks(blocks){ const seen=[]; const out=[]; for(const b of blocks){ const key=b.text.trim(); const dup=seen.find(s=>s.text===key && Math.abs(s.y-b.box[0])<25); if(dup) continue; seen.push({text:key, y:b.box[0]}); out.push(b); } return out; }
@@ -474,7 +459,7 @@ async function makePDFWithTarget(pages, targetKB, ocr) {
 
 $("generate").onclick=async()=>{
  if(!state.files.length)return;
- const ocr=$("ocr").checked; if(ocr&&!localStorage.getItem(KEY_NAME)){alert("Gemini API Key দিন।");return}
+ const ocr=$("ocr").checked;
  $("workspace").classList.add("hidden"); $("progress").style.display="block"; $("error").classList.add("hidden");
  try{
    const pages=await loadPages(); if(!pages.length)throw new Error("কোনো page পাওয়া যায়নি।");

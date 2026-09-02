@@ -260,12 +260,12 @@
             </div>
 
             <div style="background: rgba(37,99,235,0.08); border: 1px solid rgba(37,99,235,0.25); border-radius: 12px; padding: 1.4rem;">
-              <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #2563eb; margin-bottom: 0.4rem;">Model 2: Optional Cloud OCR</div>
-              <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">Optional Google Gemini OCR</h3>
+              <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #2563eb; margin-bottom: 0.4rem;">Model 2: Secure Serverless AI OCR</div>
+              <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">Cloudflare Worker AI Processing</h3>
               <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.75rem;">
-                When creating multi-column searchable PDFs from scanned documents in <strong>Searchable PDF Maker</strong>, you can optionally provide your own Google Gemini API key to recognize text via Google's official API over HTTPS.
+                When creating multi-column searchable PDFs from scanned documents in <strong>Searchable PDF Maker</strong>, recognition is executed through secure serverless Cloudflare Worker endpoints. No personal API keys are required from users.
               </p>
-              <div style="font-size: 0.82rem; font-weight: 700; color: #2563eb;">✔ Controlled directly by your personal API key.</div>
+              <div style="font-size: 0.82rem; font-weight: 700; color: #2563eb;">✔ 100% key-free and private for users.</div>
             </div>
           </div>
         </article>
@@ -364,9 +364,9 @@
             </details>
 
             <details class="faq-item">
-              <summary class="faq-question">Which tools use the Google Gemini API, and why is an API key needed?</summary>
+              <summary class="faq-question">Do I need an API key to use AI OCR features?</summary>
               <div class="faq-answer">
-                Only the <em>Searchable PDF Maker</em> and the optional OCR checkbox in the <em>Drag &amp; Drop PDF Maker</em> utilize the Google Gemini API. This feature allows advanced multi-column text extraction from scanned documents. Users supply their own Gemini API key, which is saved locally in their browser and never shared with Pragati Telecom.
+                No. All AI OCR operations (such as multi-column Bengali and English text extraction in <em>Searchable PDF Maker</em> and <em>Drag &amp; Drop PDF Maker</em>) are handled securely through Pragati Telecom's serverless Cloudflare Worker API. You never need to supply, manage, or paste personal API keys.
               </div>
             </details>
 

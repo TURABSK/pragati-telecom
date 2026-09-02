@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -168,9 +168,9 @@
         When decrypting e-Aadhaar or PM-JAY cards for PVC printing in <a href="../tools/smart-card.html">Smart Multi-Card Studio</a>, explain to the customer that the password formula (e.g. <code>NAME1992</code>) is processed only inside the local browser window and never saved to any database.
       </p>
 
-      <h3>7. Distinguishing Local Tools from Cloud AI Processing</h3>
+      <h3>7. Distinguishing Local Tools from Server-Side AI Processing</h3>
       <p>
-        When using advanced optical character recognition (such as <a href="../tools/searchable-pdf.html">Searchable PDF Maker</a>), understand that image data is transmitted via HTTPS to Google's official Gemini API endpoint using your personal key. Inform the customer when AI OCR is being used on their document.
+        When using advanced optical character recognition (such as <a href="../tools/searchable-pdf.html">Searchable PDF Maker</a>), image slices are streamed securely to our Cloudflare Worker endpoint to extract text coordinates and are immediately discarded. No personal API keys or credentials are required or stored on customer machines.
       </p>
 
       <h2>How Pragati Telecom Protects User Privacy by Design</h2>
@@ -211,8 +211,8 @@
             </tr>
             <tr>
               <td><strong>Searchable PDF Maker (AI OCR)</strong></td>
-              <td>Direct Google Gemini API over HTTPS</td>
-              <td>Pragati Telecom does not log or store files</td>
+              <td>Secure Serverless Cloudflare Worker API</td>
+              <td>Zero permanent storage (ephemeral in-memory)</td>
             </tr>
           </tbody>
         </table>

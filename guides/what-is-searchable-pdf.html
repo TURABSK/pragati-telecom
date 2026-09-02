@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -188,10 +188,10 @@
         <li><strong>Always Verify Critical Legal Data:</strong> Always check recognized bank account numbers, epic card numbers, and legal names against the visual scan image before submitting official applications.</li>
       </ul>
 
-      <h2>🔒 Privacy &amp; Data Transmission Notice</h2>
-      <div class="legal-alert warning">
+      <h2>🔒 Privacy &amp; Data Security Notice</h2>
+      <div class="legal-alert success">
         <p>
-          <strong>API Data Flow Notice:</strong> Unlike 100% offline tools, creating searchable PDFs with Google Gemini AI transmits image slices over HTTPS directly to Google's Generative Language API using your personal API key. <strong>Pragati Telecom does not store, intercept, or log your uploaded documents.</strong>
+          <strong>Zero-Storage Architecture:</strong> Image slices are processed strictly in-memory during OCR extraction via Pragati Telecom's Cloudflare Worker API. <strong>Pragati Telecom does not store, intercept, or log your uploaded documents.</strong> All buffers are automatically freed upon PDF generation.
         </p>
       </div>
 
@@ -210,9 +210,9 @@
           </div>
         </details>
         <details class="faq-item">
-          <summary class="faq-question">Where can I get a free Google Gemini API key?</summary>
+          <summary class="faq-question">Do I need to enter an API key to use this tool?</summary>
           <div class="faq-answer">
-            You can create a free developer API key in under two minutes at <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer">Google AI Studio</a>.
+            No. All OCR tasks run automatically through Pragati Telecom's Cloudflare Worker backend. You do not need to register, configure, or paste any API keys.
           </div>
         </details>
       </div>
