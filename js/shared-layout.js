@@ -6,8 +6,10 @@
 (function () {
   // 1. Detect relative base path based on current script or page location
   const currentPath = window.location.pathname;
-  const isInsideSubdir = currentPath.includes('/tools/') || currentPath.includes('/guides/') || currentPath.endsWith('/tools') || currentPath.endsWith('/guides') || window.location.href.includes('/tools/') || window.location.href.includes('/guides/');
-  const basePath = isInsideSubdir ? '../' : './';
+  const href = window.location.href;
+  const isInsideTwoLevelSubdir = currentPath.includes('/tools/smart-form-filler/') || href.includes('/tools/smart-form-filler/');
+  const isInsideSubdir = !isInsideTwoLevelSubdir && (currentPath.includes('/tools/') || currentPath.includes('/guides/') || currentPath.endsWith('/tools') || currentPath.endsWith('/guides') || href.includes('/tools/') || href.includes('/guides/'));
+  const basePath = isInsideTwoLevelSubdir ? '../../' : (isInsideSubdir ? '../' : './');
 
   // 2. Initialize Theme System immediately to avoid flash of wrong theme
   function initTheme() {
@@ -69,10 +71,10 @@
 
   // 5. Header HTML Template
   function getHeaderHTML() {
-    const isHome = !isInsideSubdir && (currentPath.endsWith('index.html') || currentPath.endsWith('/') || currentPath === '');
+    const isHome = !isInsideSubdir && !isInsideTwoLevelSubdir && (currentPath.endsWith('index.html') || currentPath.endsWith('/') || currentPath === '');
     const isPhotoStudio = currentPath.includes('photo-studio.html');
     const isSmartCard = currentPath.includes('smart-card.html');
-    const isPdfSuite = currentPath.includes('pdf-') || currentPath.includes('searchable-pdf');
+    const isPdfSuite = currentPath.includes('pdf-') || currentPath.includes('searchable-pdf') || currentPath.includes('smart-form-filler');
     const isGuides = currentPath.includes('/guides/');
     const isAbout = currentPath.includes('about.html');
     const isContact = currentPath.includes('contact.html');
@@ -168,6 +170,7 @@
         <li><a href="${basePath}tools/photo-studio.html" class="nav-link ${isPhotoStudio ? 'active' : ''}"><span>📸</span> AI Photo Studio Pro</a></li>
         <li><a href="${basePath}tools/smart-card.html" class="nav-link ${isSmartCard ? 'active' : ''}"><span>💳</span> Smart Multi-Card Studio</a></li>
         <li><a href="${basePath}tools/searchable-pdf.html" class="nav-link"><span>🔎</span> Searchable PDF (OCR)</a></li>
+        <li><a href="${basePath}tools/smart-form-filler/index.html" class="nav-link"><span>📋</span> Smart Form Filler</a></li>
         <li><a href="${basePath}tools/pdf-compressor.html" class="nav-link"><span>🗜️</span> Custom PDF Compressor</a></li>
         <li><a href="${basePath}tools/pdf-editor.html" class="nav-link"><span>✏️</span> Smart Visual PDF Editor</a></li>
         <li><a href="${basePath}tools/pdf-maker.html" class="nav-link"><span>📑</span> Drag &amp; Drop PDF Maker</a></li>

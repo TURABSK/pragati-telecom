@@ -690,7 +690,7 @@ async function requestCloudAIEnhance() {
 
   try {
     const base64 = croppedCanvasData.toDataURL("image/jpeg", 0.95).split(",")[1];
-    const res = await fetch("https://photo-hd-proxy.pragati-turab.workers.dev", {
+    const res = await fetch("/api/photo-enhance", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ image: base64, action: "hd" })

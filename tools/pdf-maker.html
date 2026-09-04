@@ -119,6 +119,8 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
   <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); background: var(--bg-card); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-light);">
     📍 Kalupur Middle Para, Murshidabad
   </div>
+</div>
+
 <div class="pdf-app-wrapper">
   <div id="title" class="title">
     <h1>📑 Drag &amp; Drop PDF Maker</h1>
@@ -170,6 +172,7 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
     <p id="status" style="font-weight: 600; color: var(--muted); font-size: 15px;">Starting Engine...</p>
     <div class="barwrap"><div id="bar" class="bar"></div></div>
     <div id="error" class="error hidden"></div>
+    <button id="btnRetryPdfMaker" onclick="resetProgress()" class="btn" style="display:none; margin-top:14px; background:var(--bg-card); border:1px solid var(--border-light); color:var(--text-main); font-weight:700; cursor:pointer;">↩️ Back to Workspace &amp; Retry</button>
   </div>
 
   <div id="success" class="success card">
@@ -351,22 +354,52 @@ const OCR_PROMPT = `You are an expert OCR engine. Extract EVERY visible line of 
 
 async function fetchWithRetry(url, options, pageIndex, totalPages, maxRetries = 3) {
     for (let i = 0; i < maxRetries; i++) {
-        const response = await fetch(url, options);
-        if (response.status === 429) { setStatus(`Rate Limit Hit! Waiting 15s... (Attempt ${i+1}/${maxRetries})`, 30+(pageIndex/totalPages)*40); await new Promise(r => setTimeout(r, 15000)); continue; }
+        let response;
+        try {
+            response = await fetch(url, options);
+        } catch (netErr) {
+            if (i === maxRetries - 1) throw new Error("Network connection error. Please check your internet.");
+            await new Promise(r => setTimeout(r, 2000));
+            continue;
+        }
+        if (response.status === 429) {
+            setStatus(`AI Quota reached. Waiting 15s... (Attempt ${i+1}/${maxRetries})`, 30+(pageIndex/totalPages)*40);
+            await new Promise(r => setTimeout(r, 15000));
+            continue;
+        }
         return response;
-    } throw new Error("API limit exceeded.");
+    }
+    throw new Error("AI service quota is temporarily unavailable. Please wait and try again.");
 }
 
 async function geminiOCRRaw(canvas, pageIndex, totalPages){
- const ocrCanvas=enhanceForOCR(canvas); const base64=ocrCanvas.toDataURL("image/jpeg",0.95).split(",")[1];
+ const ocrCanvas = enhanceForOCR(canvas);
+ const base64 = ocrCanvas.toDataURL("image/jpeg", 0.95).split(",")[1];
  const response = await fetchWithRetry("/api/pdf-ai", {
    method: "POST",
    headers: { "Content-Type": "application/json" },
    body: JSON.stringify({ image: base64, mimeType: "image/jpeg" })
  }, pageIndex, totalPages);
- const resData = await response.json().catch(() => ({}));
- if (!response.ok || !resData.success) {
-   throw new Error(resData.error || "AI OCR processing failed. Please try again.");
+
+ const contentType = response.headers.get("content-type") || "";
+ let resData = null;
+ if (contentType.includes("application/json")) {
+   try { resData = await response.json(); } catch(e) { resData = null; }
+ }
+
+ if (!response.ok || !resData || !resData.success) {
+   if (response.status === 429) {
+     throw new Error("AI service quota is temporarily unavailable. Please wait and try again.");
+   } else if (response.status === 503) {
+     throw new Error(resData?.error || "AI service is not configured on this server. Please add GEMINI_API_KEY in Cloudflare settings.");
+   } else if (response.status === 413) {
+     throw new Error("Document image is too large (max 10 MB).");
+   } else if (response.status === 400) {
+     throw new Error(resData?.error || "Invalid document request format.");
+   } else if (response.status === 502 || response.status === 504) {
+     throw new Error("AI service provider is temporarily unreachable. Please try again.");
+   }
+   throw new Error(resData?.error || `AI OCR processing failed (Status ${response.status}). Please try again.`);
  }
  return { blocks: resData.blocks || [], truncated: !!resData.truncated };
 }
@@ -395,9 +428,14 @@ async function createPDF(pages, quality, ocr) {
           let fontBuffer=null;
           for(const fontURL of fontURLs){ try{ const fontRes = await fetch(fontURL); if (fontRes.ok) { fontBuffer = await fontRes.arrayBuffer(); break; } }catch(e){} }
           if(fontBuffer) {
-              let binary = ''; const bytes = new Uint8Array(fontBuffer);
-              for (let i = 0; i < bytes.byteLength; i++) { binary += String.fromCharCode(bytes[i]); }
-              doc.addFileToVFS("Bengali.ttf", btoa(binary)); doc.addFont("Bengali.ttf", "Bengali", "normal");
+              let binary = '';
+              const bytes = new Uint8Array(fontBuffer);
+              const chunkSize = 8192;
+              for (let i = 0; i < bytes.length; i += chunkSize) {
+                binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+              }
+              doc.addFileToVFS("Bengali.ttf", btoa(binary));
+              doc.addFont("Bengali.ttf", "Bengali", "normal");
           }
       } catch(err) {}
   }
@@ -433,9 +471,19 @@ async function makePDFWithTarget(pages, targetKB, ocr) {
   } return best;
 }
 
+function resetProgress() {
+  $("progress").style.display = "none";
+  $("workspace").classList.remove("hidden");
+  $("error").classList.add("hidden");
+  const retryBtn = $("btnRetryPdfMaker");
+  if (retryBtn) retryBtn.style.display = "none";
+}
+
 $("generate").onclick=async()=>{
  if(!state.files.length)return; const ocr=$("ocr").checked;
  $("workspace").classList.add("hidden"); $("progress").style.display="block"; $("error").classList.add("hidden");
+ const retryBtn = $("btnRetryPdfMaker");
+ if (retryBtn) retryBtn.style.display = "none";
  try{
    const pages=await loadPages(); if(!pages.length)throw new Error("কোনো page পাওয়া যায়নি।");
    if(ocr){
@@ -453,6 +501,7 @@ $("generate").onclick=async()=>{
  }catch(err){
    console.error(err); $("error").textContent="❌ "+(err?.message||String(err)); $("error").classList.remove("hidden");
    $("status").textContent="Processing failed"; $("bar").style.width="100%";
+   if (retryBtn) retryBtn.style.display = "inline-block";
  }
 };
 </script>

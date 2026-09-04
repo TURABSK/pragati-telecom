@@ -131,6 +131,7 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
   <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); background: var(--bg-card); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-light);">
     📍 Kalupur Middle Para, Murshidabad
   </div>
+</div>
 <div class="pdf-app-wrapper">
   <div id="title" class="title">
     <h1>📄 Smart Searchable PDF Maker</h1>
@@ -182,6 +183,7 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
     <p id="status" style="font-weight: 600; color: var(--muted); font-size: 15px;">Starting AI Engine...</p>
     <div class="barwrap"><div id="bar" class="bar"></div></div>
     <div id="error" class="error hidden"></div>
+    <button id="btnRetrySearchable" onclick="resetProgress()" style="display:none;margin-top:14px;background:#f1f5f9;color:var(--text-main);border:1px solid var(--border-light);padding:10px 18px;border-radius:10px;font-weight:700;cursor:pointer;">↩️ Back to Workspace</button>
   </div>
 
   <div id="success" class="success card">
@@ -373,25 +375,56 @@ function canvasSlice(canvas, fromRatio, toRatio){ const w=canvas.width, h=canvas
 const OCR_PROMPT = `You are an expert multi-column OCR engine for Bengali and English documents. Extract EVERY visible line of text exactly. Return ONLY a valid JSON array of objects, no markdown. Example: [{"text": "নাম: সাজেমান", "box": [120, 350, 140, 600]}]`;
 
 async function fetchWithRetry(url, options, pageIndex, totalPages, maxRetries = 3) {
-    for (let i = 0; i < maxRetries; i++) {
-        const response = await fetch(url, options);
-        if (response.status === 429) { setStatus(`Rate Limit Hit! Waiting 15s... (Attempt ${i+1}/${maxRetries})`, 30+(pageIndex/totalPages)*40); await new Promise(r => setTimeout(r, 15000)); continue; }
-        return response;
-    } throw new Error("Google API limit exceeded.");
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await fetch(url, options);
+      if (response.status === 429) {
+        setStatus(`Rate Limit Hit! Waiting 15s... (Attempt ${i+1}/${maxRetries})`, 30+(pageIndex/totalPages)*40);
+        await new Promise(r => setTimeout(r, 15000));
+        continue;
+      }
+      return response;
+    } catch (netErr) {
+      if (i === maxRetries - 1) throw netErr;
+      await new Promise(r => setTimeout(r, 2000 * (i + 1)));
+    }
+  }
+  throw new Error("API request failed after retries. Please check your network or try again.");
 }
 
 async function geminiOCRRaw(canvas, pageIndex, totalPages){
- const ocrCanvas=enhanceForOCR(canvas); const base64=ocrCanvas.toDataURL("image/jpeg",0.95).split(",")[1];
- const response = await fetchWithRetry("/api/searchable-pdf-ai", {
-   method: "POST",
-   headers: { "Content-Type": "application/json" },
-   body: JSON.stringify({ image: base64, mimeType: "image/jpeg" })
- }, pageIndex, totalPages);
- const resData = await response.json().catch(() => ({}));
- if (!response.ok || !resData.success) {
-   throw new Error(resData.error || "AI OCR processing failed. Please try again.");
- }
- return { blocks: resData.blocks || [], truncated: !!resData.truncated };
+  const ocrCanvas = enhanceForOCR(canvas);
+  const base64 = ocrCanvas.toDataURL("image/jpeg", 0.95).split(",")[1];
+  let response;
+  try {
+    response = await fetchWithRetry("/api/searchable-pdf-ai", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ image: base64, mimeType: "image/jpeg" })
+    }, pageIndex, totalPages);
+  } catch (err) {
+    throw new Error("Network connection failed while calling AI OCR: " + err.message);
+  }
+
+  let resData;
+  const contentType = response.headers.get("content-type") || "";
+  if (contentType.includes("application/json")) {
+    resData = await response.json().catch(() => ({}));
+  } else {
+    const text = await response.text().catch(() => "");
+    throw new Error(`Server returned HTTP ${response.status}: ${text.slice(0, 120) || response.statusText}`);
+  }
+
+  if (!response.ok || !resData.success) {
+    if (response.status === 503) {
+      throw new Error("Cloudflare AI worker secret GEMINI_API_KEY is not configured yet. Please configure it in your Cloudflare dashboard.");
+    }
+    if (response.status === 413) {
+      throw new Error("Document page image is too large for AI processing. Try lowering resolution.");
+    }
+    throw new Error(resData.error || `AI OCR processing failed (HTTP ${response.status}). Please try again.`);
+  }
+  return { blocks: resData.blocks || [], truncated: !!resData.truncated };
 }
 
 function dedupeBlocks(blocks){ const seen=[]; const out=[]; for(const b of blocks){ const key=b.text.trim(); const dup=seen.find(s=>s.text===key && Math.abs(s.y-b.box[0])<25); if(dup) continue; seen.push({text:key, y:b.box[0]}); out.push(b); } return out; }
@@ -418,8 +451,12 @@ async function createPDF(pages, quality, ocr) {
           let fontBuffer=null;
           for(const fontURL of fontURLs){ try{ const fontRes = await fetch(fontURL); if (fontRes.ok) { fontBuffer = await fontRes.arrayBuffer(); break; } }catch(e){} }
           if(fontBuffer) {
-              let binary = ''; const bytes = new Uint8Array(fontBuffer);
-              for (let i = 0; i < bytes.byteLength; i++) { binary += String.fromCharCode(bytes[i]); }
+              let binary = '';
+              const bytes = new Uint8Array(fontBuffer);
+              const chunkSize = 8192;
+              for (let i = 0; i < bytes.length; i += chunkSize) {
+                binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+              }
               doc.addFileToVFS("Bengali.ttf", btoa(binary)); doc.addFont("Bengali.ttf", "Bengali", "normal");
           }
       } catch(err) {}
@@ -457,10 +494,20 @@ async function makePDFWithTarget(pages, targetKB, ocr) {
   } return best;
 }
 
+function resetProgress(){
+  $("progress").style.display = "none";
+  $("workspace").classList.remove("hidden");
+  $("error").classList.add("hidden");
+  const btnRetry = $("btnRetrySearchable");
+  if (btnRetry) btnRetry.style.display = "none";
+}
+
 $("generate").onclick=async()=>{
  if(!state.files.length)return;
  const ocr=$("ocr").checked;
  $("workspace").classList.add("hidden"); $("progress").style.display="block"; $("error").classList.add("hidden");
+ const btnRetry = $("btnRetrySearchable");
+ if (btnRetry) btnRetry.style.display = "none";
  try{
    const pages=await loadPages(); if(!pages.length)throw new Error("কোনো page পাওয়া যায়নি।");
    if(ocr){
@@ -478,8 +525,13 @@ $("generate").onclick=async()=>{
    $("result").innerHTML=`${pages.length} page তৈরি হয়েছে। Final size: <b>${kb.toFixed(1)} KB</b> (Target: ${target} KB)`;
    $("progress").style.display="none"; $("success").style.display="block";
  }catch(err){
-   console.error(err); $("error").textContent="❌ "+(err?.message||String(err)); $("error").classList.remove("hidden");
-   $("status").textContent="Processing failed"; $("bar").style.width="100%";
+   console.error(err);
+   $("error").textContent="❌ "+(err?.message||String(err));
+   $("error").classList.remove("hidden");
+   $("status").textContent="Processing failed";
+   $("bar").style.width="100%";
+   const btnRetry = $("btnRetrySearchable");
+   if (btnRetry) btnRetry.style.display = "inline-block";
  }
 };
 </script>

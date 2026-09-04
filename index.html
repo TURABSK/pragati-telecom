@@ -74,7 +74,7 @@
         <a href="#search-bar" class="sidebar-item active" data-category-filter="all" data-tooltip="Dashboard Overview">
           <div class="sidebar-item-icon" style="background: rgba(37,99,235,0.12); color: #2563eb;">⚡</div>
           <span class="sidebar-item-text">All Tools Suite</span>
-          <span class="sidebar-badge" style="background: rgba(37,99,235,0.1); color: #2563eb;">7 Tools</span>
+          <span class="sidebar-badge" style="background: rgba(37,99,235,0.1); color: #2563eb;">8 Tools</span>
         </a>
         <a href="#" class="sidebar-item" id="sidebarCashTallyBtn" data-tooltip="Daily Cash Tally">
           <div class="sidebar-item-icon" style="background: rgba(16,185,129,0.12); color: #059669;">💵</div>
@@ -104,6 +104,11 @@
         <a href="tools/searchable-pdf.html" class="sidebar-item" data-tooltip="Searchable PDF Maker">
           <div class="sidebar-item-icon" style="background: rgba(219,39,119,0.12); color: #db2777;">🔎</div>
           <span class="sidebar-item-text">Searchable PDF (OCR)</span>
+        </a>
+        <a href="tools/smart-form-filler/index.html" class="sidebar-item" data-tooltip="Smart Form Filler">
+          <div class="sidebar-item-icon" style="background: rgba(14,165,233,0.12); color: #0ea5e9;">📋</div>
+          <span class="sidebar-item-text">Smart Form Filler</span>
+          <span class="sidebar-badge" style="background: rgba(14,165,233,0.1); color: #0ea5e9;">AI Form</span>
         </a>
         <a href="tools/pdf-compressor.html" class="sidebar-item" data-tooltip="Custom PDF Compressor">
           <div class="sidebar-item-icon" style="background: rgba(217,119,6,0.12); color: #d97706;">🗜️</div>
@@ -155,7 +160,7 @@
             </div>
 
             <div class="category-filter-list" id="categoryFilterList">
-              <button class="filter-btn active" data-category="all">🌟 All Tools (7)</button>
+              <button class="filter-btn active" data-category="all">🌟 All Tools (8)</button>
               <button class="filter-btn" data-category="ai-photo">📸 Photo &amp; PVC Cards</button>
               <button class="filter-btn" data-category="pdf-doc">📄 Smart PDF Suite</button>
               <button class="filter-btn" data-category="calc-utility">🧮 Daily Utilities</button>
@@ -177,7 +182,7 @@
         </div>
       </div>
 
-      <!-- 7 RESPONSIVE COMPACT TOOL CARDS GRID -->
+      <!-- 8 RESPONSIVE COMPACT TOOL CARDS GRID -->
       <section class="tools-section">
         <div class="tools-grid" id="toolsGrid">
           <!-- Cards dynamically rendered via JavaScript -->
@@ -473,6 +478,15 @@
         icon: "🔎", iconBg: "rgba(219, 39, 119, 0.12)", iconColor: "#db2777", accent: "#db2777",
         desc: "Universal multi-column Bengali & English OCR scanner. Make images and voter lists searchable instantly.",
         url: "tools/searchable-pdf.html", actionType: "direct", tags: ["pdf", "ocr", "searchable", "bengali", "voter"]
+      },
+      {
+        id: "smart-form-filler",
+        title: "Smart Form Filler",
+        category: "pdf-doc",
+        badge: "ai", badgeText: "AI Form",
+        icon: "📋", iconBg: "rgba(14, 165, 233, 0.12)", iconColor: "#0ea5e9", accent: "#0ea5e9",
+        desc: "AI-assisted application form filler — detect blank fields, fill Bengali/English text & checkboxes, align printer offsets, and download clean PDFs.",
+        url: "tools/smart-form-filler/index.html", actionType: "direct", tags: ["form", "filler", "ai", "pdf", "print", "acroform", "government form", "scanned", "smart form filler", "fill pdf"]
       },
       {
         id: "pdf-compressor",
