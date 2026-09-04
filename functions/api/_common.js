@@ -164,8 +164,8 @@ export async function callGeminiVision({ base64, mimeType, prompt, env }) {
   }
 
   const rawModel = env?.GEMINI_MODEL;
-  const model = (typeof rawModel === "string" && rawModel.trim()) ? rawModel.trim() : "gemini-1.5-flash";
-  const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey.trim())}`;
+  const preferredModel = (typeof rawModel === "string" && rawModel.trim()) ? rawModel.trim() : "gemini-3.6-flash";
+  const candidateModels = [preferredModel, "gemini-3.5-flash", "gemini-3.0-flash", "gemini-2.5-flash", "gemini-2.0-flash"].filter((m, i, arr) => arr.indexOf(m) === i);
 
   const payload = {
     contents: [
@@ -188,31 +188,76 @@ export async function callGeminiVision({ base64, mimeType, prompt, env }) {
     }
   };
 
-  try {
-    const geminiRes = await fetch(geminiEndpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+  let geminiRes = null;
+  let resData = null;
 
-    if (geminiRes.status === 429) {
-      return {
-        status: 429,
-        error: "AI service rate limit reached. Please wait a moment and try again."
-      };
+  for (let i = 0; i < candidateModels.length; i++) {
+    const currentModel = candidateModels[i];
+    const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(currentModel)}:generateContent?key=${encodeURIComponent(apiKey.trim())}`;
+    try {
+      geminiRes = await fetch(geminiEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (geminiRes.status === 429) {
+        return {
+          status: 429,
+          error: "AI service rate limit reached. Please wait a moment and try again."
+        };
+      }
+
+      const resText = await geminiRes.text();
+      try {
+        resData = JSON.parse(resText);
+      } catch {
+        resData = null;
+      }
+
+      const errMsg = resData?.error?.message || resText;
+      const recMatch = errMsg.match(/update your code to use (?:models\/)?([a-zA-Z0-9\.\-_]+)/i);
+      if (recMatch && recMatch[1] && recMatch[1] !== currentModel) {
+        const suggested = recMatch[1].trim();
+        if (!candidateModels.includes(suggested)) {
+          candidateModels.splice(i + 1, 0, suggested);
+        }
+        continue;
+      }
+
+      const isUnavailable =
+        geminiRes.status === 404 ||
+        geminiRes.status === 400 ||
+        errMsg.includes("not found") ||
+        errMsg.includes("no longer available") ||
+        errMsg.includes("deprecated") ||
+        errMsg.includes("update your code");
+
+      if (isUnavailable && i < candidateModels.length - 1) {
+        console.warn(`[Gemini API] Model ${currentModel} unavailable, trying fallback...`);
+        continue;
+      }
+
+      if (!geminiRes.ok) {
+        console.error(`[Gemini API Error] Status: ${geminiRes.status}, Body: ${resText.slice(0, 200)}`);
+        return {
+          status: 502,
+          error: "AI request failed with provider: " + (resData?.error?.message || "Please try again.")
+        };
+      }
+
+      break;
+    } catch (err) {
+      console.error(`[Gemini Fetch Error] on model ${currentModel}:`, err);
     }
+  }
 
-    if (!geminiRes.ok) {
-      const errText = await geminiRes.text();
-      // Log sanitized error server-side without exposing API key
-      console.error(`[Gemini API Error] Status: ${geminiRes.status}, Body: ${errText.slice(0, 200)}`);
-      return {
-        status: 502,
-        error: "AI request failed with provider. Please try again."
-      };
-    }
-
-    const resData = await geminiRes.json();
+  if (!geminiRes || !geminiRes.ok || !resData) {
+    return {
+      status: 502,
+      error: "AI service unavailable. Please try again."
+    };
+  }
     const candidate = resData?.candidates?.[0];
     const isTruncated = candidate?.finishReason === "MAX_TOKENS";
     const textOutput = candidate?.content?.parts?.map(p => p.text || "").join("") || "";

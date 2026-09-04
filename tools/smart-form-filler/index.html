@@ -254,11 +254,36 @@
 
         <!-- Tab 3: Settings -->
         <section class="tab-panel" id="tab-settings" role="tabpanel">
-          <div class="settings-block">
-            <h4>AI ডিটেকশন (Gemini)</h4>
-            <p class="hint">এই ফর্মে যদি ইন্টারঅ্যাক্টিভ AcroForm ফিল্ড না থাকে (বেশিরভাগ সরকারি ফর্মেই থাকে না), তাহলে ফিল্ড অবস্থান বের করতে Pragati Telecom Cloudflare AI API সরাসরি ব্যবহৃত হয়।</p>
-            <input type="text" id="workerUrlInput" class="text-input" placeholder="/api/form-filler-ai">
-            <button class="btn-sm" id="btnSaveWorkerUrl" style="margin-top:6px;">সেভ করুন</button>
+          <div class="settings-block sff-ai-config-block">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+              <h4 style="margin:0; font-size:13.5px; font-weight:700; color:var(--text);">Google Gemini AI কনফিগারেশন</h4>
+              <span id="geminiKeyStatusBadge" class="sff-status-badge badge-warning">⚠️ Key নেই</span>
+            </div>
+            <p class="hint" style="margin-bottom:10px;">
+              স্ক্যান করা সরকারি বা সাধারণ ফর্মে স্বয়ংক্রিয়ভাবে ফিল্ড ও চেকবক্স শনাক্ত করতে Google Gemini AI ব্যবহৃত হয়। নিচে আপনার Gemini API Key টি দিন:
+            </p>
+
+            <div class="sff-options-card">
+              <div><strong>🔒 AES-256 এনক্রিপশন:</strong> আপনার API Key টি ব্রাউজারের <strong>Web Crypto (AES-256-GCM)</strong> দিয়ে সম্পূর্ণ এনক্রিপ্ট করে সুরক্ষিত রাখা হয়। কোনো সার্ভারে স্টোর হয় না বা অন্য কেউ দেখতে পারবে না।</div>
+              <div style="margin-top:6px; font-size:11.5px; color:var(--text-muted);">
+                💡 <em>ফ্রি API Key নেই?</em> Google AI Studio (<a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color:var(--accent); font-weight:600; text-decoration:underline;">aistudio.google.com</a>) থেকে সম্পূর্ণ বিনামূল্যে ১ ক্লিকে তৈরি করে নিন।
+              </div>
+            </div>
+
+            <label for="geminiApiKeyInput" style="display:block; font-size:12px; font-weight:600; color:var(--text); margin-bottom:4px;">
+              Google Gemini API Key:
+            </label>
+            <div class="sff-key-input-wrap">
+              <input type="password" id="geminiApiKeyInput" class="text-input" placeholder="AIzaSy... আপনার Gemini API Key পেস্ট করুন" spellcheck="false" autocomplete="off">
+              <button type="button" id="btnToggleKeyVisibility" class="sff-key-toggle-btn" title="API Key দেখুন / লুকান">👁️</button>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:8px;">
+              <button class="btn-sm btn-accent" id="btnSaveApiKey" type="button">🔒 এনক্রিপ্ট করে সেভ করুন</button>
+              <button class="btn-sm" id="btnClearApiKey" type="button">🗑️ Key মুছুন</button>
+            </div>
+            <div id="geminiKeyStatusNotice" class="sff-status-notice notice-warning">
+              ⚠️ <strong>কোনো API Key সেট করা নেই:</strong> AI ফিল্ড ডিটেকশন ব্যবহার করতে উপরে আপনার Gemini API Key দিন।
+            </div>
           </div>
 
           <div class="settings-block">
@@ -289,16 +314,26 @@
               </select>
             </div>
             <div class="settings-row">
-              <label for="checkSymbolInput">টিক চিহ্ন (checkbox পূরণ হলে)</label>
+              <label for="checkSymbolInput">টিক/চিহ্নের স্টাইল</label>
               <select id="checkSymbolInput" class="select-input">
-                <option value="✓" selected>✓ (টিক)</option>
-                <option value="✔">✔ (বোল্ড টিক)</option>
-                <option value="✗">✗ (ক্রস)</option>
-                <option value="×">× (ছোট ক্রস)</option>
+                <option value="✔" selected>✔ (বোল্ড টিক - স্পষ্ট)</option>
+                <option value="✓">✓ (সাধারণ টিক)</option>
+                <option value="✗">✗ (ক্রস মার্ক)</option>
+                <option value="✕">✕ (মোটা ক্রস)</option>
+                <option value="☑">☑ (বক্স টিক)</option>
                 <option value="●">● (কালো বিন্দু)</option>
               </select>
             </div>
-            <p class="hint">মাউস কোনো ফিল্ডের ওপর নিলে সেটা হাইলাইট হবে এবং কোন জায়গায় কী বসবে তা একটা টুলটিপে দেখাবে।</p>
+            <div class="settings-row">
+              <label for="checkSizeInput">টিক/ক্রস চিহ্নের সাইজ</label>
+              <select id="checkSizeInput" class="select-input">
+                <option value="1.3">মাঝারি (১৩০%)</option>
+                <option value="1.6" selected>বড় ও স্পষ্ট (১৬০% - ভেরিফিকেশন স্পেশাল)</option>
+                <option value="2.0">অতিরিক্ত বড় (২০০%)</option>
+                <option value="2.5">সর্বোচ্চ বড় (২৫০% - জাম্বো)</option>
+              </select>
+            </div>
+            <p class="hint">চেক মার্ক বা ক্রস মার্ক ভেরিফিকেশন অফিসারের স্পষ্ট বোঝার সুবিধার্থে যথেষ্ট বড় ও বোল্ড আকারে প্রিন্ট ও PDF-এ সংরক্ষিত হবে।</p>
           </div>
         </section>
 
@@ -314,6 +349,19 @@
 
       <!-- Right Stage Area -->
       <section class="stage-area" id="stageArea">
+        <div id="autoTemplateBanner" class="auto-template-banner" hidden>
+          <div class="auto-template-banner-content">
+            <span class="auto-template-icon">✨</span>
+            <div class="auto-template-text">
+              <strong id="autoTemplateName">টেমপ্লেট লোড হয়েছে</strong>
+              <small id="autoTemplateDesc">পূর্বে সেভ করা টেমপ্লেট স্বয়ংক্রিয়ভাবে শনাক্ত ও প্রয়োগ করা হয়েছে (AI স্ক্যান এড়িয়ে সময় বাঁচানো হয়েছে)।</small>
+            </div>
+          </div>
+          <div class="auto-template-actions">
+            <button type="button" class="btn-rescan" id="btnRescanAI" title="প্রয়োজনে নতুন করে AI দিয়ে ফিল্ড খুঁজুন">🔄 আবার AI স্ক্যান করুন</button>
+            <button type="button" class="btn-close-banner" id="btnCloseAutoTemplate" title="বন্ধ করুন">×</button>
+          </div>
+        </div>
         <div class="stage-inner" id="stageInner" style="display: none;">
           <canvas id="pageCanvas"></canvas>
           <div id="overlay"></div>

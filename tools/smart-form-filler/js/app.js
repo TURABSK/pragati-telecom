@@ -33,6 +33,9 @@
   // ---- State --------------------------------------------------------------
   var STATE = {
     fileName: 'ফর্ম',
+    fileSize: 0,
+    fileHash: null,
+    matchedTemplateId: null,
     fileType: null,     // 'pdf' | 'image'
     pdfDoc: null,
     imageElement: null,
@@ -46,8 +49,7 @@
     hoveredFieldId: null,
     pageDims: {},        // pageNum -> {width, height} UNSCALED (viewport scale 1.0)
     printerOffsetMm: { x: 0, y: 0 },
-    font: { family: "'Noto Sans Bengali','Inter',sans-serif", size: 12, color: '#0b2f6b', weight: '600', checkSymbol: '✓' },
-    workerUrl: localStorage.getItem('sff_worker_url') || '/api/form-filler-ai'
+    font: { family: "'Noto Sans Bengali','Inter',sans-serif", size: 12, color: '#0b2f6b', weight: '600', checkSymbol: '✔', checkScale: 1.6 }
   };
 
   // ---- Small UI helpers -----------------------------------------------
@@ -109,6 +111,143 @@
   }
 
   // =========================================================================
+  // TEMPLATES STORAGE & SMART FORM RECOGNITION
+  // =========================================================================
+  var TPL_KEY = 'sff_templates_v1';
+  function getTemplates() { try { return JSON.parse(localStorage.getItem(TPL_KEY) || '[]'); } catch (e) { return []; } }
+  function saveTemplates(t) { localStorage.setItem(TPL_KEY, JSON.stringify(t)); renderTemplatesList(); }
+
+  // Fast cryptographic hash (SHA-256) of first 128KB for instant form identification
+  function computeFileHash(arrayBuffer) {
+    if (!window.crypto || !window.crypto.subtle) {
+      return Promise.resolve(null);
+    }
+    var slice = arrayBuffer.byteLength > 131072 ? arrayBuffer.slice(0, 131072) : arrayBuffer;
+    return window.crypto.subtle.digest('SHA-256', slice).then(function (hashBuf) {
+      var hashArray = Array.from(new Uint8Array(hashBuf));
+      return hashArray.map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+    }).catch(function () {
+      return null;
+    });
+  }
+
+  function normalizeDocName(name) {
+    if (!name) return '';
+    return String(name).toLowerCase()
+      .replace(/\.[a-z0-9]+$/i, '')
+      .replace(/\(\d+\)/g, '')
+      .replace(/[_\-\s\.]+/g, ' ')
+      .trim();
+  }
+
+  function findMatchingTemplate(fileInfo) {
+    var tpls = getTemplates();
+    if (!tpls || tpls.length === 0) return null;
+
+    var curNameNorm = normalizeDocName(fileInfo.fileName);
+
+    // 1. Exact cryptographic file hash match (instant 100% confidence, even if renamed)
+    if (fileInfo.fileHash) {
+      var hashMatch = tpls.find(function (t) {
+        return t.fileHash && t.fileHash === fileInfo.fileHash;
+      });
+      if (hashMatch) return hashMatch;
+    }
+
+    // 2. Exact file name match (normalized)
+    if (curNameNorm) {
+      var nameMatch = tpls.find(function (t) {
+        var tFileNorm = normalizeDocName(t.fileName);
+        var tNameNorm = normalizeDocName(t.name);
+        return (tFileNorm && tFileNorm === curNameNorm) || (tNameNorm && tNameNorm === curNameNorm);
+      });
+      if (nameMatch) return nameMatch;
+    }
+
+    // 3. Exact file size AND total pages match
+    if (fileInfo.fileSize && fileInfo.fileSize > 0) {
+      var sizeMatch = tpls.find(function (t) {
+        if (!t.fileSize || t.fileSize !== fileInfo.fileSize) return false;
+        if (t.totalPages && fileInfo.totalPages && t.totalPages !== fileInfo.totalPages) return false;
+        return true;
+      });
+      if (sizeMatch) return sizeMatch;
+    }
+
+    return null;
+  }
+
+  function showAutoTemplateBanner(tpl) {
+    var banner = $('#autoTemplateBanner');
+    var nameEl = $('#autoTemplateName');
+    var descEl = $('#autoTemplateDesc');
+    if (!banner) return;
+    if (nameEl) nameEl.textContent = '✨ টেমপ্লেট লোড হয়েছে: "' + (tpl.name || 'সংরক্ষিত টেমপ্লেট') + '"';
+    if (descEl) descEl.textContent = 'পূর্বে সেভ করা টেমপ্লেট থেকে স্বয়ংক্রিয়ভাবে ' + tpl.fields.length + 'টি ফিল্ড বসানো হয়েছে (AI স্ক্যান এড়িয়ে সময় ও কোটা বাঁচানো হয়েছে)।';
+    banner.hidden = false;
+  }
+
+  function hideAutoTemplateBanner() {
+    var banner = $('#autoTemplateBanner');
+    if (banner) banner.hidden = true;
+  }
+
+  function applyTemplate(t, isAutoLoaded) {
+    STATE.matchedTemplateId = t.id;
+    STATE.fields = t.fields.map(function (f) {
+      return Object.assign({}, f, {
+        id: uid('tpl'),
+        value: f.type === 'checkbox' ? false : '',
+        source: 'template',
+        needsReview: false,
+        confidence: 1.0
+      });
+    });
+
+    if (t.printerOffsetMm) {
+      STATE.printerOffsetMm = Object.assign({}, t.printerOffsetMm);
+      if ($('#offsetXInput')) $('#offsetXInput').value = t.printerOffsetMm.x;
+      if ($('#offsetYInput')) $('#offsetYInput').value = t.printerOffsetMm.y;
+    }
+
+    setTab('fields');
+    renderFieldsList();
+    renderReviewList();
+    renderOverlay();
+    renderTemplatesList();
+
+    if (isAutoLoaded) {
+      showAutoTemplateBanner(t);
+      toast('✨ সংরক্ষিত টেমপ্লেট "' + t.name + '" স্বয়ংক্রিয়ভাবে শনাক্ত ও প্রয়োগ করা হয়েছে!');
+    } else {
+      hideAutoTemplateBanner();
+      toast('টেমপ্লেট "' + t.name + '" লোড হয়েছে।');
+    }
+  }
+
+  function checkAutoTemplateOrDetect() {
+    var dims = STATE.pageDims[STATE.currentPage] || { width: canvas.width, height: canvas.height };
+    var aspect = (dims.width && dims.height) ? (dims.width / dims.height).toFixed(3) : null;
+
+    var fileInfo = {
+      fileName: STATE.fileName,
+      fileSize: STATE.fileSize,
+      fileHash: STATE.fileHash,
+      totalPages: STATE.totalPages,
+      aspectRatio: aspect
+    };
+
+    var matchedTpl = findMatchingTemplate(fileInfo);
+    if (matchedTpl) {
+      applyTemplate(matchedTpl, true);
+      return Promise.resolve();
+    }
+
+    // No saved template matches, proceed with normal detection
+    return detectFields();
+  }
+
+  // =========================================================================
   // FILE LOADING
   // =========================================================================
   function handleFile(file) {
@@ -121,16 +260,26 @@
 
     setBusy(true, 'ফাইল লোড হচ্ছে...');
     STATE.fileName = file.name;
+    STATE.fileSize = file.size || 0;
+    STATE.fileHash = null;
+    STATE.matchedTemplateId = null;
     STATE.fields = [];
     STATE.pageDims = {};
     STATE.currentPage = 1;
     $('#emptyState').style.display = 'none';
     $('#stageInner').style.display = 'block';
+    hideAutoTemplateBanner();
 
     if (isPdf) {
       file.arrayBuffer().then(function (buf) {
-        return window.pdfjsLib.getDocument({ data: buf }).promise;
-      }).then(function (doc) {
+        return Promise.all([
+          computeFileHash(buf),
+          window.pdfjsLib.getDocument({ data: buf }).promise
+        ]);
+      }).then(function (results) {
+        var hash = results[0];
+        var doc = results[1];
+        STATE.fileHash = hash;
         STATE.fileType = 'pdf';
         STATE.pdfDoc = doc;
         STATE.imageElement = null;
@@ -138,13 +287,19 @@
         return renderPage();
       }).then(function () {
         setBusy(false);
-        return detectFields();
+        return checkAutoTemplateOrDetect();
       }).catch(function (err) {
         console.error(err);
         setBusy(false);
         toast('ফাইল খুলতে সমস্যা হয়েছে: ' + err.message);
       });
     } else {
+      file.arrayBuffer().then(function (buf) {
+        return computeFileHash(buf);
+      }).then(function (h) {
+        STATE.fileHash = h;
+      }).catch(function () {});
+
       var reader = new FileReader();
       reader.onload = function (e) {
         var img = new Image();
@@ -156,7 +311,7 @@
           STATE.pageDims[1] = { width: img.naturalWidth, height: img.naturalHeight };
           renderPage().then(function () {
             setBusy(false);
-            detectFields();
+            checkAutoTemplateOrDetect();
           });
         };
         img.src = e.target.result;
@@ -323,72 +478,335 @@
     });
   }
 
+  // ---- Helpers for AI Configuration & Web Crypto AES-256 Encryption -----
+  function escapeHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  // =========================================================================
+  // SECURE API KEY ENCRYPTION (AES-GCM 256-bit via Web Crypto API)
+  // =========================================================================
+  var ENC_STORAGE_KEY = 'sff_gemini_enc_v1';
+  var ENC_SALT = new Uint8Array([80, 114, 97, 103, 97, 116, 105, 84, 101, 108, 101, 99, 111, 109, 65, 73]); // "PragatiTelecomAI"
+
+  function getCryptoSecretKey() {
+    var rawSecret = (window.location.origin || 'pragati-telecom') + '_sff_sec_salt_2026';
+    var enc = new TextEncoder();
+    return window.crypto.subtle.importKey(
+      'raw',
+      enc.encode(rawSecret),
+      { name: 'PBKDF2' },
+      false,
+      ['deriveKey']
+    ).then(function (importedKey) {
+      return window.crypto.subtle.deriveKey(
+        {
+          name: 'PBKDF2',
+          salt: ENC_SALT,
+          iterations: 100000,
+          hash: 'SHA-256'
+        },
+        importedKey,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt']
+      );
+    });
+  }
+
+  function encryptApiKey(plainKey) {
+    if (!plainKey || !plainKey.trim()) return Promise.resolve(null);
+    var cleanKey = plainKey.trim();
+    if (!window.crypto || !window.crypto.subtle) {
+      return Promise.resolve('plain:' + btoa(cleanKey));
+    }
+    return getCryptoSecretKey().then(function (key) {
+      var iv = window.crypto.getRandomValues(new Uint8Array(12));
+      var enc = new TextEncoder();
+      return window.crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: iv },
+        key,
+        enc.encode(cleanKey)
+      ).then(function (ciphertext) {
+        var ivHex = Array.from(iv).map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+        var cipherHex = Array.from(new Uint8Array(ciphertext)).map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+        return 'aes_v1:' + ivHex + ':' + cipherHex;
+      });
+    }).catch(function (e) {
+      console.warn('Encryption fallback to obfuscation:', e);
+      return 'plain:' + btoa(cleanKey);
+    });
+  }
+
+  function decryptApiKey(storedPayload) {
+    if (!storedPayload) return Promise.resolve(null);
+    if (storedPayload.startsWith('plain:')) {
+      try { return Promise.resolve(atob(storedPayload.slice(6))); } catch (e) { return Promise.resolve(null); }
+    }
+    if (!storedPayload.startsWith('aes_v1:')) {
+      // Legacy plain key
+      return Promise.resolve(storedPayload);
+    }
+    var parts = storedPayload.split(':');
+    if (parts.length !== 3) return Promise.resolve(null);
+    var ivHex = parts[1];
+    var cipherHex = parts[2];
+    var ivBytes = ivHex.match(/.{1,2}/g);
+    var cipherBytes = cipherHex.match(/.{1,2}/g);
+    if (!ivBytes || !cipherBytes) return Promise.resolve(null);
+    var iv = new Uint8Array(ivBytes.map(function (b) { return parseInt(b, 16); }));
+    var cipherData = new Uint8Array(cipherBytes.map(function (b) { return parseInt(b, 16); }));
+
+    if (!window.crypto || !window.crypto.subtle) {
+      return Promise.resolve(null);
+    }
+
+    return getCryptoSecretKey().then(function (key) {
+      return window.crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: iv },
+        key,
+        cipherData
+      ).then(function (decryptedBuf) {
+        var dec = new TextDecoder();
+        return dec.decode(decryptedBuf);
+      });
+    }).catch(function (e) {
+      console.error('Decryption failed:', e);
+      return null;
+    });
+  }
+
+  var FORM_FILLER_PROMPT =
+    'You are analyzing a scanned government/official application form image.\n\n' +
+    'Detect EVERY fillable field, blank line, box, and checkbox on the page — including empty ones,\n' +
+    'and including repeating rows in tables (e.g. if a family-member table repeats "Name" for 5 rows,\n' +
+    'label them "Member 1 Name", "Member 2 Name", etc. — do not collapse them into one field).\n\n' +
+    'Return STRICT JSON only, no markdown code fences, no commentary — a single JSON array:\n' +
+    '[\n' +
+    '  {\n' +
+    '    "label": "short label as printed on the form (in the form\'s own language)",\n' +
+    '    "value": "the filled-in value if the field already has handwritten or printed text in it, otherwise an empty string",\n' +
+    '    "type": "text" | "textarea" | "checkbox" | "date" | "number",\n' +
+    '    "box_2d": [ymin, xmin, ymax, xmax]\n' +
+    '  }\n' +
+    ']\n\n' +
+    'Rules for box_2d:\n' +
+    '- Integers normalized to a 0-1000 scale relative to the FULL image (top-left corner = [0,0,0,0], bottom-right = 1000).\n' +
+    '- The box must cover the BLANK / ANSWER area where a value should be written (the empty underline, the empty box,\n' +
+    '  or the checkbox glyph itself) — NOT the printed label text next to it.\n' +
+    '- For a checkbox, make the box small and tight around just the checkbox glyph (☐ / □ / [ ]).\n' +
+    '- Never skip a field just because it is currently empty.\n' +
+    '- Never merge two distinct fields into a single box.';
+
+  // Candidate models to try in priority order (Google Gemini 3.x / 2.x)
+  var GEMINI_MODELS = [
+    'gemini-3.6-flash',
+    'gemini-3.5-flash',
+    'gemini-3.0-flash',
+    'gemini-2.5-flash',
+    'gemini-2.0-flash',
+    'gemini-2.5-flash-lite',
+    'gemini-1.5-flash'
+  ];
+  var cachedWorkingModel = null;
+
+  function requestGeminiContent(modelName, apiKey, base64) {
+    var geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(modelName) + ':generateContent?key=' + encodeURIComponent(apiKey);
+    var geminiBody = {
+      contents: [{
+        parts: [
+          { text: FORM_FILLER_PROMPT },
+          { inline_data: { mime_type: 'image/jpeg', data: base64 } }
+        ]
+      }],
+      generationConfig: {
+        temperature: 0.1,
+        response_mime_type: 'application/json'
+      }
+    };
+
+    return withTimeout(function (signal) {
+      return fetch(geminiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(geminiBody),
+        signal: signal
+      });
+    }, 30000, 'Google Gemini (' + modelName + ') থেকে ৩০ সেকেন্ডে কোনো সাড়া আসেনি।')
+    .then(function (res) {
+      if (res.status === 429) {
+        throw new Error('Gemini API কোটা লিমিট বা রেট লিমিট অতিক্রম হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।');
+      }
+      return res.json().then(function (data) {
+        if (!res.ok) {
+          var errMsg = (data && data.error && data.error.message) ? data.error.message : ('HTTP ' + res.status);
+          var err = new Error(errMsg);
+          err.status = res.status;
+          throw err;
+        }
+        var rawText = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+        return { success: true, data: rawText || '[]' };
+      });
+    });
+  }
+
+  function callDirectGeminiWithFallback(apiKey, base64) {
+    var modelsToTry = cachedWorkingModel 
+      ? [cachedWorkingModel].concat(GEMINI_MODELS.filter(function(m) { return m !== cachedWorkingModel; }))
+      : GEMINI_MODELS.slice();
+
+    function tryModel(index) {
+      if (index >= modelsToTry.length) {
+        // All pre-defined models failed.
+        // Dynamically query ModelService.ListModels to find active models for this API key:
+        return fetch('https://generativelanguage.googleapis.com/v1beta/models?key=' + encodeURIComponent(apiKey))
+          .then(function (res) {
+            if (!res.ok) {
+              throw new Error('Google Gemini API Key সঠিক নয় অথবা মডেল তালিকা পাওয়া যায়নি।');
+            }
+            return res.json();
+          })
+          .then(function (listJson) {
+            var models = (listJson && listJson.models) || [];
+            var matched = models.find(function (m) {
+              var name = m.name || '';
+              var methods = m.supportedGenerationMethods || [];
+              return methods.includes('generateContent') && (name.includes('flash') || name.includes('gemini'));
+            });
+            if (matched) {
+              var cleanName = matched.name.replace(/^models\//, '');
+              console.log('ListModels থেকে সক্রিয় মডেল পাওয়া গেছে:', cleanName);
+              return requestGeminiContent(cleanName, apiKey, base64).then(function (res) {
+                cachedWorkingModel = cleanName;
+                return res;
+              });
+            }
+            throw new Error('আপনার Gemini API Key-তে কোনো কার্যকর মডেল খুঁজে পাওয়া যায়নি। অনুগ্রহ করে Google AI Studio থেকে নতুন কী (API Key) তৈরি করুন।');
+          });
+      }
+
+      var currentModel = modelsToTry[index];
+      return requestGeminiContent(currentModel, apiKey, base64)
+        .then(function (res) {
+          cachedWorkingModel = currentModel;
+          return res;
+        })
+        .catch(function (err) {
+          var msg = (err && err.message) || '';
+
+          // 1. If Google explicitly recommends a newer model in the error message, extract & try it
+          var recMatch = msg.match(/update your code to use (?:models\/)?([a-zA-Z0-9\.\-_]+)/i);
+          if (recMatch && recMatch[1] && recMatch[1] !== currentModel) {
+            var suggested = recMatch[1].trim();
+            console.log('Google Gemini suggested model:', suggested);
+            if (!modelsToTry.includes(suggested)) {
+              modelsToTry.splice(index + 1, 0, suggested);
+            }
+            return tryModel(index + 1);
+          }
+
+          // 2. If model is retired, not available, deprecated, or not found, fall back to next candidate
+          var isModelUnavailable = 
+            err.status === 404 || 
+            err.status === 400 ||
+            msg.includes('not found') || 
+            msg.includes('no longer available') ||
+            msg.includes('not available') ||
+            msg.includes('deprecated') ||
+            msg.includes('update your code') ||
+            msg.includes('not supported for generateContent') || 
+            msg.includes('is not found for API version');
+
+          if (isModelUnavailable) {
+            console.warn('মডেল ' + currentModel + ' কাজ করছে না, পরবর্তী মডেল চেষ্টা করা হচ্ছে...', msg);
+            return tryModel(index + 1);
+          }
+          throw err;
+        });
+    }
+
+    return tryModel(0);
+  }
+
   // ---- 2) Gemini Vision fallback (for flat/print-and-fill PDFs & images) -
   function detectViaGemini() {
-    if (!STATE.workerUrl) {
-      toast('এই ফর্মে AcroForm ফিল্ড নেই এবং কোনো Gemini Worker URL সেট করা নেই। সেটিংসে URL বসান, অথবা "আঁকুন" মোডে হাতে ফিল্ড বসান।');
+    var storedEnc = localStorage.getItem(ENC_STORAGE_KEY);
+    if (!storedEnc) {
+      toast('⚠️ Gemini দিয়ে ফর্ম স্ক্যান করতে প্রথমে সেটিংসে গিয়ে আপনার Gemini API Key দিন।');
+      setTab('settings');
+      var keyInput = $('#geminiApiKeyInput');
+      if (keyInput) {
+        keyInput.focus();
+        keyInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
       return Promise.resolve();
     }
 
-    setBusy(true, 'Gemini দিয়ে ফর্ম পড়া হচ্ছে...');
-
+    setBusy(true, 'Gemini AI দিয়ে ফর্ম পড়া হচ্ছে...');
     var dims = STATE.pageDims[STATE.currentPage] || { width: canvas.width, height: canvas.height };
 
-    return renderOffscreenForGemini(dims).then(function (dataUrl) {
-      var base64 = dataUrl.split(',')[1];
-      // Bug fixed: no timeout here before — an unreachable/slow Worker URL
-      // made the "Gemini দিয়ে ফর্ম পড়া হচ্ছে..." banner spin forever with
-      // no way out except reloading the page.
-      return withTimeout(function (signal) {
-        return fetch(STATE.workerUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: base64 }),
-          signal: signal
-        });
-      }, 25000, 'Worker থেকে ২৫ সেকেন্ডে কোনো সাড়া আসেনি। URL ঠিক আছে কিনা এবং Worker ডিপ্লয় করা আছে কিনা দেখুন।');
-    }).then(function (res) { return res.json(); })
-      .then(function (json) {
-        setBusy(false);
-        if (!json.success) {
-          toast('Gemini এরর: ' + (json.error || 'অজানা সমস্যা'));
-          return;
-        }
-        var arr;
-        try {
-          arr = typeof json.data === 'string' ? JSON.parse(json.data) : json.data;
-        } catch (e) {
-          toast('Gemini থেকে বৈধ JSON পাওয়া যায়নি।');
-          return;
-        }
-        if (!Array.isArray(arr)) arr = [];
-
-        var fields = arr.map(function (item) {
-          var box = item.box_2d || [0, 0, 40, 300];
-          var ymin = box[0], xmin = box[1], ymax = box[2], xmax = box[3];
-          return {
-            id: uid('gm'),
-            page: STATE.currentPage,
-            label: item.label || 'ফিল্ড',
-            type: item.type || 'text',
-            xNorm: Math.max(0, xmin / 1000),
-            yNorm: Math.max(0, ymin / 1000),
-            wNorm: Math.max(0.01, (xmax - xmin) / 1000),
-            hNorm: Math.max(0.01, (ymax - ymin) / 1000),
-            value: item.type === 'checkbox' ? false : (item.value || ''),
-            source: 'gemini',
-            needsReview: true,
-            confidence: 0.8
-          };
-        });
-
-        replacePageFields(fields);
-        toast('Gemini ' + fields.length + 'টি ফিল্ড খুঁজে পেয়েছে। যাচাই ট্যাবে গিয়ে চেক করে নিন।');
-      }).catch(function (err) {
-        setBusy(false);
-        console.error(err);
-        toast('Gemini কল ব্যর্থ হয়েছে: ' + err.message);
+    return decryptApiKey(storedEnc).then(function (apiKey) {
+      if (!apiKey) {
+        throw new Error('সংরক্ষিত API Key ডিক্রিপ্ট করা যায়নি। অনুগ্রহ করে সেটিংসে গিয়ে নতুন করে API Key দিন।');
+      }
+      return renderOffscreenForGemini(dims).then(function (dataUrl) {
+        var base64 = dataUrl.split(',')[1];
+        // Direct Google Gemini API call with automated model fallback
+        return callDirectGeminiWithFallback(apiKey, base64);
       });
+    }).then(function (json) {
+      setBusy(false);
+      if (!json || !json.success) {
+        toast('Gemini এরর: ' + ((json && json.error) || 'অজানা সমস্যা'));
+        return;
+      }
+      var arr;
+      try {
+        var cleanData = json.data;
+        if (typeof cleanData === 'string') {
+          cleanData = cleanData.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
+          arr = JSON.parse(cleanData);
+        } else {
+          arr = cleanData;
+        }
+      } catch (e) {
+        console.error('JSON parse error:', e, json.data);
+        toast('Gemini থেকে বৈধ JSON পাওয়া যায়নি।');
+        return;
+      }
+      if (!Array.isArray(arr)) arr = [];
+
+      var fields = arr.map(function (item) {
+        var box = item.box_2d || [0, 0, 40, 300];
+        var ymin = box[0], xmin = box[1], ymax = box[2], xmax = box[3];
+        return {
+          id: uid('gm'),
+          page: STATE.currentPage,
+          label: item.label || 'ফিল্ড',
+          type: item.type || 'text',
+          xNorm: Math.max(0, ymin === undefined ? 0 : xmin / 1000),
+          yNorm: Math.max(0, ymin === undefined ? 0 : ymin / 1000),
+          wNorm: Math.max(0.01, ((xmax || 0) - (xmin || 0)) / 1000),
+          hNorm: Math.max(0.01, ((ymax || 0) - (ymin || 0)) / 1000),
+          value: item.type === 'checkbox' ? false : (item.value || ''),
+          source: 'gemini',
+          needsReview: true,
+          confidence: 0.8
+        };
+      });
+
+      replacePageFields(fields);
+      toast('Gemini ' + fields.length + 'টি ফিল্ড খুঁজে পেয়েছে। যাচাই ট্যাবে গিয়ে চেক করে নিন।');
+    }).catch(function (err) {
+      setBusy(false);
+      console.error(err);
+      toast('Gemini কল ব্যর্থ হয়েছে: ' + (err.message || err));
+    });
   }
 
   // Render a sharper standalone copy of the current page for the Gemini call,
@@ -496,7 +914,10 @@
           if (f.value) {
             var chk = document.createElement('span');
             chk.className = 'overlay-check';
-            chk.style.fontSize = Math.max(10, Math.round(hPx * 0.85)) + 'px';
+            var baseBoxDim = Math.max(wPx, hPx);
+            var scaleMultiplier = STATE.font.checkScale || 1.6;
+            var checkFontSize = Math.max(18, Math.round(baseBoxDim * scaleMultiplier));
+            chk.style.fontSize = checkFontSize + 'px';
             chk.style.color = STATE.font.color;
             chk.textContent = STATE.font.checkSymbol;
             box.appendChild(chk);
@@ -651,8 +1072,10 @@
       }
 
       STATE.selectedFieldId = fieldId;
+      $all('.field-box', overlay).forEach(function (b) {
+        b.classList.toggle('is-selected', b.dataset.fieldId === fieldId);
+      });
       renderFieldsList();
-      renderOverlay();
       dragging = { id: fieldId, startClientX: e.clientX, startClientY: e.clientY, x: f.xNorm, y: f.yNorm };
       e.preventDefault();
       return;
@@ -737,6 +1160,203 @@
   });
 
   // =========================================================================
+  // DIRECT ON-FORM DOUBLE-CLICK FILLING (Floating Inline Editor)
+  // =========================================================================
+  var activeInlineEditor = null;
+
+  function closeInlineEditor(save) {
+    if (!activeInlineEditor) return;
+    var ed = activeInlineEditor;
+    activeInlineEditor = null;
+
+    if (save && ed.input) {
+      var val = ed.input.value;
+      updateField(ed.fieldId, { value: val });
+      var sidebarInp = document.getElementById('val_' + ed.fieldId);
+      if (sidebarInp) sidebarInp.value = val;
+    }
+    if (ed.wrap && ed.wrap.parentNode) {
+      ed.wrap.parentNode.removeChild(ed.wrap);
+    }
+    renderOverlay();
+  }
+
+  function openInlineEditor(field) {
+    closeInlineEditor(true);
+
+    var scaleUsed = currentCanvasScale();
+    var offset = offsetInCanvasPx(scaleUsed);
+    var leftPx = (field.xNorm * canvas.width + offset.x) * STATE.zoom;
+    var topPx = (field.yNorm * canvas.height + offset.y) * STATE.zoom;
+    var wPx = Math.max(140, (field.wNorm * canvas.width) * STATE.zoom);
+    var hPx = Math.max(30, (field.hNorm * canvas.height) * STATE.zoom);
+
+    var wrap = document.createElement('div');
+    wrap.className = 'sff-inline-editor-wrap';
+    wrap.style.left = leftPx + 'px';
+    wrap.style.top = topPx + 'px';
+    wrap.style.width = wPx + 'px';
+
+    var isTextarea = field.type === 'textarea';
+    var input = isTextarea ? document.createElement('textarea') : document.createElement('input');
+    input.className = 'sff-inline-editor-input';
+    if (!isTextarea) input.type = (field.type === 'number' ? 'number' : 'text');
+    input.value = field.value || '';
+    input.placeholder = field.label || 'এখানে লিখুন...';
+    input.style.fontSize = Math.max(12, Math.round(STATE.font.size * scaleUsed * STATE.zoom)) + 'px';
+    input.style.color = STATE.font.color;
+    input.style.height = hPx + 'px';
+
+    var badge = document.createElement('div');
+    badge.className = 'sff-inline-editor-badge';
+    badge.textContent = field.label + ' • [Enter] সেভ • [Esc] বাতিল • [Tab] পরের ফিল্ড';
+
+    wrap.appendChild(input);
+    wrap.appendChild(badge);
+    overlay.appendChild(wrap);
+
+    activeInlineEditor = { wrap: wrap, input: input, fieldId: field.id };
+
+    setTimeout(function () {
+      input.focus();
+      if (input.select) input.select();
+    }, 20);
+
+    input.addEventListener('input', function () {
+      field.value = input.value;
+      var sidebarInp = document.getElementById('val_' + field.id);
+      if (sidebarInp) sidebarInp.value = input.value;
+    });
+
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && (!isTextarea || e.ctrlKey)) {
+        e.preventDefault();
+        closeInlineEditor(true);
+        toast('✓ পূরণ করা হয়েছে: ' + field.label);
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        closeInlineEditor(false);
+      } else if (e.key === 'Tab') {
+        e.preventDefault();
+        closeInlineEditor(true);
+        var pageFields = getPageFields();
+        var idx = pageFields.findIndex(function (x) { return x.id === field.id; });
+        var nextIdx = e.shiftKey ? (idx - 1) : (idx + 1);
+        if (nextIdx >= 0 && nextIdx < pageFields.length) {
+          var nextField = pageFields[nextIdx];
+          if (nextField.type === 'checkbox') {
+            nextField.value = !nextField.value;
+            renderOverlay();
+            renderFieldsList();
+            toast((nextField.value ? '✓ টিক দেওয়া হয়েছে: ' : 'টিক সরানো হয়েছে: ') + nextField.label);
+          } else {
+            openInlineEditor(nextField);
+          }
+        }
+      }
+    });
+
+    input.addEventListener('blur', function () {
+      setTimeout(function () {
+        if (activeInlineEditor && activeInlineEditor.fieldId === field.id) {
+          closeInlineEditor(true);
+        }
+      }, 180);
+    });
+  }
+
+  // =========================================================================
+  // DIRECT ON-FORM DOUBLE-CLICK FILLING (Floating Inline Editor)
+  // =========================================================================
+  var lastClickTime = 0;
+  var lastClickX = 0, lastClickY = 0;
+  var lastDblTrigger = 0;
+
+  function handleFormDoubleClick(e) {
+    var now = Date.now();
+    if (now - lastDblTrigger < 300) return;
+    lastDblTrigger = now;
+
+    if (STATE.mode === 'draw') return;
+
+    var r = overlay.getBoundingClientRect();
+    var clickX = (e.clientX - r.left) / STATE.zoom;
+    var clickY = (e.clientY - r.top) / STATE.zoom;
+    var scaleUsed = currentCanvasScale();
+    var offset = offsetInCanvasPx(scaleUsed);
+
+    var target = (e.target && e.target.closest) ? e.target.closest('.field-box') : null;
+    var field = null;
+
+    if (target && target.dataset.fieldId) {
+      field = STATE.fields.find(function (x) { return x.id === target.dataset.fieldId; });
+    }
+    if (!field) {
+      var pageFields = getPageFields();
+      field = pageFields.find(function (f) {
+        var fx = f.xNorm * canvas.width + offset.x;
+        var fy = f.yNorm * canvas.height + offset.y;
+        var fw = f.wNorm * canvas.width;
+        var fh = f.hNorm * canvas.height;
+        return clickX >= fx && clickX <= (fx + fw) && clickY >= fy && clickY <= (fy + fh);
+      });
+    }
+
+    if (field) {
+      if (field.type === 'checkbox') {
+        updateField(field.id, { value: !field.value });
+        renderFieldsList();
+        renderOverlay();
+        toast((field.value ? '✓ টিক দেওয়া হয়েছে: ' : 'টিক সরানো হয়েছে: ') + field.label);
+      } else {
+        openInlineEditor(field);
+      }
+      return;
+    }
+
+    // Double-click on blank form canvas area: create new field and open inline editor!
+    var formW = canvas.width;
+    var formH = canvas.height;
+    if (!formW || !formH) return;
+
+    var defaultW = 160;
+    var defaultH = 28;
+    var xCanvas = Math.max(0, clickX - offset.x);
+    var yCanvas = Math.max(0, clickY - offset.y);
+
+    var newField = addField({
+      xNorm: Math.min(0.85, xCanvas / formW),
+      yNorm: Math.min(0.95, yCanvas / formH),
+      wNorm: Math.min(0.35, defaultW / formW),
+      hNorm: Math.min(0.06, defaultH / formH),
+      label: 'ফিল্ড ' + (STATE.fields.length + 1),
+      type: 'text',
+      value: '',
+      source: 'manual'
+    });
+
+    openInlineEditor(newField);
+    toast('নতুন ফিল্ড যোগ হয়েছে। সরাসরি টাইপ করে Enter চাপুন।');
+  }
+
+  overlay.addEventListener('dblclick', handleFormDoubleClick);
+  stageInner.addEventListener('dblclick', handleFormDoubleClick);
+
+  // Consecutive click detector for 100% reliable double-click detection across all devices
+  overlay.addEventListener('click', function (e) {
+    var now = Date.now();
+    var dist = Math.hypot(e.clientX - lastClickX, e.clientY - lastClickY);
+    if (now - lastClickTime < 380 && dist < 20) {
+      handleFormDoubleClick(e);
+      lastClickTime = 0;
+    } else {
+      lastClickTime = now;
+      lastClickX = e.clientX;
+      lastClickY = e.clientY;
+    }
+  });
+
+  // =========================================================================
   // MODE / TAB / PAGE / ZOOM controls
   // =========================================================================
   function setMode(mode) {
@@ -813,20 +1433,69 @@
     head.className = 'field-card-head';
 
     var labelInput = document.createElement('input');
-    labelInput.className = 'field-label-input';
+    labelInput.className = 'field-label-input locked';
     labelInput.value = f.label;
-    labelInput.addEventListener('change', function () { updateField(f.id, { label: labelInput.value }); });
+    labelInput.readOnly = true;
+    labelInput.tabIndex = -1; // Skip in Tab navigation
+    labelInput.title = 'নাম বদলাতে এডিট (✏️) চাপুন বা ডাবল ক্লিক করুন';
+
+    function unlockLabel() {
+      labelInput.readOnly = false;
+      labelInput.tabIndex = 0;
+      labelInput.classList.remove('locked');
+      labelInput.focus();
+      if (labelInput.select) labelInput.select();
+    }
+
+    function lockLabel() {
+      labelInput.readOnly = true;
+      labelInput.tabIndex = -1;
+      labelInput.classList.add('locked');
+      var newLabel = labelInput.value.trim();
+      if (!newLabel) {
+        labelInput.value = f.label;
+      } else if (newLabel !== f.label) {
+        updateField(f.id, { label: newLabel });
+      }
+    }
+
+    labelInput.addEventListener('dblclick', unlockLabel);
+    labelInput.addEventListener('blur', lockLabel);
+    labelInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        lockLabel();
+      } else if (e.key === 'Escape') {
+        labelInput.value = f.label;
+        lockLabel();
+      }
+    });
+
+    var renameBtn = document.createElement('button');
+    renameBtn.type = 'button';
+    renameBtn.className = 'field-rename-btn';
+    renameBtn.textContent = '✏️';
+    renameBtn.tabIndex = -1; // Skip in Tab navigation
+    renameBtn.title = 'ফিল্ডের নাম পরিবর্তন করুন';
+    renameBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (labelInput.readOnly) unlockLabel();
+      else lockLabel();
+    });
 
     var tag = document.createElement('span');
     tag.className = 'field-tag ' + f.source;
-    tag.textContent = f.source === 'acroform' ? 'AcroForm' : (f.source === 'gemini' ? 'Gemini' : 'হাতে');
+    tag.textContent = f.source === 'acroform' ? 'AcroForm' : (f.source === 'gemini' ? 'Gemini' : (f.source === 'template' ? 'টেমপ্লেট' : 'হাতে'));
 
     var del = document.createElement('button');
     del.className = 'field-del';
     del.textContent = '×';
+    del.tabIndex = -1; // Skip in Tab navigation
+    del.title = 'ফিল্ড মুছুন';
     del.addEventListener('click', function () { removeField(f.id); });
 
     head.appendChild(labelInput);
+    head.appendChild(renameBtn);
     head.appendChild(tag);
     head.appendChild(del);
     card.appendChild(head);
@@ -836,6 +1505,7 @@
       row.className = 'field-checkbox-row';
       var cb = document.createElement('input');
       cb.type = 'checkbox';
+      cb.tabIndex = 0; // Focusable via Tab
       cb.checked = !!f.value;
       cb.addEventListener('change', function () { updateField(f.id, { value: cb.checked }); renderFieldsList(); });
       var txt = document.createElement('span');
@@ -847,6 +1517,7 @@
       var ta = document.createElement('textarea');
       ta.className = 'field-value-textarea';
       ta.id = 'val_' + f.id;
+      ta.tabIndex = 0; // Focusable via Tab
       ta.value = f.value || '';
       ta.addEventListener('input', function () { updateField(f.id, { value: ta.value }); });
       card.appendChild(ta);
@@ -854,6 +1525,7 @@
       var inp = document.createElement('input');
       inp.className = 'field-value-input';
       inp.id = 'val_' + f.id;
+      inp.tabIndex = 0; // Focusable via Tab
       inp.type = (f.type === 'date') ? 'text' : (f.type === 'number' ? 'number' : 'text');
       inp.placeholder = f.label;
       inp.value = f.value || '';
@@ -902,12 +1574,6 @@
     });
   }
 
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"]/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
-    });
-  }
-
   $('#btnApproveAll').addEventListener('click', function () {
     STATE.fields.forEach(function (f) { f.needsReview = false; });
     renderReviewList(); renderFieldsList(); renderOverlay();
@@ -926,14 +1592,128 @@
   $('#btnDetect').addEventListener('click', function () { detectFields(); });
 
   // =========================================================================
-  // SETTINGS
+  // SETTINGS (AI Configuration & Printer Tuning)
   // =========================================================================
-  $('#workerUrlInput').value = STATE.workerUrl || '/api/form-filler-ai';
-  $('#btnSaveWorkerUrl').addEventListener('click', function () {
-    STATE.workerUrl = $('#workerUrlInput').value.trim();
-    localStorage.setItem('sff_worker_url', STATE.workerUrl);
-    toast('Worker URL সেভ হয়েছে।');
-  });
+  // =========================================================================
+  // SETTINGS (Google Gemini Encrypted AI Configuration & Printer Tuning)
+  // =========================================================================
+  function updateApiKeyUI() {
+    var stored = localStorage.getItem(ENC_STORAGE_KEY);
+    var badge = $('#geminiKeyStatusBadge');
+    var notice = $('#geminiKeyStatusNotice');
+    var input = $('#geminiApiKeyInput');
+    if (!badge || !notice || !input) return;
+
+    if (stored) {
+      badge.textContent = '🔒 এনক্রিপ্টেড (Active)';
+      badge.className = 'sff-status-badge badge-encrypted';
+      notice.className = 'sff-status-notice notice-encrypted';
+      notice.innerHTML = '🔒 <strong>Gemini API Key সক্রিয় ও সুরক্ষিত:</strong> আপনার API Key টি ব্রাউজারে AES-256 দিয়ে এনক্রিপ্ট করে সেভ করা রয়েছে (অনিরাপদ প্লেইন টেক্সট হিসেবে নয়)।';
+      if (!input.dataset.viewingRaw) {
+        input.value = '••••••••••••••••••••••••••••••••';
+        input.type = 'password';
+      }
+    } else {
+      badge.textContent = '⚠️ Key নেই';
+      badge.className = 'sff-status-badge badge-warning';
+      notice.className = 'sff-status-notice notice-warning';
+      notice.innerHTML = '⚠️ <strong>কোনো API Key সেট করা নেই:</strong> AI ফিল্ড ডিটেকশন ব্যবহার করতে উপরে আপনার Gemini API Key দিন।';
+      input.value = '';
+      input.type = 'password';
+      delete input.dataset.viewingRaw;
+    }
+  }
+
+  // Auto-migrate legacy key if exists
+  var legacyVal = localStorage.getItem('sff_worker_url') || '';
+  if (legacyVal && (legacyVal.startsWith('AIza') || (/^[A-Za-z0-9_\-]{28,}$/.test(legacyVal) && !legacyVal.includes('/')))) {
+    encryptApiKey(legacyVal).then(function (enc) {
+      if (enc) localStorage.setItem(ENC_STORAGE_KEY, enc);
+      localStorage.removeItem('sff_worker_url');
+      updateApiKeyUI();
+    });
+  } else {
+    localStorage.removeItem('sff_worker_url');
+  }
+
+  updateApiKeyUI();
+
+  var btnToggleKey = $('#btnToggleKeyVisibility');
+  if (btnToggleKey) {
+    btnToggleKey.addEventListener('click', function () {
+      var input = $('#geminiApiKeyInput');
+      var stored = localStorage.getItem(ENC_STORAGE_KEY);
+      if (!input) return;
+      if (input.type === 'password') {
+        if (stored) {
+          decryptApiKey(stored).then(function (plain) {
+            if (plain) {
+              input.value = plain;
+              input.dataset.viewingRaw = 'true';
+              input.type = 'text';
+              btnToggleKey.textContent = '🙈';
+            }
+          });
+        } else {
+          input.type = 'text';
+          btnToggleKey.textContent = '🙈';
+        }
+      } else {
+        input.type = 'password';
+        btnToggleKey.textContent = '👁️';
+        if (stored) {
+          input.value = '••••••••••••••••••••••••••••••••';
+          delete input.dataset.viewingRaw;
+        }
+      }
+    });
+  }
+
+  var btnSaveApiKey = $('#btnSaveApiKey');
+  if (btnSaveApiKey) {
+    btnSaveApiKey.addEventListener('click', function () {
+      var input = $('#geminiApiKeyInput');
+      var val = (input ? input.value : '').trim();
+      if (!val || val.startsWith('••••')) {
+        toast('অনুগ্রহ করে আপনার আসল Gemini API Key পেস্ট করুন।');
+        return;
+      }
+      setBusy(true, 'Key এনক্রিপ্ট করা হচ্ছে...');
+      encryptApiKey(val).then(function (enc) {
+        setBusy(false);
+        if (!enc) {
+          toast('API Key এনক্রিপ্ট করা যায়নি।');
+          return;
+        }
+        localStorage.setItem(ENC_STORAGE_KEY, enc);
+        if (input) {
+          delete input.dataset.viewingRaw;
+        }
+        updateApiKeyUI();
+        toast('🔒 Google Gemini API Key সফলভাবে AES-256 এনক্রিপ্ট করে সেভ করা হয়েছে!');
+      }).catch(function (err) {
+        setBusy(false);
+        toast('এনক্রিপশন সমস্যা: ' + err.message);
+      });
+    });
+  }
+
+  var btnClearApiKey = $('#btnClearApiKey');
+  if (btnClearApiKey) {
+    btnClearApiKey.addEventListener('click', function () {
+      if (confirm('সংরক্ষিত API Key টি মুছে ফেলতে চান?')) {
+        localStorage.removeItem(ENC_STORAGE_KEY);
+        var input = $('#geminiApiKeyInput');
+        if (input) {
+          input.value = '';
+          input.type = 'password';
+          delete input.dataset.viewingRaw;
+        }
+        updateApiKeyUI();
+        toast('API Key মুছে ফেলা হয়েছে।');
+      }
+    });
+  }
 
   $('#offsetXInput').addEventListener('input', function () {
     STATE.printerOffsetMm.x = parseFloat($('#offsetXInput').value) || 0;
@@ -955,28 +1735,54 @@
     STATE.font.checkSymbol = $('#checkSymbolInput').value;
     renderOverlay();
   });
+  var checkSizeInput = $('#checkSizeInput');
+  if (checkSizeInput) {
+    checkSizeInput.addEventListener('change', function () {
+      STATE.font.checkScale = parseFloat(checkSizeInput.value) || 1.6;
+      renderOverlay();
+    });
+  }
 
   // =========================================================================
-  // TEMPLATES (localStorage)
+  // TEMPLATES (localStorage UI Handlers)
   // =========================================================================
-  var TPL_KEY = 'sff_templates_v1';
-  function getTemplates() { try { return JSON.parse(localStorage.getItem(TPL_KEY) || '[]'); } catch (e) { return []; } }
-  function saveTemplates(t) { localStorage.setItem(TPL_KEY, JSON.stringify(t)); renderTemplatesList(); }
-
   $('#btnSaveTemplate').addEventListener('click', function () {
     if (STATE.fields.length === 0) { toast('সেভ করার মতো কোনো ফিল্ড নেই।'); return; }
     var name = $('#templateNameInput').value.trim() || ('টেমপ্লেট ' + new Date().toLocaleDateString('bn-BD'));
     var tpls = getTemplates();
-    tpls.unshift({
-      id: uid('tpl'), name: name, fileName: STATE.fileName,
+    var dims = STATE.pageDims[STATE.currentPage];
+    var aspect = (dims && dims.width && dims.height) ? (dims.width / dims.height).toFixed(3) : null;
+
+    var newTpl = {
+      id: uid('tpl'),
+      name: name,
+      fileName: STATE.fileName,
+      fileSize: STATE.fileSize || 0,
+      fileHash: STATE.fileHash || null,
+      totalPages: STATE.totalPages || 1,
+      aspectRatio: aspect,
       fields: STATE.fields.map(function (f) {
         return { page: f.page, label: f.label, type: f.type, xNorm: f.xNorm, yNorm: f.yNorm, wNorm: f.wNorm, hNorm: f.hNorm };
       }),
-      printerOffsetMm: STATE.printerOffsetMm
+      printerOffsetMm: Object.assign({}, STATE.printerOffsetMm),
+      createdAt: new Date().toISOString()
+    };
+
+    var existingIdx = tpls.findIndex(function (x) {
+      return (x.name && x.name === name) || (newTpl.fileHash && x.fileHash === newTpl.fileHash);
     });
+    if (existingIdx !== -1) {
+      newTpl.id = tpls[existingIdx].id;
+      tpls[existingIdx] = newTpl;
+    } else {
+      tpls.unshift(newTpl);
+    }
+
     saveTemplates(tpls);
+    STATE.matchedTemplateId = newTpl.id;
     $('#templateNameInput').value = '';
-    toast('টেমপ্লেট সেভ হয়েছে।');
+    renderTemplatesList();
+    toast('টেমপ্লেট "' + name + '" সংরক্ষিত হয়েছে। পরবর্তীতে এই ফর্ম আপলোড করলে এটি স্বয়ংক্রিয়ভাবে চিনে নেবে!');
   });
 
   function renderTemplatesList() {
@@ -986,31 +1792,32 @@
     if (tpls.length === 0) { list.innerHTML = '<p class="hint">এখনো কোনো টেমপ্লেট সেভ করা হয়নি।</p>'; return; }
     tpls.forEach(function (t) {
       var card = document.createElement('div');
-      card.className = 'field-card';
-      card.innerHTML = '<strong>' + escapeHtml(t.name) + '</strong><div class="review-meta">' + t.fields.length + 'টি ফিল্ড &bull; ' + escapeHtml(t.fileName || '') + '</div>';
+      var isActive = (t.id === STATE.matchedTemplateId);
+      card.className = 'field-card' + (isActive ? ' selected' : '');
+      var activeBadgeHtml = isActive ? '<span class="template-active-badge">✓ সক্রিয়</span>' : '';
+
+      card.innerHTML = '<strong>' + escapeHtml(t.name) + '</strong>' + activeBadgeHtml +
+        '<div class="review-meta">' + t.fields.length + 'টি ফিল্ড &bull; ' + escapeHtml(t.fileName || '') + '</div>';
+
       var actions = document.createElement('div');
       actions.className = 'review-actions';
       var loadBtn = document.createElement('button');
       loadBtn.className = 'btn-sm btn-accent';
       loadBtn.textContent = 'লোড করুন';
       loadBtn.addEventListener('click', function () {
-        STATE.fields = t.fields.map(function (f) {
-          return Object.assign({}, f, { id: uid('tpl'), value: f.type === 'checkbox' ? false : '', source: 'manual', needsReview: false, confidence: 1 });
-        });
-        if (t.printerOffsetMm) {
-          STATE.printerOffsetMm = t.printerOffsetMm;
-          $('#offsetXInput').value = t.printerOffsetMm.x;
-          $('#offsetYInput').value = t.printerOffsetMm.y;
-        }
-        setTab('fields');
-        renderFieldsList(); renderReviewList(); renderOverlay();
-        toast('টেমপ্লেট লোড হয়েছে।');
+        applyTemplate(t, false);
       });
       var delBtn = document.createElement('button');
       delBtn.className = 'btn-sm';
       delBtn.textContent = 'মুছুন';
       delBtn.addEventListener('click', function () {
-        saveTemplates(getTemplates().filter(function (x) { return x.id !== t.id; }));
+        if (confirm('এই টেমপ্লেটটি মুছে ফেলতে চান?')) {
+          if (STATE.matchedTemplateId === t.id) {
+            STATE.matchedTemplateId = null;
+            hideAutoTemplateBanner();
+          }
+          saveTemplates(getTemplates().filter(function (x) { return x.id !== t.id; }));
+        }
       });
       actions.appendChild(loadBtn);
       actions.appendChild(delBtn);
@@ -1019,6 +1826,23 @@
     });
   }
   renderTemplatesList();
+
+  // Banner Actions
+  var btnRescanAI = $('#btnRescanAI');
+  if (btnRescanAI) {
+    btnRescanAI.addEventListener('click', function () {
+      hideAutoTemplateBanner();
+      STATE.matchedTemplateId = null;
+      renderTemplatesList();
+      detectFields();
+    });
+  }
+  var btnCloseAutoTemplate = $('#btnCloseAutoTemplate');
+  if (btnCloseAutoTemplate) {
+    btnCloseAutoTemplate.addEventListener('click', function () {
+      hideAutoTemplateBanner();
+    });
+  }
 
   // =========================================================================
   // SHARED DRAW FUNCTION — used identically by Print AND PDF export
@@ -1035,7 +1859,10 @@
       if (f.type === 'checkbox') {
         if (f.value) {
           targetCtx.fillStyle = font.color;
-          targetCtx.font = '700 ' + Math.round(h * 0.85) + 'px "Noto Sans Bengali", Arial, sans-serif';
+          var baseBoxDim = Math.max(w, h);
+          var scaleMultiplier = (font && font.checkScale) || 1.6;
+          var checkFontSize = Math.max(22 * scaleUsed, Math.round(baseBoxDim * scaleMultiplier));
+          targetCtx.font = '900 ' + checkFontSize + 'px "Noto Sans Bengali", Arial, sans-serif';
           targetCtx.textBaseline = 'middle';
           targetCtx.textAlign = 'center';
           targetCtx.fillText(font.checkSymbol, x + w / 2, y + h / 2);
