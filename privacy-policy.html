@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy | Pragati Telecom - Data Processing &amp; Security Disclosures</title>
+  <meta name="description" content="Read Pragati Telecom's transparent Privacy Policy detailing client-side browser document processing, local storage use, and optional Gemini OCR API data flows.">
+  <link rel="canonical" href="https://turabsk.github.io/pragati-telecom/privacy-policy.html">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- SHARED NAVIGATION BAR -->
+  <script src="js/shared-layout.js"></script>
+
+  <main class="content-page-wrapper">
+    <div class="content-breadcrumb">
+      <a href="index.html">🏠 Home</a> <span>/</span> <span>Privacy Policy</span>
+    </div>
+
+    <article class="content-card">
+      <header class="content-header">
+        <div class="content-badge">🔒 Privacy &amp; Data Transparency</div>
+        <h1 class="content-title">Privacy Policy</h1>
+        <p class="content-subtitle">
+          At Pragati Telecom, we believe in complete transparency regarding how digital files, images, PDFs, and API keys are handled when you use our web utilities.
+        </p>
+        <div class="content-meta">
+          <span>📅 Effective Date: August 30, 2026</span>
+          <span>🔄 Last Technical Review: August 2026</span>
+        </div>
+      </header>
+
+      <section class="legal-section">
+        <h2>1. Overview &amp; Core Privacy Principle</h2>
+        <p>
+          This Privacy Policy governs the online tools, utilities, and services provided by <strong>Pragati Telecom</strong> ("we", "us", or "our"), accessible at <strong>https://turabsk.github.io/pragati-telecom/</strong>.
+        </p>
+        <p>
+          Our fundamental engineering principle is <strong>client-side data isolation</strong>. Unlike conventional cloud document conversion websites that upload your personal documents to remote web servers for conversion and storage, the vast majority of Pragati Telecom tools execute entirely within your web browser’s sandbox memory (HTML5 Canvas, WebAssembly, Web Workers, and JavaScript).
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>2. Data Processing Architecture: Tool-by-Tool Breakdown</h2>
+        <p>
+          To maintain absolute honesty and compliance with data privacy regulations, we explicitly categorize each tool’s processing behavior below:
+        </p>
+
+        <div class="table-responsive">
+          <table class="legal-table">
+            <thead>
+              <tr>
+                <th>Tool Name</th>
+                <th>File Types Processed</th>
+                <th>Processing Type</th>
+                <th>Does File Leave Your Device?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>AI Photo Studio Pro</strong></td>
+                <td>JPG, PNG, WEBP (Photos)</td>
+                <td><span class="badge-tag local">100% Client-Side</span> (CropperJS &amp; @imgly WASM in browser)</td>
+                <td><strong>NO</strong> — Processed in local RAM only.</td>
+              </tr>
+              <tr>
+                <td><strong>Smart Multi-Card Studio</strong></td>
+                <td>PDF, JPG, PNG (ID Documents)</td>
+                <td><span class="badge-tag local">100% Client-Side</span> (PDF.js, Tesseract.js, JSZip in browser)</td>
+                <td><strong>NO</strong> — Password unlock &amp; cropping occur locally.</td>
+              </tr>
+              <tr>
+                <td><strong>Custom PDF Compressor</strong></td>
+                <td>PDF Files</td>
+                <td><span class="badge-tag local">100% Client-Side</span> (PDF-Lib &amp; Canvas scaling)</td>
+                <td><strong>NO</strong> — Re-encoded in browser memory.</td>
+              </tr>
+              <tr>
+                <td><strong>Smart Visual PDF Editor</strong></td>
+                <td>PDF Files</td>
+                <td><span class="badge-tag local">100% Client-Side</span> (PDF.js, PDF-Lib, Noto font embedding)</td>
+                <td><strong>NO</strong> — Text replacement occurs in browser.</td>
+              </tr>
+              <tr>
+                <td><strong>Cash Denomination Tally</strong></td>
+                <td>Numerical Inputs</td>
+                <td><span class="badge-tag local">100% Client-Side</span> (Local arithmetic math)</td>
+                <td><strong>NO</strong> — No files or network requests involved.</td>
+              </tr>
+              <tr>
+                <td><strong>Drag &amp; Drop PDF Maker</strong></td>
+                <td>Images &amp; PDF Pages</td>
+                <td><span class="badge-tag local">Local by Default</span> / <span class="badge-tag api">Server AI on OCR</span></td>
+                <td><strong>ONLY IF AI OCR IS CHECKED</strong> — In-memory processing via Cloudflare Worker. Zero permanent storage.</td>
+              </tr>
+              <tr>
+                <td><strong>Searchable PDF Maker</strong></td>
+                <td>Scanned Images &amp; PDFs</td>
+                <td><span class="badge-tag api">Cloudflare Worker AI API</span></td>
+                <td><strong>ONLY IF AI OCR IS CHECKED</strong> — In-memory processing via Cloudflare Worker. Zero permanent storage.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="legal-section">
+        <h2>3. Local Client-Side Processing Details</h2>
+        <p>
+          For all tools marked as <span class="badge-tag local">100% Client-Side</span>:
+        </p>
+        <ul>
+          <li>Files selected via the <code>&lt;input type="file"&gt;</code> or drag-and-drop zones are read into your browser using the HTML5 <code>FileReader</code> API or <code>URL.createObjectURL()</code>.</li>
+          <li>Document rendering, cropping, scaling, background removal, and compression occur exclusively inside your device's memory.</li>
+          <li>When you download a generated PDF or JPG image, it is generated as a client-side Blob (<code>blob:</code> URL) and saved directly to your local file storage.</li>
+          <li>Pragati Telecom has <strong>no server backend, no database, and no server-side file storage</strong> for these tools. We never view, collect, or store your documents.</li>
+        </ul>
+      </section>
+
+      <section class="legal-section">
+        <h2>4. Third-Party API Data Transmission (Google Gemini AI OCR)</h2>
+        <p>
+          In tools offering optical character recognition (specifically <code>searchable-pdf.html</code> and <code>pdf-maker.html</code>):
+        </p>
+        <ul>
+          <li><strong>Server-Side Cloudflare Worker Architecture:</strong> Pragati Telecom routes AI processing requests through secure, server-side Cloudflare Worker endpoints (<code>/api/searchable-pdf-ai</code> and <code>/api/pdf-ai</code>). Users do not need to supply, store, or manage personal API keys.</li>
+          <li><strong>Ephemeral Data Processing:</strong> When you execute AI OCR, image canvas slices are streamed in-memory over encrypted HTTPS to our Cloudflare Worker to extract text coordinates and are immediately discarded. No document files or image buffers are retained on permanent storage.</li>
+          <li><strong>Zero Client-Side Credential Exposure:</strong> All provider credentials are kept strictly secure within encrypted Cloudflare environment secrets. The user's browser never receives, handles, or stores any API keys.</li>
+          <li><strong>No Local Storage of Credentials:</strong> The application does not store any AI API tokens or credentials in your browser's <code>localStorage</code> or <code>sessionStorage</code>.</li>
+        </ul>
+      </section>
+
+      <section class="legal-section">
+        <h2>5. Content Delivery Networks (CDNs) &amp; External Assets</h2>
+        <p>
+          To ensure optimal loading speeds and secure library delivery, our website loads open-source JavaScript libraries and fonts from reputable public CDNs:
+        </p>
+        <ul>
+          <li><strong>cdnjs (Cloudflare):</strong> Serves <code>pdf.js</code>, <code>pdf-lib</code>, <code>jspdf</code>, <code>cropperjs</code>, <code>Sortable.js</code>, and <code>jszip</code>.</li>
+          <li><strong>jsdelivr:</strong> Serves <code>@imgly/background-removal</code> WebAssembly scripts.</li>
+          <li><strong>Google Fonts:</strong> Serves the <em>Plus Jakarta Sans</em> typeface stylesheet and the <em>Noto Sans Bengali</em> TrueType font binary for Bengali PDF rendering.</li>
+        </ul>
+        <p>
+          These CDNs may collect standard technical access logs (such as your IP address, browser user-agent, and timestamp) in accordance with their respective privacy policies.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>6. Cookies &amp; Tracking Technologies</h2>
+        <p>
+          <strong>Current Status:</strong> Pragati Telecom does <strong>not</strong> use tracking cookies, behavioral tracking scripts, or analytics pixels (such as Google Analytics or Facebook Pixel) in its current codebase.
+        </p>
+        <p>
+          <strong>Browser LocalStorage:</strong> We utilize browser <code>localStorage</code> solely for functional UI preferences (such as saving your Light/Dark mode theme preference and sidebar collapsed state).
+        </p>
+        <p>
+          <strong>Future Advertising Disclosures:</strong> If third-party advertising partners (such as Google AdSense) are introduced in the future, they may use cookies or web beacons to serve advertisements based on user visits to this and other websites. Users will retain the right to manage cookie preferences and opt out of personalized advertising via Google Ad Settings (<a href="https://adssettings.google.com" target="_blank" rel="noopener">https://adssettings.google.com</a>).
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>7. Data Security &amp; User Responsibilities</h2>
+        <p>
+          While our client-side architecture minimizes data exposure, users must uphold safe digital hygiene:
+        </p>
+        <ul>
+          <li>Always access Pragati Telecom over a secure HTTPS connection.</li>
+          <li>When working on public or shared computers (e.g., in cyber cafes or libraries), remember to clear downloaded files from the local Downloads folder and click <em>"Clear API Key"</em> after completing your session.</li>
+          <li>Do not share your personal Google API keys with unauthorized individuals.</li>
+        </ul>
+      </section>
+
+      <section class="legal-section">
+        <h2>8. Contact for Privacy Inquiries</h2>
+        <p>
+          If you have questions, concerns, or requests regarding this Privacy Policy or our data handling practices, please contact us:
+        </p>
+        <ul>
+          <li><strong>Physical Address:</strong> Pragati Telecom, Kalupur Middle Para, Murshidabad, West Bengal, India</li>
+          <li><strong>Phone / WhatsApp:</strong> +91 9775096842</li>
+          <li><strong>Email:</strong> <a href="mailto:support@pragatitelecom.local">support@pragatitelecom.local</a></li>
+        </ul>
+      </section>
+
+      <div style="margin-top: 2.5rem; text-align: center;">
+        <a href="index.html" class="btn btn-primary" style="display: inline-flex; width: auto; padding: 12px 24px; font-weight: 700; border-radius: 10px;">
+          ← Return to Digital Tools Portal
+        </a>
+      </div>
+    </article>
+  </main>
+
+</body>
+</html>
