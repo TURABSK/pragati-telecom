@@ -32,6 +32,8 @@ Rules for box_2d:
 - Integers normalized to a 0-1000 scale relative to the FULL image (top-left corner = [0,0,0,0], bottom-right = 1000).
 - The box must cover the BLANK / ANSWER area where a value should be written (the empty underline, the empty box,
   or the checkbox glyph itself) — NOT the printed label text next to it.
+- For name and text fields with a printed label followed by a blank underline or dotted line (e.g. "Name: ________" or "নাম: ________"):
+  The box must start IMMEDIATELY after the label/colon where the blank line begins, exactly aligned horizontally with the underline, covering the full width of the writeable underline without overlapping the label text or shifting to the side.
 - For a checkbox, make the box small and tight around just the checkbox glyph (☐ / □ / [ ]).
 - Never skip a field just because it is currently empty.
 - Never merge two distinct fields into a single box.`;

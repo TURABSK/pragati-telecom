@@ -599,19 +599,22 @@
     '- Integers normalized to a 0-1000 scale relative to the FULL image (top-left corner = [0,0,0,0], bottom-right = 1000).\n' +
     '- The box must cover the BLANK / ANSWER area where a value should be written (the empty underline, the empty box,\n' +
     '  or the checkbox glyph itself) — NOT the printed label text next to it.\n' +
+    '- For name and text fields with a printed label followed by a blank underline or dotted line (e.g. "Name: ________" or "নাম: ________"):\n' +
+    '  The box must start IMMEDIATELY after the label/colon where the blank line begins, exactly aligned horizontally with the underline, covering the full width of the writeable underline without overlapping the label text or shifting to the side.\n' +
     '- For a checkbox, make the box small and tight around just the checkbox glyph (☐ / □ / [ ]).\n' +
     '- Never skip a field just because it is currently empty.\n' +
     '- Never merge two distinct fields into a single box.';
 
-  // Candidate models to try in priority order (Google Gemini 3.x / 2.x)
+  // Candidate models to try in priority order (Google Gemini 2.x / 1.5)
   var GEMINI_MODELS = [
-    'gemini-3.6-flash',
-    'gemini-3.5-flash',
-    'gemini-3.0-flash',
     'gemini-2.5-flash',
     'gemini-2.0-flash',
     'gemini-2.5-flash-lite',
-    'gemini-1.5-flash'
+    'gemini-2.0-flash-lite',
+    'gemini-1.5-flash',
+    'gemini-1.5-pro',
+    'gemini-2.5-pro',
+    'gemini-3.6-flash'
   ];
   var cachedWorkingModel = null;
 
@@ -637,7 +640,7 @@
         body: JSON.stringify(geminiBody),
         signal: signal
       });
-    }, 30000, 'Google Gemini (' + modelName + ') থেকে ৩০ সেকেন্ডে কোনো সাড়া আসেনি।')
+    }, 20000, 'Google Gemini (' + modelName + ') থেকে ২০ সেকেন্ডে কোনো সাড়া আসেনি।')
     .then(function (res) {
       if (res.status === 429) {
         throw new Error('Gemini API কোটা লিমিট বা রেট লিমিট অতিক্রম হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।');
@@ -714,13 +717,21 @@
           var isModelUnavailable = 
             err.status === 404 || 
             err.status === 400 ||
+            err.status === 503 ||
+            err.name === 'AbortError' ||
             msg.includes('not found') || 
             msg.includes('no longer available') ||
             msg.includes('not available') ||
             msg.includes('deprecated') ||
             msg.includes('update your code') ||
-            msg.includes('not supported for generateContent') || 
-            msg.includes('is not found for API version');
+            msg.includes('not supported') || 
+            msg.includes('is not found for API version') ||
+            msg.includes('সাড়া আসেনি') ||
+            msg.includes('সময় শেষ') ||
+            msg.includes('timeout') ||
+            msg.includes('timed out') ||
+            msg.includes('Failed to fetch') ||
+            msg.includes('NetworkError');
 
           if (isModelUnavailable) {
             console.warn('মডেল ' + currentModel + ' কাজ করছে না, পরবর্তী মডেল চেষ্টা করা হচ্ছে...', msg);
@@ -909,6 +920,13 @@
       box.style.height = hPx + 'px';
       box.dataset.fieldId = f.id;
 
+      // Always include a move handle badge indicating field name & drag capability
+      var moveBadge = document.createElement('div');
+      moveBadge.className = 'field-move-handle';
+      moveBadge.title = 'মাউস দিয়ে ধরে সঠিক জায়গায় সরান';
+      moveBadge.innerHTML = '✥ ' + escapeHtml(f.label);
+      box.appendChild(moveBadge);
+
       if (STATE.mode === 'fill') {
         if (f.type === 'checkbox') {
           if (f.value) {
@@ -922,9 +940,6 @@
             chk.textContent = STATE.font.checkSymbol;
             box.appendChild(chk);
           } else if (STATE.hoveredFieldId === f.id) {
-            // Bug fixed: checkboxes never showed a hover hint before
-            // (only text fields did), so hovering an empty checkbox on
-            // the canvas gave no clue what it was or what a click would do.
             var chint = document.createElement('span');
             chint.className = 'overlay-hint';
             chint.textContent = f.label;
@@ -979,10 +994,10 @@
   function hoverTipText(f) {
     if (f.type === 'checkbox') {
       var sym = symbolPreview(f);
-      return (f.value ? 'ক্লিক করলে "' + sym + '" উঠে যাবে (আন-টিক)' : 'ক্লিক করলে "' + sym + '" বসবে') + ' — ' + f.label;
+      return (f.value ? 'ক্লিক করলে "' + sym + '" উঠে যাবে (আন-টিক)' : 'ক্লিক করলে "' + sym + '" বসবে') + ' • ধরে সরাতে পারেন — ' + f.label;
     }
-    if (f.type === 'textarea') return '✏️ এখানে লিখুন — ' + f.label;
-    return '✏️ এখানে লিখুন — ' + f.label;
+    if (f.type === 'textarea') return '✏️ এখানে লিখুন • মাউস দিয়ে ধরে পজিশন বদলান — ' + f.label;
+    return '✏️ এখানে লিখুন • মাউস দিয়ে ধরে পজিশন বদলান — ' + f.label;
   }
 
   function showHoverTip(fieldEl, f, clientX, clientY) {
@@ -1017,7 +1032,7 @@
 
   overlay.addEventListener('mouseover', function (e) {
     var target = e.target.closest('.field-box');
-    if (!target || dragging || resizing || drawing) return;
+    if (!target || dragSession || resizing || drawing) return;
     var f = STATE.fields.find(function (x) { return x.id === target.dataset.fieldId; });
     if (!f) return;
     showHoverTip(target, f, e.clientX, e.clientY);
@@ -1031,75 +1046,114 @@
     var target = e.target.closest('.field-box');
     if (!target) return;
     var toEl = e.relatedTarget && e.relatedTarget.closest ? e.relatedTarget.closest('.field-box') : null;
-    if (toEl === target) return; // moved within the same box (e.g. onto a child span)
+    if (toEl === target) return;
     hideHoverTip();
   });
 
   overlay.addEventListener('mouseleave', function () { hideHoverTip(); });
 
-  // =========================================================================
-  // INTERACTION: fill clicks, draw, drag, resize
-  // =========================================================================
-  var drawing = null, dragging = null, resizing = null;
+  // Floating Drag Position Indicator
+  var dragIndicatorEl = null;
+  function showMoveTooltip(f, clientX, clientY, xNorm, yNorm) {
+    if (!dragIndicatorEl) {
+      dragIndicatorEl = document.createElement('div');
+      dragIndicatorEl.className = 'sff-drag-indicator';
+      document.body.appendChild(dragIndicatorEl);
+    }
+    var pctX = Math.round(xNorm * 100);
+    var pctY = Math.round(yNorm * 100);
+    dragIndicatorEl.innerHTML = '<span>📍</span> <strong>' + escapeHtml(f.label) + '</strong> <span style="opacity:0.75; font-size:10.5px;">(' + pctX + '%, ' + pctY + '%)</span>';
+    dragIndicatorEl.style.left = (clientX + 14) + 'px';
+    dragIndicatorEl.style.top = (clientY + 14) + 'px';
+    dragIndicatorEl.style.display = 'flex';
+  }
 
-  overlay.addEventListener('mousedown', function (e) {
-    var target = e.target.closest('.field-box');
+  function hideMoveTooltip() {
+    if (dragIndicatorEl) dragIndicatorEl.style.display = 'none';
+  }
+
+  // =========================================================================
+  // INTERACTION: Universal Direct Mouse Dragging, Resizing, Drawing & Filling
+  // =========================================================================
+  var drawing = null;
+  var dragSession = null;
+  var resizing = null;
+
+  function onPointerDown(e) {
+    var isTouch = !!e.touches;
+    var clientX = isTouch ? e.touches[0].clientX : e.clientX;
+    var clientY = isTouch ? e.touches[0].clientY : e.clientY;
+    var target = e.target.closest ? e.target.closest('.field-box') : null;
     hideHoverTip();
 
     if (STATE.mode === 'draw' && !target) {
       var r = overlay.getBoundingClientRect();
-      drawing = { x: e.clientX - r.left, y: e.clientY - r.top };
+      drawing = { x: clientX - r.left, y: clientY - r.top };
       var box = document.createElement('div');
       box.className = 'drawing-box';
       box.style.left = drawing.x + 'px';
       box.style.top = drawing.y + 'px';
       overlay.appendChild(box);
       drawing.el = box;
+      if (!isTouch) e.preventDefault();
       return;
     }
 
-    if (STATE.mode === 'edit' && target) {
+    if (target) {
       var handle = e.target.dataset.handle;
       var fieldId = target.dataset.fieldId;
       var f = STATE.fields.find(function (x) { return x.id === fieldId; });
       if (!f) return;
 
-      if (handle) {
-        resizing = { id: fieldId, handle: handle, startClientX: e.clientX, startClientY: e.clientY,
-          x: f.xNorm, y: f.yNorm, w: f.wNorm, h: f.hNorm };
+      if (handle && STATE.mode === 'edit') {
+        resizing = {
+          id: fieldId,
+          handle: handle,
+          startClientX: clientX,
+          startClientY: clientY,
+          x: f.xNorm,
+          y: f.yNorm,
+          w: f.wNorm,
+          h: f.hNorm
+        };
         e.preventDefault();
         return;
       }
+
+      // Universal drag on any field in both fill and edit modes
+      dragSession = {
+        id: fieldId,
+        field: f,
+        startClientX: clientX,
+        startClientY: clientY,
+        origXNorm: f.xNorm,
+        origYNorm: f.yNorm,
+        origWNorm: f.wNorm,
+        origHNorm: f.hNorm,
+        currentXNorm: f.xNorm,
+        currentYNorm: f.yNorm,
+        isMoved: false,
+        el: target
+      };
 
       STATE.selectedFieldId = fieldId;
       $all('.field-box', overlay).forEach(function (b) {
         b.classList.toggle('is-selected', b.dataset.fieldId === fieldId);
       });
-      renderFieldsList();
-      dragging = { id: fieldId, startClientX: e.clientX, startClientY: e.clientY, x: f.xNorm, y: f.yNorm };
+
       e.preventDefault();
-      return;
     }
+  }
 
-    if (STATE.mode === 'fill' && target) {
-      var fid = target.dataset.fieldId;
-      var field = STATE.fields.find(function (x) { return x.id === fid; });
-      if (!field) return;
-      if (field.type === 'checkbox') {
-        updateField(fid, { value: !field.value });
-        renderFieldsList();
-      } else {
-        var input = document.getElementById('val_' + fid);
-        if (input) { input.focus(); input.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
-      }
-    }
-  });
+  function onPointerMove(e) {
+    var isTouch = !!e.touches;
+    var clientX = isTouch ? e.touches[0].clientX : e.clientX;
+    var clientY = isTouch ? e.touches[0].clientY : e.clientY;
 
-  window.addEventListener('mousemove', function (e) {
     if (drawing) {
       var r = overlay.getBoundingClientRect();
-      var cx = Math.max(0, Math.min(r.width, e.clientX - r.left));
-      var cy = Math.max(0, Math.min(r.height, e.clientY - r.top));
+      var cx = Math.max(0, Math.min(r.width, clientX - r.left));
+      var cy = Math.max(0, Math.min(r.height, clientY - r.top));
       var left = Math.min(drawing.x, cx), top = Math.min(drawing.y, cy);
       var w = Math.abs(cx - drawing.x), h = Math.abs(cy - drawing.y);
       drawing.el.style.left = left + 'px';
@@ -1107,14 +1161,39 @@
       drawing.el.style.width = w + 'px';
       drawing.el.style.height = h + 'px';
       drawing.w = w; drawing.h = h; drawing.finalLeft = left; drawing.finalTop = top;
+      if (isTouch) e.preventDefault();
       return;
     }
 
-    if (dragging) {
-      var stageW = canvas.width * STATE.zoom, stageH = canvas.height * STATE.zoom;
-      var dx = (e.clientX - dragging.startClientX) / stageW;
-      var dy = (e.clientY - dragging.startClientY) / stageH;
-      updateField(dragging.id, { xNorm: dragging.x + dx, yNorm: dragging.y + dy });
+    if (dragSession) {
+      var dist = Math.hypot(clientX - dragSession.startClientX, clientY - dragSession.startClientY);
+      if (dist >= 3 || dragSession.isMoved) {
+        dragSession.isMoved = true;
+        dragSession.el.classList.add('is-dragging');
+        document.body.classList.add('sff-is-dragging');
+
+        var scaleUsed = currentCanvasScale();
+        var offset = offsetInCanvasPx(scaleUsed);
+        var stageW = canvas.width * STATE.zoom;
+        var stageH = canvas.height * STATE.zoom;
+        var dxNorm = (clientX - dragSession.startClientX) / stageW;
+        var dyNorm = (clientY - dragSession.startClientY) / stageH;
+
+        var newXNorm = Math.max(0, Math.min(1 - dragSession.origWNorm, dragSession.origXNorm + dxNorm));
+        var newYNorm = Math.max(0, Math.min(1 - dragSession.origHNorm, dragSession.origYNorm + dyNorm));
+
+        dragSession.currentXNorm = newXNorm;
+        dragSession.currentYNorm = newYNorm;
+
+        // Smooth real-time DOM position update
+        var leftPx = (newXNorm * canvas.width + offset.x) * STATE.zoom;
+        var topPx = (newYNorm * canvas.height + offset.y) * STATE.zoom;
+        dragSession.el.style.left = leftPx + 'px';
+        dragSession.el.style.top = topPx + 'px';
+
+        showMoveTooltip(dragSession.field, clientX, clientY, newXNorm, newYNorm);
+      }
+      if (isTouch) e.preventDefault();
       return;
     }
 
@@ -1122,19 +1201,23 @@
       var f = STATE.fields.find(function (x) { return x.id === resizing.id; });
       if (!f) return;
       var stageW2 = canvas.width * STATE.zoom, stageH2 = canvas.height * STATE.zoom;
-      var ddx = (e.clientX - resizing.startClientX) / stageW2;
-      var ddy = (e.clientY - resizing.startClientY) / stageH2;
+      var ddx = (clientX - resizing.startClientX) / stageW2;
+      var ddy = (clientY - resizing.startClientY) / stageH2;
       var x = resizing.x, y = resizing.y, w = resizing.w, h = resizing.h;
       var hd = resizing.handle;
-      if (hd.indexOf('e') !== -1) w = Math.max(0.01, resizing.w + ddx);
-      if (hd.indexOf('s') !== -1) h = Math.max(0.01, resizing.h + ddy);
-      if (hd.indexOf('w') !== -1) { var nw = resizing.w - ddx; if (nw > 0.01) { x = resizing.x + ddx; w = nw; } }
-      if (hd.indexOf('n') !== -1) { var nh = resizing.h - ddy; if (nh > 0.01) { y = resizing.y + ddy; h = nh; } }
+      if (hd.indexOf('e') !== -1) w = Math.max(0.01, Math.min(1 - x, resizing.w + ddx));
+      if (hd.indexOf('s') !== -1) h = Math.max(0.01, Math.min(1 - y, resizing.h + ddy));
+      if (hd.indexOf('w') !== -1) { var nw = resizing.w - ddx; if (nw > 0.01 && (resizing.x + ddx >= 0)) { x = resizing.x + ddx; w = nw; } }
+      if (hd.indexOf('n') !== -1) { var nh = resizing.h - ddy; if (nh > 0.01 && (resizing.y + ddy >= 0)) { y = resizing.y + ddy; h = nh; } }
       updateField(resizing.id, { xNorm: x, yNorm: y, wNorm: w, hNorm: h });
+      if (isTouch) e.preventDefault();
     }
-  });
+  }
 
-  window.addEventListener('mouseup', function () {
+  function onPointerUp() {
+    hideMoveTooltip();
+    document.body.classList.remove('sff-is-dragging');
+
     if (drawing) {
       var w = drawing.w || 0, h = drawing.h || 0;
       drawing.el.remove();
@@ -1155,8 +1238,83 @@
       }
       drawing = null;
     }
-    dragging = null;
+
+    if (dragSession) {
+      dragSession.el.classList.remove('is-dragging');
+      if (dragSession.isMoved) {
+        updateField(dragSession.id, {
+          xNorm: dragSession.currentXNorm,
+          yNorm: dragSession.currentYNorm
+        });
+        toast('📍 ফিল্ডের সঠিক অবস্থান সংরক্ষণ করা হয়েছে (' + dragSession.field.label + ')');
+      } else {
+        // Simple click without dragging
+        var clickedField = dragSession.field;
+        if (STATE.mode === 'fill') {
+          if (clickedField.type === 'checkbox') {
+            updateField(clickedField.id, { value: !clickedField.value });
+            renderFieldsList();
+          } else {
+            var input = document.getElementById('val_' + clickedField.id);
+            if (input) {
+              input.focus();
+              input.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+          }
+        } else if (STATE.mode === 'edit') {
+          renderOverlay();
+          renderFieldsList();
+        }
+      }
+      dragSession = null;
+    }
+
     resizing = null;
+  }
+
+  overlay.addEventListener('mousedown', onPointerDown);
+  window.addEventListener('mousemove', onPointerMove);
+  window.addEventListener('mouseup', onPointerUp);
+
+  overlay.addEventListener('touchstart', onPointerDown, { passive: false });
+  window.addEventListener('touchmove', onPointerMove, { passive: false });
+  window.addEventListener('touchend', onPointerUp);
+
+  // Keyboard Fine-Nudging (Arrow Keys)
+  window.addEventListener('keydown', function (e) {
+    var tag = (document.activeElement && document.activeElement.tagName) ? document.activeElement.tagName.toLowerCase() : '';
+    if (tag === 'input' || tag === 'textarea' || tag === 'select' || (document.activeElement && document.activeElement.isContentEditable)) return;
+    if (!STATE.selectedFieldId) return;
+
+    var f = STATE.fields.find(function (x) { return x.id === STATE.selectedFieldId; });
+    if (!f || f.page !== STATE.currentPage) return;
+
+    var step = e.shiftKey ? 0.01 : 0.002;
+    var handled = false;
+
+    if (e.key === 'ArrowLeft') {
+      f.xNorm = Math.max(0, f.xNorm - step);
+      handled = true;
+    } else if (e.key === 'ArrowRight') {
+      f.xNorm = Math.min(1 - f.wNorm, f.xNorm + step);
+      handled = true;
+    } else if (e.key === 'ArrowUp') {
+      f.yNorm = Math.max(0, f.yNorm - step);
+      handled = true;
+    } else if (e.key === 'ArrowDown') {
+      f.yNorm = Math.min(1 - f.hNorm, f.yNorm + step);
+      handled = true;
+    } else if (e.key === 'Delete' || e.key === 'Backspace') {
+      if (STATE.mode === 'edit') {
+        removeField(f.id);
+        handled = true;
+      }
+    }
+
+    if (handled) {
+      e.preventDefault();
+      renderOverlay();
+    }
   });
 
   // =========================================================================
@@ -1407,15 +1565,28 @@
     if (getPageFields().length === 0) detectFields();
   }
 
-  // =========================================================================
-  // SIDEBAR: Fields list
-  // =========================================================================
   function renderFieldsList() {
     var list = $('#fieldsList');
     var fields = getPageFields();
     list.innerHTML = '';
+
+    var searchQ = '';
+    var searchInput = $('#fieldSearchInput');
+    if (searchInput) searchQ = (searchInput.value || '').trim().toLowerCase();
+
+    if (searchQ) {
+      fields = fields.filter(function (f) {
+        return (f.label && f.label.toLowerCase().includes(searchQ)) ||
+               (typeof f.value === 'string' && f.value.toLowerCase().includes(searchQ));
+      });
+    }
+
     if (fields.length === 0) {
-      list.innerHTML = '<p class="hint">এই পাতায় কোনো ফিল্ড নেই। "ফিল্ড খুঁজুন" চাপুন অথবা "আঁকুন" মোডে হাতে বসান।</p>';
+      if (searchQ) {
+        list.innerHTML = '<p class="hint">"' + escapeHtml(searchQ) + '" দিয়ে কোনো ফিল্ড পাওয়া যায়নি।</p>';
+      } else {
+        list.innerHTML = '<p class="hint">এই পাতায় কোনো ফিল্ড নেই। "ফিল্ড খুঁজুন" চাপুন অথবা "আঁকুন" মোডে হাতে বসান।</p>';
+      }
       return;
     }
     fields.forEach(function (f) {
@@ -2025,5 +2196,23 @@
     e.preventDefault();
     if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
   });
+
+  var fieldSearchInput = $('#fieldSearchInput');
+  if (fieldSearchInput) {
+    fieldSearchInput.addEventListener('input', function () {
+      renderFieldsList();
+      var q = (fieldSearchInput.value || '').trim().toLowerCase();
+      if (q) {
+        var match = getPageFields().find(function (f) {
+          return (f.label && f.label.toLowerCase().includes(q)) ||
+                 (typeof f.value === 'string' && f.value.toLowerCase().includes(q));
+        });
+        if (match) {
+          STATE.selectedFieldId = match.id;
+          renderOverlay();
+        }
+      }
+    });
+  }
 
 })();

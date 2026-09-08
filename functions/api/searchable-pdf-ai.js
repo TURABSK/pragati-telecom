@@ -13,7 +13,17 @@ import {
   jsonResponse
 } from "./_common.js";
 
-const SEARCHABLE_PDF_PROMPT = `You are an expert multi-column OCR engine for Bengali and English documents. Extract EVERY visible line of text exactly. Return ONLY a valid JSON array of objects, no markdown. Example: [{"text": "নাম: সাজেমান", "box": [120, 350, 140, 600]}]`;
+const SEARCHABLE_PDF_PROMPT = `You are an expert OCR engine for multi-column Bengali and English documents, voter lists, and scanned records.
+Extract EVERY text segment, word, or separate field with its exact bounding box [ymin, xmin, ymax, xmax].
+Return STRICT JSON ONLY as a single array of objects, no markdown fences, no commentary:
+[
+  {"text": "লাইন বা শব্দের লেখা", "box": [ymin, xmin, ymax, xmax]}
+]
+
+CRITICAL POSITIONING RULES:
+1. MULTI-COLUMN & VOTER CARDS: NEVER combine text across vertical columns or adjacent cards into a single wide line. Each voter card or table cell must be its OWN separate bounding box.
+2. FIELD ISOLATION: Separate labels and values (e.g. "নাম:" and "রহিম সেখ", "বয়স:" and "৩৪") if there is any space or gap between them, so each has its own tight box.
+3. TIGHT BOUNDING BOX: Integers normalized to 0-1000 scale relative to the image [ymin, xmin, ymax, xmax]. The box must tightly wrap the exact printed characters with NO extra horizontal or vertical margins.`;
 
 export async function onRequestOptions() {
   return handleOptions();

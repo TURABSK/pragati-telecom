@@ -116,6 +116,114 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
 .download:hover{transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);}
 .error{background:rgba(239,68,68,0.1); color:#dc2626; border:1px solid rgba(239,68,68,0.25); border-radius:10px; padding:12px; margin-top:16px; text-align:left; font-size:13px; font-weight: 600;}
 
+/* Gemini AI Config Card */
+.spdf-ai-config-block {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+.spdf-status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: inline-block;
+}
+.spdf-status-badge.badge-warning {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+.spdf-status-badge.badge-encrypted {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+.spdf-key-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-top: 6px;
+}
+.spdf-key-input-wrap input {
+  width: 100%;
+  padding: 8px 34px 8px 10px;
+  border: 1.5px solid var(--border-light);
+  border-radius: 8px;
+  font-size: 12.5px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  outline: none;
+  font-family: inherit;
+}
+.spdf-key-input-wrap input:focus {
+  border-color: var(--brand-primary);
+}
+.spdf-key-toggle-btn {
+  position: absolute;
+  right: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-muted);
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+.spdf-btn-sm {
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  color: var(--text-main);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.15s;
+  font-family: inherit;
+}
+.spdf-btn-sm:hover {
+  background: var(--bg-card-subtle);
+}
+.spdf-btn-sm.btn-accent {
+  background: var(--brand-primary);
+  color: #fff;
+  border-color: var(--brand-primary);
+}
+.spdf-btn-sm.btn-accent:hover {
+  background: var(--brand-primary-light);
+}
+.spdf-status-notice {
+  margin-top: 8px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+.spdf-status-notice.notice-warning {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  color: #92400e;
+}
+.spdf-status-notice.notice-encrypted {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+.spdf-info-box {
+  background: rgba(37,99,235,0.06);
+  border: 1px solid rgba(37,99,235,0.18);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin-top: 8px;
+}
+
 @media(max-width:900px){.workspace{grid-template-columns:1fr}}
 </style>
 </head>
@@ -143,6 +251,10 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
       <input id="fileInput" type="file" multiple accept="application/pdf,image/png,image/jpeg,image/webp">
     </label>
     <p style="font-size:14px;color:var(--muted);margin-top:16px;font-weight: 600;">Supports: JPG, PNG, Scanned Voter PDFs, Land Records</p>
+    <div id="uploadKeyStatus" style="margin-top:18px; display:inline-flex; align-items:center; gap:8px; background:var(--bg-card); padding:6px 14px; border-radius:24px; border:1px solid var(--border-light); font-size:12px; font-weight:600;">
+      <span id="uploadKeyBadge" class="spdf-status-badge badge-warning">⚠️ Key নেই</span>
+      <span id="uploadKeyText">Google Gemini AI: সরাসরি Key দিয়ে OCR করুন</span>
+    </div>
   </div>
 
   <div id="workspace" class="workspace hidden">
@@ -158,6 +270,31 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
     </div>
 
     <aside class="sidebar card">
+      <!-- Google Gemini AI Key Configuration -->
+      <div class="spdf-ai-config-block">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+          <h4 style="margin:0; font-size:13px; font-weight:800; color:var(--text-main);">Google Gemini AI Key</h4>
+          <span id="geminiKeyStatusBadge" class="spdf-status-badge badge-warning">⚠️ Key নেই</span>
+        </div>
+        <p style="font-size:11.5px; color:var(--text-muted); line-height:1.45; margin-bottom:6px;">
+          বাংলা ও ইংরেজি ডকুমেন্টের নির্ভুল OCR স্ক্যান করতে আপনার Gemini API Key দিন:
+        </p>
+        <div class="spdf-key-input-wrap">
+          <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy... Gemini API Key পেস্ট করুন" spellcheck="false" autocomplete="off">
+          <button type="button" id="btnToggleKeyVisibility" class="spdf-key-toggle-btn" title="API Key দেখুন / লুকান">👁️</button>
+        </div>
+        <div style="display:flex; gap:6px; margin-top:8px;">
+          <button class="spdf-btn-sm btn-accent" id="btnSaveApiKey" type="button">🔒 এনক্রিপ্ট সেভ</button>
+          <button class="spdf-btn-sm" id="btnClearApiKey" type="button">🗑️ মুছুন</button>
+        </div>
+        <div id="geminiKeyStatusNotice" class="spdf-status-notice notice-warning">
+          ⚠️ <strong>Key সেট করা নেই:</strong> AI OCR চালাতে উপরে আপনার Gemini Key দিন।
+        </div>
+        <div class="spdf-info-box">
+          🔒 <strong>AES-256 সুরক্ষিত:</strong> Key ব্রাউজারে সম্পূর্ণ এনক্রিপ্ট থাকবে। ফ্রি Key: <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color:var(--brand-primary); font-weight:700; text-decoration:underline;">aistudio.google.com</a>
+        </div>
+      </div>
+
       <div class="group">
         <label>🎯 Target PDF Size (Compression)</label>
         <div class="val"><span id="sizeText">500</span> KB</div>
@@ -174,7 +311,6 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
       </div>
 
       <button id="generate" class="primary" style="font-size:16px;padding:16px;">⚙️ Generate Searchable PDF</button>
-      <div style="margin-top:12px; font-size:12px; color:var(--text-muted); text-align:center; font-weight:600;">🔒 Secure Server-Side AI (No API Key Required)</div>
     </aside>
   </div>
 
@@ -308,193 +444,861 @@ button,.download{border:0; border-radius:10px; padding:12px 20px; font-weight:80
 </section>
 
 <script>
-// Secure Server-Side Cloudflare Worker Integration
 pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-const state={files:[],pages:[],originalKB:0};
-const $=id=>document.getElementById(id);
-const setStatus=(t,p)=>{$("status").textContent=t;if(p!==undefined)$("bar").style.width=p+"%"};
+const state = { files: [], pages: [], originalKB: 0 };
+const $ = id => document.getElementById(id);
+const setStatus = (t, p) => { $("status").textContent = t; if (p !== undefined) $("bar").style.width = p + "%"; };
 
-$("sizeSlider").oninput=e=>$("sizeText").textContent=e.target.value;
-$("fileInput").onchange=e=>addFiles([...e.target.files]);
-$("moreInput").onchange=e=>addFiles([...e.target.files]);
+$("sizeSlider").oninput = e => $("sizeText").textContent = e.target.value;
+$("fileInput").onchange = e => addFiles([...e.target.files]);
+$("moreInput").onchange = e => addFiles([...e.target.files]);
 
-new Sortable($("grid",{ animation:150, onEnd:()=>{ const ids=[...$("grid").children].map(x=>x.dataset.id); state.pages.sort((a,b)=>ids.indexOf(a.id)-ids.indexOf(b.id)); renumber(); } }));
-
-async function addFiles(files){
-  if(!files.length)return;
-  $("upload").classList.add("hidden"); $("workspace").classList.remove("hidden");
-  for(const file of files){
-    if(!["application/pdf","image/png","image/jpeg","image/webp"].includes(file.type)) continue;
-    const id="p_"+Date.now()+"_"+Math.random().toString(36).slice(2);
-    const obj={id,file,name:file.name,type:file.type};
-    state.files.push(obj); state.originalKB+=file.size/1024; addGrid(obj);
+new Sortable($("grid"), {
+  animation: 150,
+  onEnd: () => {
+    const ids = [...$("grid").children].map(x => x.dataset.id);
+    state.files.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
+    renumber();
   }
-  $("fileInput").value=""; $("moreInput").value="";
-  if(state.originalKB>0){ $("sizeSlider").value=Math.max(100,Math.min(5000,Math.round(Math.min(500,state.originalKB)))); $("sizeText").textContent=$("sizeSlider").value; }
+});
+
+async function addFiles(files) {
+  if (!files.length) return;
+  $("upload").classList.add("hidden");
+  $("workspace").classList.remove("hidden");
+  for (const file of files) {
+    const isImage = (file.type && file.type.startsWith("image/")) || /\.(png|jpe?g|webp)$/i.test(file.name);
+    const isPdf = file.type === "application/pdf" || file.type === "application/x-pdf" || /\.pdf$/i.test(file.name);
+    if (!isImage && !isPdf) continue;
+    const id = "p_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+    const obj = { id, file, name: file.name, type: isImage ? "image/jpeg" : "application/pdf" };
+    state.files.push(obj);
+    state.originalKB += file.size / 1024;
+    addGrid(obj);
+  }
+  $("fileInput").value = "";
+  $("moreInput").value = "";
+  if (state.originalKB > 0) {
+    $("sizeSlider").value = Math.max(100, Math.min(5000, Math.round(Math.min(500, state.originalKB))));
+    $("sizeText").textContent = $("sizeSlider").value;
+  }
 }
 
-function addGrid(obj){
-  const div=document.createElement("div"); div.className="item"; div.dataset.id=obj.id;
-  const preview=obj.type.startsWith("image/") ? `<img src="${URL.createObjectURL(obj.file)}">` : `<div style="font-size:55px">📑</div>`;
-  div.innerHTML=`<div class="num"></div><button class="remove">✕</button><div class="preview">${preview}</div><div class="name" title="${obj.name}">${obj.name}</div>`;
-  div.querySelector(".remove").onclick=()=>{ state.files=state.files.filter(x=>x.id!==obj.id); div.remove(); renumber(); if(!state.files.length){$("workspace").classList.add("hidden");$("upload").classList.remove("hidden");} };
-  $("grid").appendChild(div); renumber();
-}
-function renumber(){[...$("grid").children].forEach((x,i)=>x.querySelector(".num").textContent=i+1)}
-
-async function imageToCanvas(file,maxDim=2200){
- const url=URL.createObjectURL(file);
- const img=await new Promise((resolve,reject)=>{ const i=new Image();i.onload=()=>resolve(i);i.onerror=reject;i.src=url; });
- let w=img.naturalWidth,h=img.naturalHeight; const scale=Math.min(1,maxDim/Math.max(w,h));w=Math.round(w*scale);h=Math.round(h*scale);
- const c=document.createElement("canvas");c.width=w;c.height=h;
- const ctx=c.getContext("2d",{alpha:false});ctx.fillStyle="#fff";ctx.fillRect(0,0,w,h);ctx.drawImage(img,0,0,w,h);
- URL.revokeObjectURL(url);return c;
-}
-
-async function loadPages(){
- const pages=[];
- for(let i=0;i<state.files.length;i++){
-   const f=state.files[i]; setStatus(`Loading ${i+1}/${state.files.length}: ${f.name}`,5+Math.round(i/state.files.length*20));
-   if(f.type.startsWith("image/")){ const c=await imageToCanvas(f.file,2200); pages.push({canvas:c,w:c.width,h:c.height,blocks:[]}); }else{
-     const buf=await f.file.arrayBuffer(); const pdf=await pdfjsLib.getDocument({data:buf}).promise;
-     for(let p=1;p<=pdf.numPages;p++){
-       const page=await pdf.getPage(p); const base=page.getViewport({scale:1});
-       const scale=Math.min(2.4,2200/Math.max(base.width,base.height)); const vp=page.getViewport({scale});
-       const c=document.createElement("canvas");c.width=Math.ceil(vp.width);c.height=Math.ceil(vp.height);
-       await page.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;
-       pages.push({canvas:c,w:c.width,h:c.height,blocks:[]});
-     }
-   }
- }
- return pages;
+function addGrid(obj) {
+  const div = document.createElement("div");
+  div.className = "item";
+  div.dataset.id = obj.id;
+  const preview = obj.type.startsWith("image/") ? `<img src="${URL.createObjectURL(obj.file)}">` : `<div style="font-size:55px">📑</div>`;
+  div.innerHTML = `<div class="num"></div><button class="remove">✕</button><div class="preview">${preview}</div><div class="name" title="${obj.name}">${obj.name}</div>`;
+  div.querySelector(".remove").onclick = () => {
+    state.files = state.files.filter(x => x.id !== obj.id);
+    div.remove();
+    renumber();
+    if (!state.files.length) {
+      $("workspace").classList.add("hidden");
+      $("upload").classList.remove("hidden");
+    }
+  };
+  $("grid").appendChild(div);
+  renumber();
 }
 
-function enhanceForOCR(canvas){ const c=document.createElement("canvas"); c.width=canvas.width; c.height=canvas.height; const ctx=c.getContext("2d"); ctx.filter="contrast(1.18) brightness(1.04) saturate(0.9)"; ctx.drawImage(canvas,0,0); return c; }
-function canvasSlice(canvas, fromRatio, toRatio){ const w=canvas.width, h=canvas.height; const sy=Math.round(fromRatio*h); const sh=Math.max(1, Math.round((toRatio-fromRatio)*h)); const c=document.createElement("canvas"); c.width=w; c.height=sh; c.getContext("2d").drawImage(canvas,0,sy,w,sh,0,0,w,sh); return c; }
+function renumber() {
+  [...$("grid").children].forEach((x, i) => x.querySelector(".num").textContent = i + 1);
+}
 
-const OCR_PROMPT = `You are an expert multi-column OCR engine for Bengali and English documents. Extract EVERY visible line of text exactly. Return ONLY a valid JSON array of objects, no markdown. Example: [{"text": "নাম: সাজেমান", "box": [120, 350, 140, 600]}]`;
+// =========================================================================
+// SECURE API KEY ENCRYPTION (AES-GCM 256-bit via Web Crypto API)
+// Compatible with AI Smart Form Filler (shared key storage)
+// =========================================================================
+var ENC_STORAGE_KEY = 'sff_gemini_enc_v1';
+var ENC_SALT = new Uint8Array([80, 114, 97, 103, 97, 116, 105, 84, 101, 108, 101, 99, 111, 109, 65, 73]); // "PragatiTelecomAI"
 
-async function fetchWithRetry(url, options, pageIndex, totalPages, maxRetries = 3) {
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      const response = await fetch(url, options);
-      if (response.status === 429) {
-        setStatus(`Rate Limit Hit! Waiting 15s... (Attempt ${i+1}/${maxRetries})`, 30+(pageIndex/totalPages)*40);
-        await new Promise(r => setTimeout(r, 15000));
-        continue;
-      }
-      return response;
-    } catch (netErr) {
-      if (i === maxRetries - 1) throw netErr;
-      await new Promise(r => setTimeout(r, 2000 * (i + 1)));
+function getCryptoSecretKey() {
+  var rawSecret = (window.location.origin || 'pragati-telecom') + '_sff_sec_salt_2026';
+  var enc = new TextEncoder();
+  return window.crypto.subtle.importKey(
+    'raw',
+    enc.encode(rawSecret),
+    { name: 'PBKDF2' },
+    false,
+    ['deriveKey']
+  ).then(function (importedKey) {
+    return window.crypto.subtle.deriveKey(
+      {
+        name: 'PBKDF2',
+        salt: ENC_SALT,
+        iterations: 100000,
+        hash: 'SHA-256'
+      },
+      importedKey,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['encrypt', 'decrypt']
+    );
+  });
+}
+
+function encryptApiKey(plainKey) {
+  if (!plainKey || !plainKey.trim()) return Promise.resolve(null);
+  var cleanKey = plainKey.trim();
+  if (!window.crypto || !window.crypto.subtle) {
+    return Promise.resolve('plain:' + btoa(cleanKey));
+  }
+  return getCryptoSecretKey().then(function (key) {
+    var iv = window.crypto.getRandomValues(new Uint8Array(12));
+    var enc = new TextEncoder();
+    return window.crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv: iv },
+      key,
+      enc.encode(cleanKey)
+    ).then(function (ciphertext) {
+      var ivHex = Array.from(iv).map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+      var cipherHex = Array.from(new Uint8Array(ciphertext)).map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+      return 'aes_v1:' + ivHex + ':' + cipherHex;
+    });
+  }).catch(function (e) {
+    console.warn('Encryption fallback to obfuscation:', e);
+    return 'plain:' + btoa(cleanKey);
+  });
+}
+
+function decryptApiKey(storedPayload) {
+  if (!storedPayload) return Promise.resolve(null);
+  if (storedPayload.startsWith('plain:')) {
+    try { return Promise.resolve(atob(storedPayload.slice(6))); } catch (e) { return Promise.resolve(null); }
+  }
+  if (!storedPayload.startsWith('aes_v1:')) {
+    return Promise.resolve(storedPayload);
+  }
+  var parts = storedPayload.split(':');
+  if (parts.length !== 3) return Promise.resolve(null);
+  var ivHex = parts[1];
+  var cipherHex = parts[2];
+  var ivBytes = ivHex.match(/.{1,2}/g);
+  var cipherBytes = cipherHex.match(/.{1,2}/g);
+  if (!ivBytes || !cipherBytes) return Promise.resolve(null);
+  var iv = new Uint8Array(ivBytes.map(function (b) { return parseInt(b, 16); }));
+  var cipherData = new Uint8Array(cipherBytes.map(function (b) { return parseInt(b, 16); }));
+
+  if (!window.crypto || !window.crypto.subtle) {
+    return Promise.resolve(null);
+  }
+
+  return getCryptoSecretKey().then(function (key) {
+    return window.crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: iv },
+      key,
+      cipherData
+    ).then(function (decryptedBuf) {
+      var dec = new TextDecoder();
+      return dec.decode(decryptedBuf);
+    });
+  }).catch(function (e) {
+    console.error('Decryption failed:', e);
+    return null;
+  });
+}
+
+function updateApiKeyUI() {
+  var stored = localStorage.getItem(ENC_STORAGE_KEY);
+  var badge = $('geminiKeyStatusBadge');
+  var notice = $('geminiKeyStatusNotice');
+  var input = $('geminiApiKeyInput');
+  var upBadge = $('uploadKeyBadge');
+  var upText = $('uploadKeyText');
+
+  if (stored) {
+    if (badge) {
+      badge.textContent = '🔒 এনক্রিপ্টেড (Active)';
+      badge.className = 'spdf-status-badge badge-encrypted';
+    }
+    if (notice) {
+      notice.className = 'spdf-status-notice notice-encrypted';
+      notice.innerHTML = '🔒 <strong>Gemini API Key সক্রিয় ও সুরক্ষিত:</strong> AES-256 দিয়ে এনক্রিপ্ট রয়েছে (Smart Form Filler ও Searchable PDF উভয় জায়গায় কাজ করবে)।';
+    }
+    if (input && !input.dataset.viewingRaw) {
+      input.value = '••••••••••••••••••••••••••••••••';
+      input.type = 'password';
+    }
+    if (upBadge) {
+      upBadge.textContent = '🔒 Key সক্রিয়';
+      upBadge.className = 'spdf-status-badge badge-encrypted';
+    }
+    if (upText) {
+      upText.textContent = 'Google Gemini AI সক্রিয় (সরাসরি দ্রুত OCR হবে)';
+    }
+  } else {
+    if (badge) {
+      badge.textContent = '⚠️ Key নেই';
+      badge.className = 'spdf-status-badge badge-warning';
+    }
+    if (notice) {
+      notice.className = 'spdf-status-notice notice-warning';
+      notice.innerHTML = '⚠️ <strong>কোনো API Key সেট নেই:</strong> সরাসরি OCR চালাতে উপরে Gemini API Key দিন।';
+    }
+    if (input) {
+      input.value = '';
+      input.type = 'password';
+      delete input.dataset.viewingRaw;
+    }
+    if (upBadge) {
+      upBadge.textContent = '⚠️ Key নেই';
+      upBadge.className = 'spdf-status-badge badge-warning';
+    }
+    if (upText) {
+      upText.textContent = 'Google Gemini AI: সরাসরি Key দিয়ে OCR করুন';
     }
   }
-  throw new Error("API request failed after retries. Please check your network or try again.");
 }
 
-async function geminiOCRRaw(canvas, pageIndex, totalPages){
-  const ocrCanvas = enhanceForOCR(canvas);
-  const base64 = ocrCanvas.toDataURL("image/jpeg", 0.95).split(",")[1];
-  let response;
+// Key UI Event Handlers
+var btnToggleKey = $('btnToggleKeyVisibility');
+if (btnToggleKey) {
+  btnToggleKey.addEventListener('click', function () {
+    var input = $('geminiApiKeyInput');
+    var stored = localStorage.getItem(ENC_STORAGE_KEY);
+    if (!input) return;
+    if (input.type === 'password') {
+      if (stored) {
+        decryptApiKey(stored).then(function (plain) {
+          if (plain) {
+            input.value = plain;
+            input.dataset.viewingRaw = 'true';
+            input.type = 'text';
+            btnToggleKey.textContent = '🙈';
+          }
+        });
+      } else {
+        input.type = 'text';
+        btnToggleKey.textContent = '🙈';
+      }
+    } else {
+      input.type = 'password';
+      btnToggleKey.textContent = '👁️';
+      if (stored) {
+        input.value = '••••••••••••••••••••••••••••••••';
+        delete input.dataset.viewingRaw;
+      }
+    }
+  });
+}
+
+var btnSaveApiKey = $('btnSaveApiKey');
+if (btnSaveApiKey) {
+  btnSaveApiKey.addEventListener('click', function () {
+    var input = $('geminiApiKeyInput');
+    var val = (input ? input.value : '').trim();
+    if (!val || val.startsWith('••••')) {
+      alert('অনুগ্রহ করে আপনার আসল Google Gemini API Key পেস্ট করুন।');
+      return;
+    }
+    encryptApiKey(val).then(function (enc) {
+      if (!enc) {
+        alert('API Key এনক্রিপ্ট করা যায়নি।');
+        return;
+      }
+      localStorage.setItem(ENC_STORAGE_KEY, enc);
+      if (input) delete input.dataset.viewingRaw;
+      updateApiKeyUI();
+      alert('🔒 Google Gemini API Key সফলভাবে AES-256 এনক্রিপ্ট করে সেভ করা হয়েছে!');
+    }).catch(function (err) {
+      alert('এনক্রিপশন সমস্যা: ' + err.message);
+    });
+  });
+}
+
+var btnClearApiKey = $('btnClearApiKey');
+if (btnClearApiKey) {
+  btnClearApiKey.addEventListener('click', function () {
+    if (confirm('সংরক্ষিত API Key টি মুছে ফেলতে চান?')) {
+      localStorage.removeItem(ENC_STORAGE_KEY);
+      var input = $('geminiApiKeyInput');
+      if (input) {
+        input.value = '';
+        input.type = 'password';
+        delete input.dataset.viewingRaw;
+      }
+      updateApiKeyUI();
+      alert('API Key মুছে ফেলা হয়েছে।');
+    }
+  });
+}
+
+updateApiKeyUI();
+
+// =========================================================================
+// DIRECT GEMINI VISION OCR ENGINE (Automated Fallback Models)
+// =========================================================================
+const SEARCHABLE_PDF_PROMPT =
+  'You are an expert OCR engine for multi-column Bengali and English documents, voter lists, and scanned records.\n' +
+  'Extract EVERY text segment, word, or separate field with its exact bounding box [ymin, xmin, ymax, xmax].\n' +
+  'Return STRICT JSON ONLY as a single array of objects, no markdown fences, no commentary:\n' +
+  '[\n' +
+  '  {"text": "লাইন বা শব্দের লেখা", "box": [ymin, xmin, ymax, xmax]}\n' +
+  ']\n\n' +
+  'CRITICAL POSITIONING RULES:\n' +
+  '1. MULTI-COLUMN & VOTER CARDS: NEVER combine text across vertical columns or adjacent cards into a single wide line. Each voter card or table cell must be its OWN separate bounding box.\n' +
+  '2. FIELD ISOLATION: Separate labels and values (e.g. "নাম:" and "রহিম সেখ", "বয়স:" and "৩৪") if there is any space or gap between them, so each has its own tight box.\n' +
+  '3. TIGHT BOUNDING BOX: Integers normalized to 0-1000 scale relative to the image [ymin, xmin, ymax, xmax]. The box must tightly wrap the exact printed characters with NO extra horizontal or vertical margins.';
+
+const GEMINI_MODELS = [
+  'gemini-2.5-flash',
+  'gemini-2.0-flash',
+  'gemini-2.5-flash-lite',
+  'gemini-2.0-flash-lite',
+  'gemini-1.5-flash',
+  'gemini-1.5-pro',
+  'gemini-2.5-pro',
+  'gemini-3.6-flash'
+];
+let cachedWorkingModel = null;
+
+function withTimeout(promise, ms, message) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  return Promise.race([
+    promise(controller.signal),
+    new Promise((_, reject) => {
+      controller.signal.addEventListener('abort', () => {
+        reject(new Error(message || (`সময় শেষ (${Math.round(ms / 1000)} সেকেন্ড)।`)));
+      });
+    })
+  ]).finally(() => clearTimeout(timer));
+}
+
+function requestGeminiOCRDirect(modelName, apiKey, base64) {
+  const geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(modelName) + ':generateContent?key=' + encodeURIComponent(apiKey);
+  const geminiBody = {
+    contents: [{
+      parts: [
+        { text: SEARCHABLE_PDF_PROMPT },
+        { inline_data: { mime_type: 'image/jpeg', data: base64 } }
+      ]
+    }],
+    generationConfig: {
+      temperature: 0.0,
+      response_mime_type: 'application/json'
+    }
+  };
+
+  return withTimeout(signal => {
+    return fetch(geminiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(geminiBody),
+      signal: signal
+    });
+  }, 20000, `Google Gemini (${modelName}) থেকে ২০ সেকেন্ডে কোনো সাড়া আসেনি।`)
+  .then(async res => {
+    if (res.status === 429) {
+      throw new Error('Gemini API কোটা লিমিট বা রেট লিমিট অতিক্রম হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।');
+    }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const errMsg = (data && data.error && data.error.message) ? data.error.message : ('HTTP ' + res.status);
+      const err = new Error(errMsg);
+      err.status = res.status;
+      throw err;
+    }
+    const candidate = data.candidates && data.candidates[0];
+    const isTruncated = candidate && candidate.finishReason === 'MAX_TOKENS';
+    const rawText = candidate && candidate.content && candidate.content.parts && candidate.content.parts[0] && candidate.content.parts[0].text;
+    return { success: true, data: rawText || '[]', truncated: isTruncated };
+  });
+}
+
+async function callDirectGeminiWithFallback(apiKey, base64) {
+  const modelsToTry = cachedWorkingModel
+    ? [cachedWorkingModel].concat(GEMINI_MODELS.filter(m => m !== cachedWorkingModel))
+    : GEMINI_MODELS.slice();
+
+  for (let i = 0; i < modelsToTry.length; i++) {
+    const currentModel = modelsToTry[i];
+    try {
+      const res = await requestGeminiOCRDirect(currentModel, apiKey, base64);
+      cachedWorkingModel = currentModel;
+      return res;
+    } catch (err) {
+      const msg = (err && err.message) || '';
+      const recMatch = msg.match(/update your code to use (?:models\/)?([a-zA-Z0-9\.\-_]+)/i);
+      if (recMatch && recMatch[1] && recMatch[1] !== currentModel) {
+        const suggested = recMatch[1].trim();
+        if (!modelsToTry.includes(suggested)) {
+          modelsToTry.splice(i + 1, 0, suggested);
+        }
+        continue;
+      }
+      const isUnavailable =
+        err.status === 404 ||
+        err.status === 400 ||
+        err.status === 503 ||
+        err.name === 'AbortError' ||
+        msg.includes('not found') ||
+        msg.includes('no longer available') ||
+        msg.includes('not available') ||
+        msg.includes('deprecated') ||
+        msg.includes('update your code') ||
+        msg.includes('not supported') ||
+        msg.includes('সাড়া আসেনি') ||
+        msg.includes('সময় শেষ') ||
+        msg.includes('timeout') ||
+        msg.includes('timed out') ||
+        msg.includes('Failed to fetch') ||
+        msg.includes('NetworkError');
+
+      if (isUnavailable && i < modelsToTry.length - 1) {
+        console.warn(`[Gemini OCR] Model ${currentModel} failed (${msg}), trying next model...`);
+        continue;
+      }
+      if (i === modelsToTry.length - 1) {
+        // Dynamic ListModels fallback to auto-discover active models
+        try {
+          const listRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models?key=' + encodeURIComponent(apiKey));
+          if (listRes.ok) {
+            const listJson = await listRes.json();
+            const models = (listJson && listJson.models) || [];
+            const matched = models.find(m => {
+              const name = m.name || '';
+              const methods = m.supportedGenerationMethods || [];
+              return methods.includes('generateContent') && (name.includes('flash') || name.includes('gemini'));
+            });
+            if (matched) {
+              const cleanName = matched.name.replace(/^models\//, '');
+              console.log('[Gemini OCR] ListModels থেকে সক্রিয় মডেল পাওয়া গেছে:', cleanName);
+              const res2 = await requestGeminiOCRDirect(cleanName, apiKey, base64);
+              cachedWorkingModel = cleanName;
+              return res2;
+            }
+          }
+        } catch (e) {}
+        throw err;
+      }
+      throw err;
+    }
+  }
+  throw new Error('Google Gemini AI দিয়ে OCR সম্পন্ন করা সম্ভব হয়নি।');
+}
+
+// =========================================================================
+// CANVAS HELPERS & OCR SLICING
+// =========================================================================
+async function imageToCanvas(file, maxDim = 2200) {
+  const url = URL.createObjectURL(file);
+  const img = await new Promise((resolve, reject) => {
+    const i = new Image();
+    i.onload = () => resolve(i);
+    i.onerror = reject;
+    i.src = url;
+  });
+  let w = img.naturalWidth, h = img.naturalHeight;
+  const scale = Math.min(1, maxDim / Math.max(w, h));
+  w = Math.round(w * scale);
+  h = Math.round(h * scale);
+  const c = document.createElement("canvas");
+  c.width = w;
+  c.height = h;
+  const ctx = c.getContext("2d", { alpha: false });
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0, 0, w, h);
+  ctx.drawImage(img, 0, 0, w, h);
+  URL.revokeObjectURL(url);
+  return c;
+}
+
+async function loadPages() {
+  const pages = [];
+  for (let i = 0; i < state.files.length; i++) {
+    const f = state.files[i];
+    setStatus(`Loading ${i + 1}/${state.files.length}: ${f.name}`, 5 + Math.round((i / state.files.length) * 20));
+    const isImage = (f.type && f.type.startsWith("image/")) || /\.(png|jpe?g|webp)$/i.test(f.name);
+    if (isImage) {
+      const c = await imageToCanvas(f.file, 2200);
+      pages.push({ canvas: c, w: c.width, h: c.height, blocks: [] });
+    } else {
+      const buf = await f.file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+      for (let p = 1; p <= pdf.numPages; p++) {
+        const page = await pdf.getPage(p);
+        const base = page.getViewport({ scale: 1 });
+        const scale = Math.min(2.4, 2200 / Math.max(base.width, base.height));
+        const vp = page.getViewport({ scale });
+        const c = document.createElement("canvas");
+        c.width = Math.ceil(vp.width);
+        c.height = Math.ceil(vp.height);
+        await page.render({ canvasContext: c.getContext("2d"), viewport: vp }).promise;
+        pages.push({ canvas: c, w: c.width, h: c.height, blocks: [] });
+      }
+    }
+  }
+  return pages;
+}
+
+function enhanceForOCR(canvas, maxDim = 1600) {
+  let w = canvas.width, h = canvas.height;
+  const scale = Math.min(1, maxDim / Math.max(w, h));
+  const sw = Math.round(w * scale);
+  const sh = Math.round(h * scale);
+  const c = document.createElement("canvas");
+  c.width = sw;
+  c.height = sh;
+  const ctx = c.getContext("2d");
+  ctx.filter = "contrast(1.18) brightness(1.04) saturate(0.9)";
+  ctx.drawImage(canvas, 0, 0, sw, sh);
+  return c;
+}
+
+function canvasSlice(canvas, fromRatio, toRatio) {
+  const w = canvas.width, h = canvas.height;
+  const sy = Math.round(fromRatio * h);
+  const sh = Math.max(1, Math.round((toRatio - fromRatio) * h));
+  const c = document.createElement("canvas");
+  c.width = w;
+  c.height = sh;
+  c.getContext("2d").drawImage(canvas, 0, sy, w, sh, 0, 0, w, sh);
+  return c;
+}
+
+function disaggregateMultiColumns(blocks) {
+  const result = [];
+  for (const b of blocks) {
+    const box = b.box;
+    const ymin = box[0], xmin = box[1], ymax = box[2], xmax = box[3];
+    const width = xmax - xmin;
+    const text = b.text.trim();
+
+    // Detect if wide block (>450 / 1000) accidentally merged multiple adjacent columns or cards
+    const nameMatches = text.match(/(?:নাম\s*[:ঃ]|Name\s*[:ঃ]|পিতা\s*[:ঃ]|Father\s*[:ঃ]|EPIC\s*[:ঃ]|ভোটার\s*নং)/gi);
+    const hasMultipleCards = (nameMatches && nameMatches.length >= 2 && width > 450);
+    const pipeParts = text.split(/\s*\|\s*\|\s*|\s{3,}\|\s{3,}/);
+
+    if (hasMultipleCards || pipeParts.length >= 2) {
+      let segments = [];
+      if (pipeParts.length >= 2) {
+        segments = pipeParts;
+      } else {
+        const splitRegex = /(?=(?:ক্রঃ\s*\d+|SL\s*NO|নাম\s*[:ঃ]|Name\s*[:ঃ]))/gi;
+        const rawSegs = text.split(splitRegex).map(s => s.trim()).filter(Boolean);
+        if (rawSegs.length >= 2) segments = rawSegs;
+      }
+
+      if (segments.length >= 2) {
+        const segWidth = width / segments.length;
+        for (let i = 0; i < segments.length; i++) {
+          const segText = segments[i].trim();
+          if (!segText) continue;
+          const segXmin = Math.round(xmin + i * segWidth);
+          const segXmax = Math.round(xmin + (i + 1) * segWidth);
+          result.push({
+            text: segText,
+            box: [ymin, segXmin, ymax, segXmax]
+          });
+        }
+        continue;
+      }
+    }
+
+    result.push(b);
+  }
+  return result;
+}
+
+function parseBlocksJson(rawText) {
+  if (!rawText) return [];
+  if (Array.isArray(rawText)) return disaggregateMultiColumns(rawText);
+  let clean = String(rawText).trim();
+  clean = clean.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
+  const firstBracket = clean.indexOf("[");
+  const lastBracket = clean.lastIndexOf("]");
+  if (firstBracket !== -1 && lastBracket !== -1 && lastBracket > firstBracket) {
+    clean = clean.slice(firstBracket, lastBracket + 1);
+  }
+  let arr = [];
   try {
-    response = await fetchWithRetry("/api/searchable-pdf-ai", {
+    arr = JSON.parse(clean);
+  } catch (e) {
+    console.error('JSON parse error in OCR:', e, rawText);
+    return [];
+  }
+  if (!Array.isArray(arr)) return [];
+  const normalized = arr.filter(b => b && typeof b.text === 'string' && Array.isArray(b.box) && b.box.length === 4)
+    .map(b => ({
+      text: b.text.normalize ? b.text.normalize('NFC') : b.text,
+      box: b.box
+    }));
+  return disaggregateMultiColumns(normalized);
+}
+
+async function geminiOCRRaw(canvas, pageIndex, totalPages) {
+  const ocrCanvas = enhanceForOCR(canvas, 1600);
+  const base64 = ocrCanvas.toDataURL("image/jpeg", 0.85).split(",")[1];
+
+  // 1. Direct Gemini API if API key is stored locally
+  const storedEnc = localStorage.getItem(ENC_STORAGE_KEY);
+  if (storedEnc) {
+    const apiKey = await decryptApiKey(storedEnc);
+    if (apiKey && apiKey.trim()) {
+      const directRes = await callDirectGeminiWithFallback(apiKey.trim(), base64);
+      const blocks = parseBlocksJson(directRes.data);
+      return { blocks: blocks, truncated: !!directRes.truncated };
+    }
+  }
+
+  // 2. Fallback to Cloudflare Worker API endpoint if no API key is provided
+  try {
+    const response = await fetch("/api/searchable-pdf-ai", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ image: base64, mimeType: "image/jpeg" })
-    }, pageIndex, totalPages);
-  } catch (err) {
-    throw new Error("Network connection failed while calling AI OCR: " + err.message);
-  }
+    });
 
-  let resData;
-  const contentType = response.headers.get("content-type") || "";
-  if (contentType.includes("application/json")) {
-    resData = await response.json().catch(() => ({}));
-  } else {
-    const text = await response.text().catch(() => "");
-    throw new Error(`Server returned HTTP ${response.status}: ${text.slice(0, 120) || response.statusText}`);
-  }
+    if (response.ok) {
+      const resData = await response.json().catch(() => ({}));
+      if (resData.success) {
+        return { blocks: resData.blocks || [], truncated: !!resData.truncated };
+      }
+    }
+  } catch (err) {}
 
-  if (!response.ok || !resData.success) {
-    if (response.status === 503) {
-      throw new Error("Cloudflare AI worker secret GEMINI_API_KEY is not configured yet. Please configure it in your Cloudflare dashboard.");
-    }
-    if (response.status === 413) {
-      throw new Error("Document page image is too large for AI processing. Try lowering resolution.");
-    }
-    throw new Error(resData.error || `AI OCR processing failed (HTTP ${response.status}). Please try again.`);
-  }
-  return { blocks: resData.blocks || [], truncated: !!resData.truncated };
+  // If both failed or no key
+  throw new Error("⚠️ AI OCR সম্পন্ন করতে আপনার Google Gemini API Key দিন। (ডানের সেটিংসে আপনার Key দিন অথবা Google AI Studio থেকে বিনামূল্যে ১ ক্লিকে তৈরি করুন)।");
 }
 
-function dedupeBlocks(blocks){ const seen=[]; const out=[]; for(const b of blocks){ const key=b.text.trim(); const dup=seen.find(s=>s.text===key && Math.abs(s.y-b.box[0])<25); if(dup) continue; seen.push({text:key, y:b.box[0]}); out.push(b); } return out; }
+function dedupeBlocks(blocks) {
+  const seen = [];
+  const out = [];
+  for (const b of blocks) {
+    const key = b.text.trim();
+    const dup = seen.find(s => s.text === key && Math.abs(s.y - b.box[0]) < 25);
+    if (dup) continue;
+    seen.push({ text: key, y: b.box[0] });
+    out.push(b);
+  }
+  return out;
+}
 
-async function geminiOCR(canvas, pageIndex, totalPages, yFrom=0, yTo=1, depth=0){
-  const slice = (yFrom===0 && yTo===1) ? canvas : canvasSlice(canvas, yFrom, yTo);
-  const {blocks, truncated} = await geminiOCRRaw(slice, pageIndex, totalPages);
-  const remapped = blocks.map(b=>({ text:b.text, box:[ yFrom*1000 + b.box[0]*(yTo-yFrom), b.box[1], yFrom*1000 + b.box[2]*(yTo-yFrom), b.box[3] ] }));
-  if(truncated && depth<2 && (yTo-yFrom)>0.15){
-    const mid=(yFrom+yTo)/2; const overlap=0.02;
-    const topHalf=await geminiOCR(canvas, pageIndex, totalPages, yFrom, Math.min(1,mid+overlap), depth+1);
-    const botHalf=await geminiOCR(canvas, pageIndex, totalPages, Math.max(0,mid-overlap), yTo, depth+1);
+async function geminiOCR(canvas, pageIndex, totalPages, yFrom = 0, yTo = 1, depth = 0) {
+  const slice = (yFrom === 0 && yTo === 1) ? canvas : canvasSlice(canvas, yFrom, yTo);
+  const { blocks, truncated } = await geminiOCRRaw(slice, pageIndex, totalPages);
+  const remapped = blocks.map(b => ({
+    text: b.text,
+    box: [
+      yFrom * 1000 + b.box[0] * (yTo - yFrom),
+      b.box[1],
+      yFrom * 1000 + b.box[2] * (yTo - yFrom),
+      b.box[3]
+    ]
+  }));
+  if (truncated && depth < 2 && (yTo - yFrom) > 0.15) {
+    const mid = (yFrom + yTo) / 2;
+    const overlap = 0.02;
+    const topHalf = await geminiOCR(canvas, pageIndex, totalPages, yFrom, Math.min(1, mid + overlap), depth + 1);
+    const botHalf = await geminiOCR(canvas, pageIndex, totalPages, Math.max(0, mid - overlap), yTo, depth + 1);
     return dedupeBlocks([...topHalf, ...botHalf]);
-  } return remapped;
+  }
+  return remapped;
+}
+
+// =========================================================================
+// BENGALI FONT CACHING & SEARCHABLE PDF CREATION
+// =========================================================================
+let cachedBengaliFontBinary = null;
+
+async function getBengaliFontBase64() {
+  if (cachedBengaliFontBinary) return cachedBengaliFontBinary;
+  const fontURLs = [
+    "https://cdn.jsdelivr.net/gh/googlefonts/noto-fonts@main/hinted/ttf/NotoSansBengali/NotoSansBengali-Regular.ttf",
+    "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notosansbengali/NotoSansBengali%5Bwdth%2Cwght%5D.ttf",
+    "https://raw.githubusercontent.com/google/fonts/main/ofl/notosansbengali/NotoSansBengali%5Bwdth%2Cwght%5D.ttf"
+  ];
+  let fontBuffer = null;
+  for (const fontURL of fontURLs) {
+    try {
+      const fontRes = await fetch(fontURL);
+      if (fontRes.ok) {
+        fontBuffer = await fontRes.arrayBuffer();
+        break;
+      }
+    } catch (e) {}
+  }
+  if (fontBuffer) {
+    let binary = '';
+    const bytes = new Uint8Array(fontBuffer);
+    const chunkSize = 8192;
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+    }
+    cachedBengaliFontBinary = btoa(binary);
+    return cachedBengaliFontBinary;
+  }
+  return null;
+}
+
+function splitTextByScript(text) {
+  if (!text) return [];
+  const chunks = [];
+  const regex = /([\u0980-\u09FF]+|[^\u0980-\u09FF]+)/g;
+  let match;
+  while ((match = regex.exec(text)) !== null) {
+    if (match[0]) {
+      const isBengali = /[\u0980-\u09FF]/.test(match[0]);
+      chunks.push({ text: match[0], isBengali });
+    }
+  }
+  return chunks;
+}
+
+function renderWordChunks(doc, word, targetX, targetY, hasBengaliFont, appendSpace) {
+  const chunks = splitTextByScript(word);
+  let curX = targetX;
+  for (let i = 0; i < chunks.length; i++) {
+    const chunk = chunks[i];
+    const isLastChunk = (i === chunks.length - 1);
+    if (chunk.isBengali && hasBengaliFont) {
+      try { doc.setFont('Bengali'); } catch (e) { doc.setFont('Helvetica', 'normal'); }
+    } else {
+      doc.setFont('Helvetica', 'normal');
+    }
+    const textToDraw = chunk.text + (isLastChunk && appendSpace ? ' ' : '');
+    doc.text(textToDraw, curX, targetY);
+    curX += doc.getTextWidth(chunk.text);
+  }
+}
+
+function renderSearchableTextLine(doc, fullText, x, y, maxW, maxH, hasBengaliFont) {
+  if (!fullText || !fullText.trim()) return;
+
+  const rawWords = fullText.trim().split(/\s+/).filter(Boolean);
+  if (rawWords.length === 0) return;
+
+  // 1. Proportional font size matching bounding box height (no arbitrary 18pt cap)
+  let fontSize = Math.max(6, maxH * 0.82);
+  doc.setFontSize(fontSize);
+
+  function measureWordWidth(word) {
+    const chunks = splitTextByScript(word);
+    let w = 0;
+    for (const chunk of chunks) {
+      if (chunk.isBengali && hasBengaliFont) {
+        try { doc.setFont('Bengali'); } catch (e) { doc.setFont('Helvetica', 'normal'); }
+      } else {
+        doc.setFont('Helvetica', 'normal');
+      }
+      w += doc.getTextWidth(chunk.text);
+    }
+    return w;
+  }
+
+  // 2. Measure all words
+  let wordWidths = rawWords.map(measureWordWidth);
+  let totalWordsW = wordWidths.reduce((a, b) => a + b, 0);
+
+  // 3. If total words width exceeds bounding box width, scale down font size
+  if (maxW > 10 && totalWordsW > maxW) {
+    const scale = maxW / totalWordsW;
+    fontSize = Math.max(5, fontSize * scale);
+    doc.setFontSize(fontSize);
+    wordWidths = rawWords.map(measureWordWidth);
+    totalWordsW = wordWidths.reduce((a, b) => a + b, 0);
+  }
+
+  // 4. Word spacing & gap distribution across the bounding box
+  doc.setFont('Helvetica', 'normal');
+  const normalSpaceW = doc.getTextWidth(' ');
+  const remainingSpace = Math.max(0, maxW - totalWordsW);
+
+  if (rawWords.length === 1) {
+    // Single word: horizontally center within the bounding box
+    const startX = x + Math.max(0, (maxW - totalWordsW) / 2);
+    renderWordChunks(doc, rawWords[0], startX, y, hasBengaliFont, false);
+  } else {
+    // Multi-word line: distribute space evenly between words so every word is at its visual position
+    const naturalGap = remainingSpace / (rawWords.length - 1);
+    const gap = Math.min(Math.max(naturalGap, normalSpaceW), normalSpaceW * 4.5);
+
+    let curX = x;
+    for (let i = 0; i < rawWords.length; i++) {
+      const isLast = (i === rawWords.length - 1);
+      renderWordChunks(doc, rawWords[i], curX, y, hasBengaliFont, !isLast);
+      curX += wordWidths[i] + gap;
+    }
+  }
 }
 
 async function createPDF(pages, quality, ocr) {
-  const { jsPDF } = window.jspdf; const first = pages[0];
-  const doc = new jsPDF({ orientation: first.w > first.h ? 'landscape' : 'portrait', unit: 'px', format: [first.w, first.h] });
+  const { jsPDF } = window.jspdf;
+  const first = pages[0];
+  const doc = new jsPDF({
+    orientation: first.w > first.h ? 'landscape' : 'portrait',
+    unit: 'pt',
+    format: [first.w, first.h]
+  });
+
+  let hasBengaliFont = false;
   if (ocr) {
-      setStatus("Preparing Bengali Font...", 80);
-      try {
-          const fontURLs = [ "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notosansbengali/NotoSansBengali-Regular.ttf" ];
-          let fontBuffer=null;
-          for(const fontURL of fontURLs){ try{ const fontRes = await fetch(fontURL); if (fontRes.ok) { fontBuffer = await fontRes.arrayBuffer(); break; } }catch(e){} }
-          if(fontBuffer) {
-              let binary = '';
-              const bytes = new Uint8Array(fontBuffer);
-              const chunkSize = 8192;
-              for (let i = 0; i < bytes.length; i += chunkSize) {
-                binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
-              }
-              doc.addFileToVFS("Bengali.ttf", btoa(binary)); doc.addFont("Bengali.ttf", "Bengali", "normal");
-          }
-      } catch(err) {}
-  }
-  for (let i = 0; i < pages.length; i++) {
-      const pageData = pages[i];
-      if (i > 0) doc.addPage([pageData.w, pageData.h], pageData.w > pageData.h ? 'landscape' : 'portrait');
-      if (ocr && pageData.blocks && pageData.blocks.length > 0) {
-          try { doc.setFont("Bengali"); } catch(e) {}
-          doc.setGState(new doc.GState({opacity: 0}));
-          for (const block of pageData.blocks) {
-              try {
-                  const box = block.box; if(!box || box.length !== 4) continue;
-                  const yMin = (box[0] / 1000) * pageData.h; const xMin = (box[1] / 1000) * pageData.w; const yMax = (box[2] / 1000) * pageData.h;
-                  let fontSize = Math.max(10, (yMax - yMin) * 0.85); doc.setFontSize(fontSize);
-                  doc.text(block.text, xMin, yMin + fontSize * 0.8);
-              } catch(e) {}
-          }
-          doc.setGState(new doc.GState({opacity: 1}));
+    setStatus("Preparing Bengali Searchable Font...", 80);
+    try {
+      const fontB64 = await getBengaliFontBase64();
+      if (fontB64) {
+        doc.addFileToVFS("Bengali.ttf", fontB64);
+        doc.addFont("Bengali.ttf", "Bengali", "normal");
+        hasBengaliFont = true;
       }
-      doc.addImage(pageData.canvas.toDataURL('image/jpeg', quality), 'JPEG', 0, 0, pageData.w, pageData.h);
+    } catch (err) {
+      console.warn("Font loading error:", err);
+    }
+  }
+
+  for (let i = 0; i < pages.length; i++) {
+    const pageData = pages[i];
+    if (i > 0) doc.addPage([pageData.w, pageData.h], pageData.w > pageData.h ? 'landscape' : 'portrait');
+
+    // 1. Draw page visual background image
+    doc.addImage(pageData.canvas.toDataURL('image/jpeg', quality), 'JPEG', 0, 0, pageData.w, pageData.h);
+
+    // 2. Draw 100% selectable transparent text layer ON TOP of the image
+    if (ocr && pageData.blocks && pageData.blocks.length > 0) {
+      doc.setGState(new doc.GState({ opacity: 0 }));
+      for (const block of pageData.blocks) {
+        try {
+          const box = block.box;
+          if (!box || box.length !== 4) continue;
+          const yMin = (box[0] / 1000) * pageData.h;
+          const xMin = (box[1] / 1000) * pageData.w;
+          const yMax = (box[2] / 1000) * pageData.h;
+          const xMax = (box[3] / 1000) * pageData.w;
+          const boxWidth = Math.max(8, xMax - xMin);
+          const boxHeight = Math.max(6, yMax - yMin);
+          renderSearchableTextLine(doc, block.text, xMin, yMin + boxHeight * 0.80, boxWidth, boxHeight, hasBengaliFont);
+        } catch (e) {
+          console.warn('Block render err:', e);
+        }
+      }
+      doc.setGState(new doc.GState({ opacity: 1 }));
+    }
   }
   return doc.output('arraybuffer');
 }
 
 async function makePDFWithTarget(pages, targetKB, ocr) {
   let quality = 0.85, best = null, bestDiff = Infinity;
-  const attempts = [0.85, 0.70, 0.50, 0.35]; 
+  const attempts = [0.85, 0.70, 0.50, 0.35];
   for (let i = 0; i < attempts.length; i++) {
-    quality = attempts[i]; setStatus(`Creating PDF — pass ${i + 1}/${attempts.length}`, 85 + i * 4);
+    quality = attempts[i];
+    setStatus(`Creating PDF — pass ${i + 1}/${attempts.length}`, 85 + i * 4);
     const bytes = await createPDF(pages, quality, ocr);
-    const kb = bytes.byteLength / 1024; const diff = Math.abs(kb - targetKB);
-    if (diff < bestDiff) { best = bytes; bestDiff = diff; }
+    const kb = bytes.byteLength / 1024;
+    const diff = Math.abs(kb - targetKB);
+    if (diff < bestDiff) {
+      best = bytes;
+      bestDiff = diff;
+    }
     if (kb <= targetKB) return bytes;
-  } return best;
+  }
+  return best;
 }
 
-function resetProgress(){
+function resetProgress() {
   $("progress").style.display = "none";
   $("workspace").classList.remove("hidden");
   $("error").classList.add("hidden");
@@ -502,37 +1306,49 @@ function resetProgress(){
   if (btnRetry) btnRetry.style.display = "none";
 }
 
-$("generate").onclick=async()=>{
- if(!state.files.length)return;
- const ocr=$("ocr").checked;
- $("workspace").classList.add("hidden"); $("progress").style.display="block"; $("error").classList.add("hidden");
- const btnRetry = $("btnRetrySearchable");
- if (btnRetry) btnRetry.style.display = "none";
- try{
-   const pages=await loadPages(); if(!pages.length)throw new Error("কোনো page পাওয়া যায়নি।");
-   if(ocr){
-     for(let i=0;i<pages.length;i++){
-       setStatus(`AI Multi-Column Scanning — page ${i+1}/${pages.length}`,30+(i/pages.length)*40);
-       pages[i].blocks=await geminiOCR(pages[i].canvas, i, pages.length);
-       if(i < pages.length - 1) { setStatus(`Cooling down API... (${i+1}/${pages.length})`, 30+(i/pages.length)*40); await new Promise(resolve => setTimeout(resolve, 4000)); }
-     }
-   }
-   const target=Number($("sizeSlider").value);
-   const bytes=await makePDFWithTarget(pages, target, ocr);
-   const kb=bytes.byteLength/1024;
-   const blob=new Blob([bytes],{type:"application/pdf"}); const url=URL.createObjectURL(blob);
-   $("download").href=url; $("download").download="Pragati_Smart_PDF_" + Date.now() + ".pdf";
-   $("result").innerHTML=`${pages.length} page তৈরি হয়েছে। Final size: <b>${kb.toFixed(1)} KB</b> (Target: ${target} KB)`;
-   $("progress").style.display="none"; $("success").style.display="block";
- }catch(err){
-   console.error(err);
-   $("error").textContent="❌ "+(err?.message||String(err));
-   $("error").classList.remove("hidden");
-   $("status").textContent="Processing failed";
-   $("bar").style.width="100%";
-   const btnRetry = $("btnRetrySearchable");
-   if (btnRetry) btnRetry.style.display = "inline-block";
- }
+$("generate").onclick = async () => {
+  if (!state.files.length) return;
+  const ocr = $("ocr").checked;
+  $("workspace").classList.add("hidden");
+  $("progress").style.display = "block";
+  $("error").classList.add("hidden");
+  const btnRetry = $("btnRetrySearchable");
+  if (btnRetry) btnRetry.style.display = "none";
+
+  try {
+    const pages = await loadPages();
+    if (!pages.length) throw new Error("কোনো পাতা পাওয়া যায়নি।");
+
+    if (ocr) {
+      for (let i = 0; i < pages.length; i++) {
+        setStatus(`AI Multi-Column Scanning — page ${i + 1}/${pages.length}`, 30 + (i / pages.length) * 40);
+        pages[i].blocks = await geminiOCR(pages[i].canvas, i, pages.length);
+        if (i < pages.length - 1) {
+          setStatus(`Cooling down API... (${i + 1}/${pages.length})`, 30 + (i / pages.length) * 40);
+          await new Promise(resolve => setTimeout(resolve, 3000));
+        }
+      }
+    }
+    const target = Number($("sizeSlider").value);
+    const bytes = await makePDFWithTarget(pages, target, ocr);
+    window._lastGeneratedPdfBytes = bytes;
+    const kb = bytes.byteLength / 1024;
+    const blob = new Blob([bytes], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+    $("download").href = url;
+    $("download").download = "Pragati_Searchable_PDF_" + Date.now() + ".pdf";
+    $("result").innerHTML = `${pages.length} page সার্চেবল PDF তৈরি হয়েছে। সাইজ: <b>${kb.toFixed(1)} KB</b> (Target: ${target} KB)`;
+    $("progress").style.display = "none";
+    $("success").style.display = "block";
+  } catch (err) {
+    console.error(err);
+    $("error").textContent = "❌ " + (err?.message || String(err));
+    $("error").classList.remove("hidden");
+    $("status").textContent = "Processing failed";
+    $("bar").style.width = "100%";
+    const btnRetry = $("btnRetrySearchable");
+    if (btnRetry) btnRetry.style.display = "inline-block";
+  }
 };
 </script>
 </body>

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Multi-Card Studio | PVC Card Print Layout &amp; Crop Tool | Pragati Telecom</title>
-<meta name="description" content="Auto-detect Aadhaar, PAN, Ayushman PMJAY, and Ration cards. Unlock password PDFs, crop front &amp; back, and arrange side-by-side on A4 for PVC card printing.">
+<meta name="description" content="Auto-detect Aadhaar, PAN, Ayushman PMJAY, e-Shram, and Ration cards. Unlock password PDFs, crop front &amp; back, and arrange side-by-side on A4 for PVC card printing.">
   <link rel="canonical" href="https://turabsk.github.io/pragati-telecom/tools/smart-card.html">
 
 
@@ -120,7 +120,7 @@ select { width:100%; padding:10px 12px; border:1px solid var(--border-light); bo
 .pair-info { position:absolute; top:12px; left:12px; background:#0f172a; color:#fff; padding:4px 10px; border-radius:6px; font-size:11px; z-index:4; font-weight: 700; }
 
 .box-wrap { display:flex; flex-direction:column; gap:10px; }
-.pvc { width:85.6mm; height:54mm; border:1px solid #94a3b8; overflow:hidden; position:relative; background:#fff; flex-shrink:0; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.pvc { width:85.6mm; height:54mm; border:1.5px solid rgba(15, 23, 42, 0.75); overflow:hidden; position:relative; background:#fff; flex-shrink:0; border-radius: 3px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
 .pvc img { position:absolute; display:block; max-width:none; max-height:none; transform:none; object-fit:fill; transform-origin:top left; }
 
 /* Sliders inside Card */
@@ -174,6 +174,7 @@ input[type=range] { width:100%; accent-color:var(--brand-primary); cursor:pointe
 
   <div class="modebar no-print">
     <button class="mode active" data-mode="auto">✨ Smart Auto</button>
+    <button class="mode" data-mode="eshram">👷 e-Shram Card</button>
     <button class="mode" data-mode="ayushman">💳 Ayushman Card</button>
     <button class="mode" data-mode="ration">🍚 Ration Card</button>
     <button class="mode" data-mode="pan">🪪 PAN Card</button>
@@ -207,6 +208,7 @@ input[type=range] { width:100%; accent-color:var(--brand-primary); cursor:pointe
       <select id="profile">
         <option value="auto">Smart Auto — নিজে নির্বাচন করবে</option>
         <option value="pvc">PVC Card — 85.6 × 54 mm</option>
+        <option value="eshram">e-Shram Card — 85.6 × 54 mm</option>
         <option value="a4">A4 Document</option>
         <option value="custom">Custom — বর্তমানে PVC canvas</option>
       </select>
@@ -217,7 +219,8 @@ input[type=range] { width:100%; accent-color:var(--brand-primary); cursor:pointe
   <div class="toolbar no-print">
     <button class="btn blue" id="add-btn">➕ আরও ফাইল</button>
     <button class="btn gray" id="reset-btn">↻ সব মুছুন</button>
-    <button class="btn purple" id="save-btn">🗂️ ফোল্ডারে সেভ</button>
+    <button class="btn purple" id="save-jpg-btn">🖼️ JPG সেভ করুন (HQ)</button>
+    <button class="btn gray" id="save-btn">🗂️ ফোল্ডারে সেভ (ZIP)</button>
     <button class="btn green" onclick="window.print()">🖨️ Direct Print</button>
   </div>
 
@@ -246,7 +249,7 @@ input[type=range] { width:100%; accent-color:var(--brand-primary); cursor:pointe
   <article class="home-article-card">
     <h2 class="home-section-title">💳 How Smart Multi-Card Studio Works</h2>
     <p class="home-section-desc">
-      <strong>Smart Multi-Card Studio</strong> is an automated document formatting and print-alignment utility engineered for cyber cafes, CSC centers, and digital service operators. When customers bring password-protected electronic identity PDFs or photographed cards, this tool handles decryption prompts, auto-detects the document type (Aadhaar, PAN, Ayushman PMJAY, Ration Card), isolates the front and back card regions, and positions them side-by-side in exact <strong>85.6 × 54 mm</strong> standard PVC dimensions.
+      <strong>Smart Multi-Card Studio</strong> is an automated document formatting and print-alignment utility engineered for cyber cafes, CSC centers, and digital service operators. When customers bring password-protected electronic identity PDFs or photographed cards, this tool handles decryption prompts, auto-detects the document type (Aadhaar, PAN, Ayushman PMJAY, e-Shram, Ration Card), isolates the front and back card regions, and positions them side-by-side in exact <strong>85.6 × 54 mm</strong> standard PVC dimensions.
     </p>
 
     <div class="features-grid-3col">
@@ -258,7 +261,7 @@ input[type=range] { width:100%; accent-color:var(--brand-primary); cursor:pointe
       <div class="feature-box">
         <div class="feature-box-icon">✂️</div>
         <h3>Intelligent Boundary Extraction</h3>
-        <p>Includes specialized coordinate extractors for Aadhaar (bottom half), PAN cards, Ayushman Bharat, and dual-column Ration cards.</p>
+        <p>Includes specialized coordinate extractors for Aadhaar (bottom half), e-Shram (dual card stack), PAN cards, Ayushman Bharat, and dual-column Ration cards.</p>
       </div>
       <div class="feature-box">
         <div class="feature-box-icon">🖨️</div>
@@ -271,7 +274,7 @@ input[type=range] { width:100%; accent-color:var(--brand-primary); cursor:pointe
   <!-- Non-Government Disclaimer -->
   <div class="legal-alert warning" style="margin-bottom: 2rem;">
     <p>
-      <strong>⚠️ Independent Utility Disclaimer:</strong> Pragati Telecom is an independent digital tool platform. This utility is a visual cropping, alignment, and formatting assistant created to help lawful operators print physical cards. <strong>We do NOT issue, verify, generate, or validate government identity credentials.</strong> We have no affiliation with UIDAI, PM-JAY, NSDL, UTIITSL, or the Department of Food and Supplies. For details, view our <a href="../disclaimer.html" style="color: #92400e; font-weight: 800; text-decoration: underline;">Disclaimer</a>.
+      <strong>⚠️ Independent Utility Disclaimer:</strong> Pragati Telecom is an independent digital tool platform. This utility is a visual cropping, alignment, and formatting assistant created to help lawful operators print physical cards. <strong>We do NOT issue, verify, generate, or validate government identity credentials.</strong> We have no affiliation with UIDAI, PM-JAY, NSDL, UTIITSL, Ministry of Labour &amp; Employment, or the Department of Food and Supplies. For details, view our <a href="../disclaimer.html" style="color: #92400e; font-weight: 800; text-decoration: underline;">Disclaimer</a>.
     </p>
   </div>
 
@@ -299,7 +302,7 @@ input[type=range] { width:100%; accent-color:var(--brand-primary); cursor:pointe
         <tbody>
           <tr>
             <td><strong>Supported Card Profiles</strong></td>
-            <td>Ayushman Bharat (PM-JAY), PAN Card, Aadhaar Card, Digital Ration Card (NFSA), Custom Card</td>
+            <td>e-Shram Card (NDUW), Ayushman Bharat (PM-JAY), PAN Card, Aadhaar Card, Digital Ration Card (NFSA), Custom Card</td>
           </tr>
           <tr>
             <td><strong>Standard PVC Dimensions</strong></td>
@@ -390,6 +393,7 @@ const input=$('file-input'), drop=$('dropzone'), page=$('a4-page');
 let mode='auto', counter=0, cards=[], ocrWorker=null;
 
 const PROFILES={
+  eshram:{name:'e-Shram Card',type:'PVC',keywords:['eshram','e-shram','shram','labour','universal account number','uan','ministry of labour','श्रम'],ratio:85.6/54},
   ayushman:{name:'Ayushman Card',type:'PVC',keywords:['ayushman','pmjay','health','beneficiary','national health'],ratio:85.6/54},
   pan:{name:'PAN Card',type:'PVC',keywords:['income tax','permanent account number','pan','govt of india'],ratio:85.6/54},
   aadhaar:{name:'Aadhaar Card',type:'PVC',keywords:['aadhaar','unique identification authority','uidai','government of india'],ratio:85.6/54},
@@ -455,98 +459,53 @@ async function pdfDoc(file) {
 }
 // ==============================================================
 
-async function renderPdfPage(pdf,n=1,scale=3){
+async function renderPdfPage(pdf,n=1,scale=3.5){
  const p=await pdf.getPage(n), v=p.getViewport({scale});
  const c=document.createElement('canvas'); c.width=v.width;c.height=v.height;
  const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);
+ ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
  await p.render({canvasContext:ctx,viewport:v}).promise;return c;
 }
 function imageCanvas(file){
  return new Promise((res,rej)=>{
   const im=new Image(); im.onload=()=>{
-   const c=document.createElement('canvas'); const max=2200;
+   const c=document.createElement('canvas'); const max=3500;
    const sc=Math.min(1,max/Math.max(im.width,im.height));
    c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);
-   c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c);
+   const ctx=c.getContext('2d');
+   ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
+   ctx.drawImage(im,0,0,c.width,c.height);res(c);
   };im.onerror=rej;im.src=URL.createObjectURL(file);
  });
 }
 
-function isRationGreen(r,g,b){
- return g>90 && g>r*1.08 && g>b*0.85 && (g-r)>15;
-}
-function projectionRuns(arr, threshold){
- const runs=[]; let start=-1;
- for(let i=0;i<arr.length;i++){
-  if(arr[i]>=threshold && start<0) start=i;
-  if((arr[i]<threshold || i===arr.length-1) && start>=0){
-   const end=(arr[i]>=threshold&&i===arr.length-1)?i:i-1;
-   if(end-start>=2) runs.push([start,end]);
-   start=-1;
-  }
- }
- return runs;
-}
-
 function extractRationCards(c){
- const w=c.width, h=c.height, ctx=c.getContext('2d'), d=ctx.getImageData(0,0,w,h).data;
- const y0=Math.floor(h*0.40), step=3;
- const rows=new Array(Math.ceil((h-y0)/step)).fill(0);
- 
- for(let yy=y0; yy<h; yy+=step){
-  let n=0;
-  for(let x=0; x<w; x+=step){
-   const i=(yy*w+x)*4;
-   if(isRationGreen(d[i], d[i+1], d[i+2])) n++;
-  }
-  rows[Math.floor((yy-y0)/step)]=n;
- }
- 
- const rr=projectionRuns(rows, Math.max(5, Math.floor(w/step*0.02)));
- if(!rr.length){
-   return [
-     {x: Math.round(w*0.05), y: Math.round(h*0.45), w: Math.round(w*0.43), h: Math.round(h*0.45)},
-     {x: Math.round(w*0.52), y: Math.round(h*0.45), w: Math.round(w*0.43), h: Math.round(h*0.45)}
-   ];
- }
- 
- const r=rr.sort((a,b)=>(b[1]-b[0])-(a[1]-a[0]))[0];
- const top=Math.max(0, y0 + r[0]*step - 15);
- const bottom=Math.min(h, y0 + (r[1]+1)*step + 15);
+  const w=c.width, h=c.height;
+  // High-accuracy calibrated normalized geometry for West Bengal Digital e-Ration Card (dual column at bottom of A4)
+  // Front Card (Left):  x: 6.83%, y: 77.83%, w: 43.37%, h: 19.24%
+  // Back Card (Right):  x: 50.20%, y: 77.83%, w: 42.86%, h: 19.24%
+  const front={
+    x: Math.round(w * 0.0683),
+    y: Math.round(h * 0.7783),
+    w: Math.round(w * 0.4337),
+    h: Math.round(h * 0.1924)
+  };
+  const back={
+    x: Math.round(w * 0.5020),
+    y: Math.round(h * 0.7783),
+    w: Math.round(w * 0.4286),
+    h: Math.round(h * 0.1924)
+  };
 
- const cols=new Array(Math.ceil(w/step)).fill(0);
- for(let x=0; x<w; x+=step){
-  let n=0;
-  for(let y=top; y<bottom; y+=step){
-   const i=(y*w+x)*4;
-   if(isRationGreen(d[i], d[i+1], d[i+2])) n++;
-  }
-  cols[Math.floor(x/step)]=n;
- }
- 
- const runs=projectionRuns(cols, Math.max(5, Math.floor((bottom-top)/step*0.05)));
- const mid=Math.floor(w/(2*step));
- const left=runs.filter(v=>((v[0]+v[1])/2) < mid);
- const right=runs.filter(v=>((v[0]+v[1])/2) >= mid);
- 
- let xr=[];
- if(left.length && right.length){
-   xr=[
-     [Math.min(...left.map(v=>v[0])), Math.max(...left.map(v=>v[1]))],
-     [Math.min(...right.map(v=>v[0])), Math.max(...right.map(v=>v[1]))]
-   ];
- } else {
-   xr=[
-    [Math.floor(w*0.05/step), Math.floor((mid-15)/step)],
-    [Math.floor((mid+15)/step), Math.floor(w*0.95/step)]
-   ];
- }
- 
- return xr.map(v=>{
-  const x=Math.max(0, v[0]*step - 10);
-  const x2=Math.min(w, (v[1]+1)*step + 10);
-  return {x, y:top, w:x2-x, h:bottom-top};
- }).sort((a,b)=>a.x-b.x);
+  const clamp=b=>{
+    const x=Math.max(0, Math.min(w-1, b.x));
+    const y=Math.max(0, Math.min(h-1, b.y));
+    const x2=Math.max(x+1, Math.min(w, b.x+b.w));
+    const y2=Math.max(y+1, Math.min(h, b.y+b.h));
+    return {x, y, w:x2-x, h:y2-y};
+  };
+
+  return [clamp(front), clamp(back)];
 }
 
 function cropCanvas(c,b){
@@ -562,6 +521,32 @@ function extractPanCards(c){
                w:Math.round(w*.401),h:Math.round(h*.180)};
   const back ={x:Math.round(w*.515),y:Math.round(h*.768),
                w:Math.round(w*.401),h:Math.round(h*.180)};
+  const clamp=b=>{
+    const x=Math.max(0,Math.min(w-1,b.x)), y=Math.max(0,Math.min(h-1,b.y));
+    const x2=Math.max(x+1,Math.min(w,b.x+b.w));
+    const y2=Math.max(y+1,Math.min(h,b.y+b.h));
+    return {x,y,w:x2-x,h:y2-y};
+  };
+  return {front:cropCanvas(c,clamp(front)),back:cropCanvas(c,clamp(back))};
+}
+
+function extractEShramCards(c){
+  const w=c.width, h=c.height;
+  // Official e-Shram PDF normalized template coordinates (PVC aspect ratio ~1.585)
+  // Front Card (Top): x: 29.39%, y: 7.17%, w: 38.22%, h: 18.21%
+  // Back Card (Bottom): x: 29.39%, y: 25.71%, w: 38.22%, h: 18.21%
+  const front={
+    x:Math.round(w*0.2939),
+    y:Math.round(h*0.0717),
+    w:Math.round(w*0.3822),
+    h:Math.round(h*0.1821)
+  };
+  const back={
+    x:Math.round(w*0.2939),
+    y:Math.round(h*0.2571),
+    w:Math.round(w*0.3822),
+    h:Math.round(h*0.1821)
+  };
   const clamp=b=>{
     const x=Math.max(0,Math.min(w-1,b.x)), y=Math.max(0,Math.min(h-1,b.y));
     const x2=Math.max(x+1,Math.min(w,b.x+b.w));
@@ -674,7 +659,8 @@ function detectType(text,fileName){
   if(n>score){score=n;best=k}
  }
  if(best==='custom'){
-  if(/aadhaar|uidai/.test(s))best='aadhaar';
+  if(/eshram|e-shram|\bshram\b|uan|labour|ministry of labour/.test(s))best='eshram';
+  else if(/aadhaar|uidai/.test(s))best='aadhaar';
   else if(/\bpan\b|income tax/.test(s))best='pan';
   else if(/ration|nfsa|pds/.test(s))best='ration';
  }
@@ -697,6 +683,12 @@ function addPair(front,back,profile,label,frontFit,backFit){
  pair.appendChild(makeBox(front,frontFit,'সামনে / Front',id,'front'));
  pair.appendChild(makeBox(back,backFit,'পেছনে / Back',id,'back'));
  
+ const dlBtn=document.createElement('button');dlBtn.className='btn blue no-print';dlBtn.textContent='💾 JPG সেভ';
+ dlBtn.style.position='absolute';dlBtn.style.right='95px';dlBtn.style.top='8px'; dlBtn.style.padding='8px 12px'; dlBtn.style.fontSize='12px';
+ dlBtn.title='উভয় সাইড হাই-কোয়ালিটি JPG হিসেবে ডাউনলোড করুন';
+ dlBtn.onclick=()=>downloadPairJpg(id);
+ pair.appendChild(dlBtn);
+
  const del=document.createElement('button');del.className='btn red no-print';del.textContent='❌ মুছুন';
  del.style.position='absolute';del.style.right='8px';del.style.top='8px'; del.style.padding='8px 12px'; del.style.fontSize='12px';
  del.onclick=()=>{pair.remove();cards=cards.filter(x=>x.id!==id); if(!cards.length) $('reset-btn').click();};
@@ -721,9 +713,16 @@ function makeBox(src,f,title,id,side){
   r.oninput=()=>{vals[k]=+r.value;o.textContent=vals[k].toFixed(1)+'%';im.style[k==='w'?'width':k==='h'?'height':k==='left'?'left':'top']=r.value+'%'};
   c.appendChild(row);
  });
- const reset=document.createElement('button');reset.className='btn gray';reset.style.width='100%';reset.style.marginTop='10px';reset.textContent='↻ Reset Auto-Fit';
+ const reset=document.createElement('button');reset.className='btn gray';reset.style.width='100%';reset.style.marginTop='8px';reset.textContent='↻ Reset Auto-Fit';
  reset.onclick=()=>{Object.assign(vals,f);im.style.width=f.w+'%';im.style.height=f.h+'%';im.style.left=f.left+'%';im.style.top=f.top+'%';c.querySelectorAll('input').forEach((r,i)=>{r.value=[f.w,f.h,f.left,f.top][i];r.nextElementSibling.textContent=[f.w,f.h,f.left,f.top][i].toFixed(1)+'%'})};
- c.appendChild(reset);wrap.appendChild(c);return wrap;
+ c.appendChild(reset);
+
+ const dlSide=document.createElement('button');dlSide.className='btn blue';dlSide.style.width='100%';dlSide.style.marginTop='6px';dlSide.style.fontSize='12px';dlSide.style.padding='8px 10px';
+ dlSide.textContent=`💾 ${title.includes('Front')||title.includes('সামনে')?'Front':'Back'} JPG সেভ`;
+ dlSide.onclick=()=>downloadSingleCardJpg(id, side);
+ c.appendChild(dlSide);
+
+ wrap.appendChild(c);return wrap;
 }
 
 async function processFiles(files){
@@ -757,6 +756,12 @@ async function processFiles(files){
      backC=faces.back;
      ff={w:100,h:100,left:0,top:0};
      bf={w:100,h:100,left:0,top:0};
+   } else if(type==='eshram'){
+     const eshramFaces=extractEShramCards(canvases[0]);
+     frontC=eshramFaces.front;
+     backC=eshramFaces.back;
+     ff={w:100,h:100,left:0,top:0};
+     bf={w:100,h:100,left:0,top:0};
    } else if(type==='ration'){
      const rationBoxes = extractRationCards(canvases[0]);
      frontC = cropCanvas(canvases[0], rationBoxes[0] || {x:0, y:0, w:canvases[0].width/2, h:canvases[0].height});
@@ -776,8 +781,8 @@ async function processFiles(files){
      bf=fit(backC||frontC,backRegion);
    }
 
-   const front=frontC.toDataURL('image/jpeg',.97);
-   const back=(backC||frontC).toDataURL('image/jpeg',.97);
+   const front=frontC.toDataURL('image/jpeg',.98);
+   const back=(backC||frontC).toDataURL('image/jpeg',.98);
    addPair(front,back,profile,label,ff,bf);
    setStatus(`✓ ${profile.name} detected — ${file.name}`);
   }
@@ -789,25 +794,115 @@ async function processFiles(files){
  }finally{busy(false);input.value=''}
 }
 
+// Ultra High-Definition (600 DPI) Canvas Generator with Subtle Black Stroke Border
+async function generateCardCanvas(cardId, side){
+  const im=document.querySelector(`#img-${cardId}-${side}`);
+  if(!im)return null;
+  const canvas=document.createElement('canvas');
+  canvas.width=2022; // 600 DPI for standard 85.6mm PVC
+  canvas.height=1276; // 600 DPI for standard 54mm PVC
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.imageSmoothingEnabled=true;
+  ctx.imageSmoothingQuality='high';
+
+  const w=parseFloat(im.style.width),h=parseFloat(im.style.height);
+  const l=parseFloat(im.style.left),t=parseFloat(im.style.top);
+  await new Promise(res=>{
+    const x=new Image();
+    x.onload=()=>{
+      ctx.drawImage(x,canvas.width*l/100,canvas.height*t/100,canvas.width*w/100,canvas.height*h/100);
+      res();
+    };
+    x.src=im.src;
+  });
+
+  // Draw subtle light black stroke border (crisp guideline)
+  ctx.strokeStyle='rgba(15, 23, 42, 0.65)';
+  ctx.lineWidth=3;
+  ctx.strokeRect(1.5, 1.5, canvas.width - 3, canvas.height - 3);
+
+  return canvas;
+}
+
+async function downloadSingleCardJpg(cardId, side){
+  const card=cards.find(c=>c.id===cardId);
+  const sideName=side==='front'?'Front':'Back';
+  const label=card?card.fileName:`Card_${cardId}`;
+  busy(true,`💾 ${sideName} High-Res JPG ডাউনলোড হচ্ছে...`);
+  try{
+    const canvas=await generateCardCanvas(cardId, side);
+    if(!canvas)return;
+    const blob=await new Promise(r=>canvas.toBlob(r,'image/jpeg',0.98));
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=`${label}_${sideName}_HQ.jpg`;
+    a.click();
+    setStatus(`✓ ${sideName} High-Res JPG ডাউনলোড সম্পন্ন`);
+  }catch(e){
+    console.error(e);
+    alert('JPG সেভ করতে সমস্যা হয়েছে: '+e.message);
+  }finally{
+    busy(false);
+  }
+}
+
+async function downloadPairJpg(cardId){
+  const card=cards.find(c=>c.id===cardId);
+  const label=card?card.fileName:`Card_${cardId}`;
+  busy(true,`💾 ${label} এর High-Res JPG তৈরি হচ্ছে...`);
+  try{
+    for(const side of ['front','back']){
+      const canvas=await generateCardCanvas(cardId, side);
+      if(canvas){
+        const sideName=side==='front'?'Front':'Back';
+        const blob=await new Promise(r=>canvas.toBlob(r,'image/jpeg',0.98));
+        const a=document.createElement('a');
+        a.href=URL.createObjectURL(blob);
+        a.download=`${label}_${sideName}_HQ.jpg`;
+        a.click();
+        await new Promise(r=>setTimeout(r,300));
+      }
+    }
+    setStatus(`✓ ${label} এর Front ও Back JPG সেভ হয়েছে`);
+  }catch(e){
+    console.error(e);
+  }finally{
+    busy(false);
+  }
+}
+
+$('save-jpg-btn').onclick=async()=>{
+  if(!cards.length){alert('আগে ফাইল আপলোড করুন।');return}
+  busy(true,'💾 High Quality JPG তৈরি ও ডাউনলোড হচ্ছে...');
+  try{
+    for(const c of cards){
+      await downloadPairJpg(c.id);
+    }
+    setStatus('✓ সব কার্ড High Quality JPG হিসেবে ডাউনলোড হয়েছে');
+  }catch(e){
+    console.error(e);
+  }finally{
+    busy(false);
+  }
+};
+
 $('save-btn').onclick=async()=>{
  if(!cards.length){alert('আগে ফাইল আপলোড করুন।');return}
- busy(true,'💾 JPG ফাইল তৈরি হচ্ছে...');
+ busy(true,'💾 High Quality ZIP ফাইল তৈরি হচ্ছে...');
  const zip=new JSZip();
  for(const c of cards){
   for(const side of ['front','back']){
-   const im=document.querySelector(`#img-${c.id}-${side}`);
-   if(!im)continue;
-   const canvas=document.createElement('canvas');canvas.width=1011;canvas.height=638;
-   const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
-   const w=parseFloat(im.style.width),h=parseFloat(im.style.height),l=parseFloat(im.style.left),t=parseFloat(im.style.top);
-   await new Promise(res=>{const x=new Image();x.onload=()=>{ctx.drawImage(x,canvas.width*l/100,canvas.height*t/100,canvas.width*w/100,canvas.height*h/100);res()};x.src=im.src});
-   const blob=await new Promise(r=>canvas.toBlob(r,'image/jpeg',.95));
-   zip.file(`${c.fileName}_${side}.jpg`,blob);
+   const canvas=await generateCardCanvas(c.id, side);
+   if(!canvas)continue;
+   const blob=await new Promise(r=>canvas.toBlob(r,'image/jpeg',0.98));
+   zip.file(`${c.fileName}_${side==='front'?'Front':'Back'}_HQ.jpg`,blob);
   }
  }
  const content=await zip.generateAsync({type:'blob'});
- const a=document.createElement('a');a.href=URL.createObjectURL(content);a.download='Pragati_Smart_Cards.zip';a.click();
- setStatus('✓ সব ফাইল ZIP-এ সেভ হয়েছে');busy(false);
+ const a=document.createElement('a');a.href=URL.createObjectURL(content);a.download='Pragati_Smart_Cards_HQ.zip';a.click();
+ setStatus('✓ সব High-Res ফাইল ZIP-এ সেভ হয়েছে');busy(false);
 };
 </script>
 </body>
