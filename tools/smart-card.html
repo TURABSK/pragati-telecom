@@ -37,6 +37,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <!-- Premium Font Matches Home Page -->
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -87,7 +88,7 @@ button{cursor:pointer}
 #file-input { display:none; }
 
 /* Panels */
-.smart-panel { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
+.smart-panel { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:20px 0; }
 .panel { background:var(--bg-card); border:1px solid var(--border-light); border-radius:var(--radius-md); padding:18px; box-shadow: var(--shadow-xs);}
 .panel h3 { margin:0 0 10px; font-size:15px; font-weight: 800; color: var(--text-main); }
 .panel p { margin:4px 0 12px; color:var(--text-muted); font-size:12px; font-weight: 500; }
@@ -120,7 +121,8 @@ select { width:100%; padding:10px 12px; border:1px solid var(--border-light); bo
 .pair-info { position:absolute; top:12px; left:12px; background:#0f172a; color:#fff; padding:4px 10px; border-radius:6px; font-size:11px; z-index:4; font-weight: 700; }
 
 .box-wrap { display:flex; flex-direction:column; gap:10px; }
-.pvc { width:85.6mm; height:54mm; border:1.5px solid rgba(15, 23, 42, 0.75); overflow:hidden; position:relative; background:#fff; flex-shrink:0; border-radius: 3px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.pvc { width:85.6mm; height:54mm; border: var(--card-stroke-width, 1.5px) solid var(--card-stroke-color, rgba(15, 23, 42, 0.75)); overflow:hidden; position:relative; background:#fff; flex-shrink:0; border-radius: 3px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: border 0.2s ease, box-shadow 0.2s ease; }
+.no-stroke .pvc { border: 1px dashed rgba(148, 163, 184, 0.6) !important; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
 .pvc img { position:absolute; display:block; max-width:none; max-height:none; transform:none; object-fit:fill; transform-origin:top left; }
 
 /* Sliders inside Card */
@@ -147,7 +149,8 @@ input[type=range] { width:100%; accent-color:var(--brand-primary); cursor:pointe
   #workspace {margin: 0;}
   .a4{ box-shadow:none !important; width:210mm !important; min-height:297mm !important; padding:8mm !important; margin:0 auto !important; }
   .pair{ display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important; gap:8mm !important; border:0 !important; padding:0 !important; background:#fff !important; break-inside:avoid !important; margin-bottom:12mm !important; justify-content: flex-start !important; }
-  .pvc { border:1px solid #000 !important; box-shadow: none !important; border-radius: 0 !important; }
+  .pvc { border: var(--card-print-stroke-width, 1px) solid var(--card-print-stroke-color, #000) !important; box-shadow: none !important; border-radius: 0 !important; }
+  .no-stroke .pvc { border: none !important; box-shadow: none !important; outline: none !important; }
 }
 </style>
 </head>
@@ -214,14 +217,52 @@ input[type=range] { width:100%; accent-color:var(--brand-primary); cursor:pointe
       </select>
       <p id="profile-help">Auto mode-এ ডকুমেন্ট অনুযায়ী প্রোফাইল নির্বাচন করা হবে।</p>
     </div>
+    <div class="panel" id="stroke-settings-panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <h3 style="margin:0;">🔲 Card Outline / Stroke (বর্ডার)</h3>
+        <span id="stroke-badge" class="badge" style="background:rgba(16,185,129,0.12); color:#059669; font-size:11px;">● চালু (ON)</span>
+      </div>
+      <p style="margin:4px 0 10px; color:var(--text-muted); font-size:12px; font-weight:500;">
+        কাঁচি দিয়ে কাটার জন্য বর্ডার রাখুন, অথবা প্রি-কাট PVC ট্রে প্রিন্টিংয়ের জন্য বন্ধ করুন।
+      </p>
+      <div style="display:flex; gap:8px; margin-bottom:12px;">
+        <button type="button" id="btn-stroke-on" class="btn blue" style="flex:1; padding:7px 10px; font-size:12px; justify-content:center;">
+          ✓ বর্ডার চালু (ON)
+        </button>
+        <button type="button" id="btn-stroke-off" class="btn gray" style="flex:1; padding:7px 10px; font-size:12px; justify-content:center;">
+          ✕ বর্ডার বন্ধ (OFF)
+        </button>
+      </div>
+      <div id="stroke-advanced-options" style="display:flex; gap:10px; align-items:center; transition:0.2s;">
+        <div style="flex:1;">
+          <label style="font-size:11px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:3px;">বর্ডার সাইজ</label>
+          <select id="stroke-width-select" style="padding:6px 8px; font-size:12px; height:36px;">
+            <option value="1">Hairline (1 px)</option>
+            <option value="1.5" selected>Standard (1.5 px)</option>
+            <option value="2">Medium (2 px)</option>
+            <option value="3">Thick (3 px)</option>
+          </select>
+        </div>
+        <div style="flex:1;">
+          <label style="font-size:11px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:3px;">বর্ডার কালার</label>
+          <div style="display:flex; gap:6px; align-items:center; height:36px;">
+            <input type="color" id="stroke-color-picker" value="#0f172a" style="width:36px; height:36px; padding:0; border:1px solid var(--border-light); border-radius:6px; cursor:pointer; background:none;">
+            <span id="stroke-color-label" style="font-size:11px; font-weight:700; color:var(--text-muted); font-family:monospace;">#0F172A</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <div class="toolbar no-print">
     <button class="btn blue" id="add-btn">➕ আরও ফাইল</button>
     <button class="btn gray" id="reset-btn">↻ সব মুছুন</button>
-    <button class="btn purple" id="save-jpg-btn">🖼️ JPG সেভ করুন (HQ)</button>
-    <button class="btn gray" id="save-btn">🗂️ ফোল্ডারে সেভ (ZIP)</button>
-    <button class="btn green" onclick="window.print()">🖨️ Direct Print</button>
+    <button class="btn blue" id="toolbar-stroke-btn" title="কার্ডের আউটলাইন / বর্ডার অন বা অফ করুন">🔲 বর্ডার: চালু</button>
+    <button class="btn purple" id="save-jpg-btn" title="উভয় সাইড আলাদা 85.6×54 mm PVC সাইজে JPG সেভ করুন">🖼️ JPG সেভ (PVC সাইজ)</button>
+    <button class="btn blue" id="save-pair-btn" title="ফ্রন্ট এবং ব্যাক পাশাপাশি প্রিন্ট-রেডি 300 DPI শিট সেভ করুন">🪪 পাশাপাশি JPG (প্রিন্ট রেডি)</button>
+    <button class="btn green" id="save-pdf-btn" title="১০০% অ্যাকচুয়াল স্কেলে নিখুঁত 85.6×54 mm PVC প্রিন্ট PDF সেভ করুন">📄 PDF সেভ (PVC রেডি)</button>
+    <button class="btn gray" id="save-btn" title="সবগুলো কার্ড PVC সাইজ JPG ফাইলে ZIP হিসেবে সেভ করুন">🗂️ ফোল্ডারে সেভ (ZIP)</button>
+    <button class="btn" style="background:#0f172a; color:#fff;" onclick="window.print()">🖨️ Direct Print</button>
   </div>
 
   <div class="progress no-print" id="progress">
@@ -285,7 +326,7 @@ input[type=range] { width:100%; accent-color:var(--brand-primary); cursor:pointe
       <li style="margin-bottom: 0.5rem;"><strong>Password Unlock (If Protected):</strong> If your PDF is locked (e.g. e-Aadhaar), enter the password (e.g. first 4 letters of name in CAPITAL + year of birth) into the browser prompt.</li>
       <li style="margin-bottom: 0.5rem;"><strong>Auto-Detection:</strong> The engine automatically classifies the card type and crops the front and back sections.</li>
       <li style="margin-bottom: 0.5rem;"><strong>Fine-Tune Alignment:</strong> Use the Zoom (↔/↕) and Position (Left/Top) sliders if you wish to adjust margins or crop lines.</li>
-      <li style="margin-bottom: 0.5rem;"><strong>Print or Export:</strong> Click <em>"Direct Print"</em> (Ctrl+P) to print on your PVC card tray or photo paper, or click <em>"ফোল্ডারে সেভ (Save as ZIP)"</em> to download high-resolution JPG files.</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Print or Export:</strong> Click <em>"Direct Print"</em> (Ctrl+P) to print directly, <em>"JPG সেভ (PVC সাইজ)"</em> for standard 85.6×54 mm (300 DPI) cards, <em>"পাশাপাশি JPG"</em> for tray/folding print sheet, or <em>"PDF সেভ (PVC রেডি)"</em> for 100% actual-size vector PDF.</li>
     </ol>
   </article>
 
@@ -367,6 +408,13 @@ input[type=range] { width:100%; accent-color:var(--brand-primary); cursor:pointe
           You can use the real-time adjustment sliders on the right of each card box (Zoom ↔, Zoom ↕, Left ⇄, Top ⇅) to expand or re-center the crop box before printing.
         </div>
       </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">কার্ডের আউটলাইন বা বর্ডার (Stroke) কীভাবে চালু বা বন্ধ করব?</summary>
+        <div class="faq-answer">
+          টুলটির <strong>"Card Outline / Stroke (বর্ডার)"</strong> প্যানেল অথবা উপরের টুলবারের <strong>"🔲 বর্ডার"</strong> বোতামে ক্লিক করে এক ক্লিকেই আউটলাইন চালু বা বন্ধ করতে পারেন। ফটো পেপারে প্রিন্ট করে কাঁচি দিয়ে কাটার সুবিধার জন্য বর্ডার চালু রাখুন; আর সরাসরি প্লাস্টিক PVC কার্ড ট্রেতে প্রিন্ট করার জন্য বর্ডার বন্ধ করে দিন।
+        </div>
+      </details>
     </div>
 
     <!-- Related Tools & Guides Navigation -->
@@ -391,6 +439,78 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 const $=id=>document.getElementById(id);
 const input=$('file-input'), drop=$('dropzone'), page=$('a4-page');
 let mode='auto', counter=0, cards=[], ocrWorker=null;
+
+// Card Outline / Stroke Configuration
+let strokeConfig = {
+  enabled: true,
+  width: 1.5,
+  color: '#0f172a'
+};
+
+function updateStrokeUI(){
+  const root = document.documentElement;
+  const workspace = $('workspace');
+  const a4 = $('a4-page');
+  const btnOn = $('btn-stroke-on');
+  const btnOff = $('btn-stroke-off');
+  const tbBtn = $('toolbar-stroke-btn');
+  const badge = $('stroke-badge');
+  const adv = $('stroke-advanced-options');
+  const colorLabel = $('stroke-color-label');
+
+  if(strokeConfig.enabled){
+    document.body.classList.remove('no-stroke');
+    if(workspace) workspace.classList.remove('no-stroke');
+    if(a4) a4.classList.remove('no-stroke');
+
+    root.style.setProperty('--card-stroke-width', strokeConfig.width + 'px');
+    root.style.setProperty('--card-stroke-color', strokeConfig.color);
+    root.style.setProperty('--card-print-stroke-width', Math.max(1, Math.round(strokeConfig.width)) + 'px');
+    root.style.setProperty('--card-print-stroke-color', strokeConfig.color);
+
+    if(btnOn) { btnOn.className = 'btn blue'; }
+    if(btnOff) { btnOff.className = 'btn gray'; }
+    if(tbBtn) { tbBtn.className = 'btn blue'; tbBtn.innerHTML = '🔲 বর্ডার: চালু'; }
+    if(badge) {
+      badge.style.background = 'rgba(16,185,129,0.12)';
+      badge.style.color = '#059669';
+      badge.textContent = '● চালু (ON)';
+    }
+    if(adv) {
+      adv.style.opacity = '1';
+      adv.style.pointerEvents = 'auto';
+    }
+  } else {
+    document.body.classList.add('no-stroke');
+    if(workspace) workspace.classList.add('no-stroke');
+    if(a4) a4.classList.add('no-stroke');
+
+    if(btnOn) { btnOn.className = 'btn gray'; }
+    if(btnOff) { btnOff.className = 'btn red'; }
+    if(tbBtn) { tbBtn.className = 'btn gray'; tbBtn.innerHTML = '🔲 বর্ডার: বন্ধ'; }
+    if(badge) {
+      badge.style.background = 'rgba(239,68,68,0.12)';
+      badge.style.color = '#dc2626';
+      badge.textContent = '○ বন্ধ (OFF)';
+    }
+    if(adv) {
+      adv.style.opacity = '0.35';
+      adv.style.pointerEvents = 'none';
+    }
+  }
+
+  if(colorLabel) {
+    colorLabel.textContent = strokeConfig.color.toUpperCase();
+  }
+}
+
+// Stroke event listeners & initial state
+if($('btn-stroke-on')) $('btn-stroke-on').onclick = () => { strokeConfig.enabled = true; updateStrokeUI(); setStatus('Card outline: চালু (Border ON)'); };
+if($('btn-stroke-off')) $('btn-stroke-off').onclick = () => { strokeConfig.enabled = false; updateStrokeUI(); setStatus('Card outline: বন্ধ (Border OFF)'); };
+if($('toolbar-stroke-btn')) $('toolbar-stroke-btn').onclick = () => { strokeConfig.enabled = !strokeConfig.enabled; updateStrokeUI(); setStatus(strokeConfig.enabled ? 'Card outline: চালু (Border ON)' : 'Card outline: বন্ধ (Border OFF)'); };
+if($('stroke-width-select')) $('stroke-width-select').onchange = (e) => { strokeConfig.width = parseFloat(e.target.value); updateStrokeUI(); };
+if($('stroke-color-picker')) $('stroke-color-picker').oninput = (e) => { strokeConfig.color = e.target.value; updateStrokeUI(); };
+updateStrokeUI();
 
 const PROFILES={
   eshram:{name:'e-Shram Card',type:'PVC',keywords:['eshram','e-shram','shram','labour','universal account number','uan','ministry of labour','श्रम'],ratio:85.6/54},
@@ -683,44 +803,68 @@ function addPair(front,back,profile,label,frontFit,backFit){
  pair.appendChild(makeBox(front,frontFit,'সামনে / Front',id,'front'));
  pair.appendChild(makeBox(back,backFit,'পেছনে / Back',id,'back'));
  
- const dlBtn=document.createElement('button');dlBtn.className='btn blue no-print';dlBtn.textContent='💾 JPG সেভ';
- dlBtn.style.position='absolute';dlBtn.style.right='95px';dlBtn.style.top='8px'; dlBtn.style.padding='8px 12px'; dlBtn.style.fontSize='12px';
- dlBtn.title='উভয় সাইড হাই-কোয়ালিটি JPG হিসেবে ডাউনলোড করুন';
- dlBtn.onclick=()=>downloadPairJpg(id);
- pair.appendChild(dlBtn);
+  const actions=document.createElement('div');
+  actions.className='pair-actions no-print';
+  actions.style.cssText='position:absolute; right:8px; top:8px; display:flex; gap:6px; flex-wrap:wrap; align-items:center; z-index:5;';
 
- const del=document.createElement('button');del.className='btn red no-print';del.textContent='❌ মুছুন';
- del.style.position='absolute';del.style.right='8px';del.style.top='8px'; del.style.padding='8px 12px'; del.style.fontSize='12px';
- del.onclick=()=>{pair.remove();cards=cards.filter(x=>x.id!==id); if(!cards.length) $('reset-btn').click();};
- pair.appendChild(del);
- 
- page.appendChild(pair);
- cards.push({id,front,back,profile,fileName:cleanName(label)});
+  const pairSideBtn=document.createElement('button');
+  pairSideBtn.className='btn blue'; pairSideBtn.style.padding='6px 10px'; pairSideBtn.style.fontSize='11px';
+  pairSideBtn.title='উভয় সাইড পাশাপাশি PVC প্রিন্ট সাইজে (300 DPI) JPG হিসেবে সেভ করুন';
+  pairSideBtn.innerHTML='🪪 পাশাপাশি JPG';
+  pairSideBtn.onclick=()=>downloadSideBySideJpg(id);
+  actions.appendChild(pairSideBtn);
+
+  const pdfBtn=document.createElement('button');
+  pdfBtn.className='btn green'; pdfBtn.style.padding='6px 10px'; pdfBtn.style.fontSize='11px';
+  pdfBtn.title='১০০% অ্যাকচুয়াল 85.6×54 mm PVC সাইজে PDF ফাইল সেভ করুন';
+  pdfBtn.innerHTML='📄 PDF';
+  pdfBtn.onclick=()=>downloadSingleCardPdf(id);
+  actions.appendChild(pdfBtn);
+
+  const dlBtn=document.createElement('button');
+  dlBtn.className='btn purple'; dlBtn.style.padding='6px 10px'; dlBtn.style.fontSize='11px';
+  dlBtn.title='উভয় সাইড আলাদা আলাদা 85.6×54 mm PVC সাইজ JPG ডাউনলোড করুন';
+  dlBtn.innerHTML='💾 ২ সাইড JPG';
+  dlBtn.onclick=()=>downloadPairJpg(id);
+  actions.appendChild(dlBtn);
+
+  const del=document.createElement('button');
+  del.className='btn red'; del.style.padding='6px 10px'; del.style.fontSize='11px';
+  del.title='এই কার্ডটি মুছুন';
+  del.innerHTML='❌';
+  del.onclick=()=>{pair.remove();cards=cards.filter(x=>x.id!==id); if(!cards.length) $('reset-btn').click();};
+  actions.appendChild(del);
+
+  pair.appendChild(actions);
+  
+  page.appendChild(pair);
+  cards.push({id,front,back,profile,fileName:cleanName(label)});
 }
 
 function makeBox(src,f,title,id,side){
- const wrap=document.createElement('div');wrap.className='box-wrap';
- const box=document.createElement('div');box.className='pvc';
- const im=makeImg(src,f);im.id=`img-${id}-${side}`;box.appendChild(im);wrap.appendChild(box);
- const c=document.createElement('div');c.className='controls no-print';
- c.innerHTML=`<strong>${title}</strong>
- <div class="detect"><span class="badge">FULL CARD</span><span class="badge">AUTO FIT</span></div>`;
- const vals={w:f.w,h:f.h,left:f.left,top:f.top};
- [['Zoom ↔','w',30,900],['Zoom ↕','h',30,1200],['Left ⇄','left',-900,100],['Top ⇅','top',-1000,100]].forEach(([lab,k,min,max])=>{
-  const row=document.createElement('div');row.className='row';
-  row.innerHTML=`<label>${lab}</label><input type="range" min="${min}" max="${max}" step=".1" value="${Math.min(max,Math.max(min,vals[k]))}"><output>${vals[k].toFixed(1)}%</output>`;
-  const r=row.querySelector('input'),o=row.querySelector('output');
-  r.oninput=()=>{vals[k]=+r.value;o.textContent=vals[k].toFixed(1)+'%';im.style[k==='w'?'width':k==='h'?'height':k==='left'?'left':'top']=r.value+'%'};
-  c.appendChild(row);
- });
- const reset=document.createElement('button');reset.className='btn gray';reset.style.width='100%';reset.style.marginTop='8px';reset.textContent='↻ Reset Auto-Fit';
- reset.onclick=()=>{Object.assign(vals,f);im.style.width=f.w+'%';im.style.height=f.h+'%';im.style.left=f.left+'%';im.style.top=f.top+'%';c.querySelectorAll('input').forEach((r,i)=>{r.value=[f.w,f.h,f.left,f.top][i];r.nextElementSibling.textContent=[f.w,f.h,f.left,f.top][i].toFixed(1)+'%'})};
- c.appendChild(reset);
+  const wrap=document.createElement('div');wrap.className='box-wrap';
+  const box=document.createElement('div');box.className='pvc';
+  const im=makeImg(src,f);im.id=`img-${id}-${side}`;box.appendChild(im);wrap.appendChild(box);
+  const c=document.createElement('div');c.className='controls no-print';
+  c.innerHTML=`<strong>${title}</strong>
+  <div class="detect"><span class="badge">FULL CARD</span><span class="badge">AUTO FIT</span></div>`;
+  const vals={w:f.w,h:f.h,left:f.left,top:f.top};
+  [['Zoom ↔','w',30,900],['Zoom ↕','h',30,1200],['Left ⇄','left',-900,100],['Top ⇅','top',-1000,100]].forEach(([lab,k,min,max])=>{
+   const row=document.createElement('div');row.className='row';
+   row.innerHTML=`<label>${lab}</label><input type="range" min="${min}" max="${max}" step=".1" value="${Math.min(max,Math.max(min,vals[k]))}"><output>${vals[k].toFixed(1)}%</output>`;
+   const r=row.querySelector('input'),o=row.querySelector('output');
+   r.oninput=()=>{vals[k]=+r.value;o.textContent=vals[k].toFixed(1)+'%';im.style[k==='w'?'width':k==='h'?'height':k==='left'?'left':'top']=r.value+'%'};
+   c.appendChild(row);
+  });
+  const reset=document.createElement('button');reset.className='btn gray';reset.style.width='100%';reset.style.marginTop='8px';reset.textContent='↻ Reset Auto-Fit';
+  reset.onclick=()=>{Object.assign(vals,f);im.style.width=f.w+'%';im.style.height=f.h+'%';im.style.left=f.left+'%';im.style.top=f.top+'%';c.querySelectorAll('input').forEach((r,i)=>{r.value=[f.w,f.h,f.left,f.top][i];r.nextElementSibling.textContent=[f.w,f.h,f.left,f.top][i].toFixed(1)+'%'})};
+  c.appendChild(reset);
 
- const dlSide=document.createElement('button');dlSide.className='btn blue';dlSide.style.width='100%';dlSide.style.marginTop='6px';dlSide.style.fontSize='12px';dlSide.style.padding='8px 10px';
- dlSide.textContent=`💾 ${title.includes('Front')||title.includes('সামনে')?'Front':'Back'} JPG সেভ`;
- dlSide.onclick=()=>downloadSingleCardJpg(id, side);
- c.appendChild(dlSide);
+  const dlSide=document.createElement('button');dlSide.className='btn blue';dlSide.style.width='100%';dlSide.style.marginTop='6px';dlSide.style.fontSize='12px';dlSide.style.padding='8px 10px';
+  dlSide.textContent=`💾 ${title.includes('Front')||title.includes('সামনে')?'Front':'Back'} (PVC সাইজ JPG)`;
+  dlSide.title='এই সাইডটি 85.6×54 mm (300 DPI) PVC প্রিন্ট সাইজে JPG সেভ করুন';
+  dlSide.onclick=()=>downloadSingleCardJpg(id, side);
+  c.appendChild(dlSide);
 
  wrap.appendChild(c);return wrap;
 }
@@ -794,13 +938,69 @@ async function processFiles(files){
  }finally{busy(false);input.value=''}
 }
 
-// Ultra High-Definition (600 DPI) Canvas Generator with Subtle Black Stroke Border
+// =========================================================================
+// STANDARD PVC PRINT EXPORT ENGINE (CR80: 85.6 × 54.0 mm @ 300 DPI)
+// =========================================================================
+
+// Injects 300 DPI JFIF APP0 header into JPEG Blob
+// Guarantees Photoshop, MS Word, and Windows Print recognize exact 85.6 × 54 mm physical size
+async function blobToDpiBlob(blob, dpi = 300) {
+  try {
+    const buffer = new Uint8Array(await blob.arrayBuffer());
+    if (buffer[0] !== 0xFF || buffer[1] !== 0xD8) return blob;
+    let pos = 2;
+    let modified = false;
+    while (pos < buffer.length - 4) {
+      if (buffer[pos] === 0xFF && buffer[pos + 1] === 0xE0) {
+        const len = (buffer[pos + 2] << 8) | buffer[pos + 3];
+        if (buffer[pos + 4] === 0x4A && buffer[pos + 5] === 0x46 && buffer[pos + 6] === 0x49 && buffer[pos + 7] === 0x46 && buffer[pos + 8] === 0x00) {
+          buffer[pos + 11] = 1; // 1 = Dots per inch (DPI)
+          buffer[pos + 12] = (dpi >> 8) & 0xFF;
+          buffer[pos + 13] = dpi & 0xFF;
+          buffer[pos + 14] = (dpi >> 8) & 0xFF;
+          buffer[pos + 15] = dpi & 0xFF;
+          modified = true;
+          break;
+        }
+      }
+      if (buffer[pos] === 0xFF && (buffer[pos + 1] === 0xDA || buffer[pos + 1] === 0xD9)) break;
+      if (buffer[pos] === 0xFF) {
+        const len = (buffer[pos + 2] << 8) | buffer[pos + 3];
+        pos += 2 + len;
+      } else {
+        pos++;
+      }
+    }
+    if (!modified) {
+      const app0 = new Uint8Array([
+        0xFF, 0xE0, 0x00, 0x10,
+        0x4A, 0x46, 0x49, 0x46, 0x00, // JFIF\0
+        0x01, 0x02,                   // Version 1.02
+        0x01,                         // Units = DPI
+        (dpi >> 8) & 0xFF, dpi & 0xFF,// X-Density
+        (dpi >> 8) & 0xFF, dpi & 0xFF,// Y-Density
+        0x00, 0x00                    // Thumbnail
+      ]);
+      const newBuf = new Uint8Array(buffer.length + app0.length);
+      newBuf.set(buffer.subarray(0, 2), 0);
+      newBuf.set(app0, 2);
+      newBuf.set(buffer.subarray(2), 2 + app0.length);
+      return new Blob([newBuf], { type: 'image/jpeg' });
+    }
+    return new Blob([buffer], { type: 'image/jpeg' });
+  } catch (err) {
+    console.warn('DPI injection fallback:', err);
+    return blob;
+  }
+}
+
+// Generates Canvas calibrated to exact standard CR80 PVC card: 85.6 × 54.0 mm @ 300 DPI (1011 × 638 px)
 async function generateCardCanvas(cardId, side){
   const im=document.querySelector(`#img-${cardId}-${side}`);
   if(!im)return null;
   const canvas=document.createElement('canvas');
-  canvas.width=2022; // 600 DPI for standard 85.6mm PVC
-  canvas.height=1276; // 600 DPI for standard 54mm PVC
+  canvas.width=1011; // 85.60 mm at 300 DPI
+  canvas.height=638; // 53.98 mm at 300 DPI
   const ctx=canvas.getContext('2d');
   ctx.fillStyle='#ffffff';
   ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -818,28 +1018,82 @@ async function generateCardCanvas(cardId, side){
     x.src=im.src;
   });
 
-  // Draw subtle light black stroke border (crisp guideline)
-  ctx.strokeStyle='rgba(15, 23, 42, 0.65)';
-  ctx.lineWidth=3;
-  ctx.strokeRect(1.5, 1.5, canvas.width - 3, canvas.height - 3);
+  // Draw crisp guideline border (if enabled)
+  if (strokeConfig.enabled) {
+    ctx.strokeStyle = strokeConfig.color || '#0f172a';
+    const effectiveWidth = Math.max(1, Math.round(strokeConfig.width * 1.5));
+    ctx.lineWidth = effectiveWidth;
+    const half = effectiveWidth / 2;
+    ctx.strokeRect(half, half, canvas.width - effectiveWidth, canvas.height - effectiveWidth);
+  }
 
   return canvas;
+}
+
+// Generates combined Side-by-Side Canvas for PVC dual-slot tray or paper folding (179.2 × 54 mm @ 300 DPI = 2116 × 638 px)
+async function generateSideBySideCanvas(cardId){
+  const frontC=await generateCardCanvas(cardId, 'front');
+  const backC=await generateCardCanvas(cardId, 'back');
+  if(!frontC || !backC) return null;
+
+  const gap = 94; // 8mm horizontal spacing between cards at 300 DPI
+  const canvas = document.createElement('canvas');
+  canvas.width = frontC.width + gap + backC.width; // 2116 px
+  canvas.height = Math.max(frontC.height, backC.height); // 638 px
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw Front & Back cards
+  ctx.drawImage(frontC, 0, 0);
+  ctx.drawImage(backC, frontC.width + gap, 0);
+
+  // Faint dashed center folding / cutting guideline (only if outline/guidelines enabled)
+  if (strokeConfig.enabled) {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(15, 23, 42, 0.35)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([6, 6]);
+    const midX = frontC.width + Math.round(gap / 2);
+    ctx.beginPath();
+    ctx.moveTo(midX, 0);
+    ctx.lineTo(midX, canvas.height);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  return canvas;
+}
+
+async function canvasToPvcJpgBlob(canvas) {
+  const rawBlob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.96));
+  return await blobToDpiBlob(rawBlob, 300);
+}
+
+function triggerDownload(blob, filename){
+  const a = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 1000);
 }
 
 async function downloadSingleCardJpg(cardId, side){
   const card=cards.find(c=>c.id===cardId);
   const sideName=side==='front'?'Front':'Back';
   const label=card?card.fileName:`Card_${cardId}`;
-  busy(true,`💾 ${sideName} High-Res JPG ডাউনলোড হচ্ছে...`);
+  busy(true,`💾 ${sideName} PVC সাইজ JPG (300 DPI) ডাউনলোড হচ্ছে...`);
   try{
     const canvas=await generateCardCanvas(cardId, side);
     if(!canvas)return;
-    const blob=await new Promise(r=>canvas.toBlob(r,'image/jpeg',0.98));
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    a.download=`${label}_${sideName}_HQ.jpg`;
-    a.click();
-    setStatus(`✓ ${sideName} High-Res JPG ডাউনলোড সম্পন্ন`);
+    const blob=await canvasToPvcJpgBlob(canvas);
+    triggerDownload(blob, `${label}_${sideName}_PVC_300DPI.jpg`);
+    setStatus(`✓ ${sideName} PVC সাইজ JPG (300 DPI: 85.6×54 mm) ডাউনলোড সম্পন্ন`);
   }catch(e){
     console.error(e);
     alert('JPG সেভ করতে সমস্যা হয়েছে: '+e.message);
@@ -851,23 +1105,111 @@ async function downloadSingleCardJpg(cardId, side){
 async function downloadPairJpg(cardId){
   const card=cards.find(c=>c.id===cardId);
   const label=card?card.fileName:`Card_${cardId}`;
-  busy(true,`💾 ${label} এর High-Res JPG তৈরি হচ্ছে...`);
+  busy(true,`💾 ${label} এর PVC সাইজ JPG তৈরি হচ্ছে...`);
   try{
     for(const side of ['front','back']){
       const canvas=await generateCardCanvas(cardId, side);
       if(canvas){
         const sideName=side==='front'?'Front':'Back';
-        const blob=await new Promise(r=>canvas.toBlob(r,'image/jpeg',0.98));
-        const a=document.createElement('a');
-        a.href=URL.createObjectURL(blob);
-        a.download=`${label}_${sideName}_HQ.jpg`;
-        a.click();
-        await new Promise(r=>setTimeout(r,300));
+        const blob=await canvasToPvcJpgBlob(canvas);
+        triggerDownload(blob, `${label}_${sideName}_PVC_300DPI.jpg`);
+        await new Promise(r=>setTimeout(r,350));
       }
     }
-    setStatus(`✓ ${label} এর Front ও Back JPG সেভ হয়েছে`);
+    setStatus(`✓ ${label} এর Front ও Back PVC সাইজ JPG ডাউনলোড হয়েছে`);
   }catch(e){
     console.error(e);
+    alert('JPG সেভ করতে সমস্যা হয়েছে: '+e.message);
+  }finally{
+    busy(false);
+  }
+}
+
+async function downloadSideBySideJpg(cardId){
+  const card=cards.find(c=>c.id===cardId);
+  const label=card?card.fileName:`Card_${cardId}`;
+  busy(true,`💾 ${label} এর পাশাপাশি PVC প্রিন্ট JPG তৈরি হচ্ছে...`);
+  try{
+    const canvas=await generateSideBySideCanvas(cardId);
+    if(!canvas) return;
+    const blob=await canvasToPvcJpgBlob(canvas);
+    triggerDownload(blob, `${label}_SideBySide_PVC_Print.jpg`);
+    setStatus(`✓ ${label} এর পাশাপাশি PVC প্রিন্ট JPG (300 DPI) ডাউনলোড সম্পন্ন`);
+  }catch(e){
+    console.error(e);
+    alert('পাশাপাশি JPG সেভ করতে সমস্যা হয়েছে: '+e.message);
+  }finally{
+    busy(false);
+  }
+}
+
+async function downloadSingleCardPdf(cardId){
+  const card=cards.find(c=>c.id===cardId);
+  const label=card?card.fileName:`Card_${cardId}`;
+  if(!window.jspdf || !window.jspdf.jsPDF){
+    alert('PDF লাইব্রেরি লোড হচ্ছে, অনুগ্রহ করে কয়েক সেকেন্ড পর আবার চেষ্টা করুন।');
+    return;
+  }
+  busy(true,`📄 ${label} এর PVC সাইজ PDF তৈরি হচ্ছে...`);
+  try{
+    const { jsPDF } = window.jspdf;
+    // CR80 standard: 85.60 mm × 54.00 mm (Landscape)
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [54, 85.6] });
+
+    const frontCanvas = await generateCardCanvas(cardId, 'front');
+    const backCanvas = await generateCardCanvas(cardId, 'back');
+
+    if(frontCanvas){
+      const frontData = frontCanvas.toDataURL('image/jpeg', 0.98);
+      doc.addImage(frontData, 'JPEG', 0, 0, 85.6, 54);
+    }
+    if(backCanvas){
+      doc.addPage([54, 85.6], 'landscape');
+      const backData = backCanvas.toDataURL('image/jpeg', 0.98);
+      doc.addImage(backData, 'JPEG', 0, 0, 85.6, 54);
+    }
+    doc.save(`${label}_PVC_Print_Ready.pdf`);
+    setStatus(`✓ ${label} এর নিখুঁত 85.6×54 mm PVC প্রিন্ট PDF ডাউনলোড সম্পন্ন`);
+  }catch(e){
+    console.error(e);
+    alert('PDF সেভ করতে সমস্যা হয়েছে: '+e.message);
+  }finally{
+    busy(false);
+  }
+}
+
+async function downloadAllCardsPdf(){
+  if(!cards.length){alert('আগে ফাইল আপলোড করুন।');return}
+  if(!window.jspdf || !window.jspdf.jsPDF){
+    alert('PDF লাইব্রেরি লোড হচ্ছে, অনুগ্রহ করে কয়েক সেকেন্ড পর আবার চেষ্টা করুন।');
+    return;
+  }
+  busy(true,'📄 সবগুলো কার্ডের PVC সাইজ PDF তৈরি হচ্ছে...');
+  try{
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [54, 85.6] });
+    let pageCount = 0;
+
+    for(const c of cards){
+      const frontCanvas = await generateCardCanvas(c.id, 'front');
+      const backCanvas = await generateCardCanvas(c.id, 'back');
+
+      if(frontCanvas){
+        if(pageCount > 0) doc.addPage([54, 85.6], 'landscape');
+        doc.addImage(frontCanvas.toDataURL('image/jpeg', 0.98), 'JPEG', 0, 0, 85.6, 54);
+        pageCount++;
+      }
+      if(backCanvas){
+        doc.addPage([54, 85.6], 'landscape');
+        doc.addImage(backCanvas.toDataURL('image/jpeg', 0.98), 'JPEG', 0, 0, 85.6, 54);
+        pageCount++;
+      }
+    }
+    doc.save(`Pragati_Smart_Cards_PVC_Print_All.pdf`);
+    setStatus('✓ সব কার্ডের PVC সাইজ PDF ডাউনলোড সম্পন্ন (100% Actual Size)');
+  }catch(e){
+    console.error(e);
+    alert('PDF সেভ করতে সমস্যা হয়েছে: '+e.message);
   }finally{
     busy(false);
   }
@@ -875,12 +1217,12 @@ async function downloadPairJpg(cardId){
 
 $('save-jpg-btn').onclick=async()=>{
   if(!cards.length){alert('আগে ফাইল আপলোড করুন।');return}
-  busy(true,'💾 High Quality JPG তৈরি ও ডাউনলোড হচ্ছে...');
+  busy(true,'💾 সব কার্ডের PVC সাইজ (300 DPI) JPG তৈরি হচ্ছে...');
   try{
     for(const c of cards){
       await downloadPairJpg(c.id);
     }
-    setStatus('✓ সব কার্ড High Quality JPG হিসেবে ডাউনলোড হয়েছে');
+    setStatus('✓ সব কার্ড PVC প্রিন্ট সাইজ JPG হিসেবে ডাউনলোড হয়েছে');
   }catch(e){
     console.error(e);
   }finally{
@@ -888,21 +1230,58 @@ $('save-jpg-btn').onclick=async()=>{
   }
 };
 
+const savePairBtn = $('save-pair-btn');
+if(savePairBtn){
+  savePairBtn.onclick=async()=>{
+    if(!cards.length){alert('আগে ফাইল আপলোড করুন।');return}
+    busy(true,'💾 সব কার্ডের পাশাপাশি PVC প্রিন্ট JPG তৈরি হচ্ছে...');
+    try{
+      for(const c of cards){
+        await downloadSideBySideJpg(c.id);
+        await new Promise(r=>setTimeout(r,350));
+      }
+      setStatus('✓ সব কার্ডের পাশাপাশি প্রিন্ট-রেডি JPG ডাউনলোড সম্পন্ন');
+    }catch(e){
+      console.error(e);
+    }finally{
+      busy(false);
+    }
+  };
+}
+
+const savePdfBtn = $('save-pdf-btn');
+if(savePdfBtn){
+  savePdfBtn.onclick=()=>downloadAllCardsPdf();
+}
+
 $('save-btn').onclick=async()=>{
- if(!cards.length){alert('আগে ফাইল আপলোড করুন।');return}
- busy(true,'💾 High Quality ZIP ফাইল তৈরি হচ্ছে...');
- const zip=new JSZip();
- for(const c of cards){
-  for(const side of ['front','back']){
-   const canvas=await generateCardCanvas(c.id, side);
-   if(!canvas)continue;
-   const blob=await new Promise(r=>canvas.toBlob(r,'image/jpeg',0.98));
-   zip.file(`${c.fileName}_${side==='front'?'Front':'Back'}_HQ.jpg`,blob);
+  if(!cards.length){alert('আগে ফাইল আপলোড করুন।');return}
+  busy(true,'💾 PVC সাইজ ZIP ফাইল তৈরি হচ্ছে...');
+  try{
+    const zip=new JSZip();
+    for(const c of cards){
+      for(const side of ['front','back']){
+        const canvas=await generateCardCanvas(c.id, side);
+        if(!canvas)continue;
+        const blob=await canvasToPvcJpgBlob(canvas);
+        zip.file(`${c.fileName}_${side==='front'?'Front':'Back'}_PVC_300DPI.jpg`, blob);
+      }
+      // Also add the combined side-by-side printable JPG into the ZIP
+      const pairCanvas=await generateSideBySideCanvas(c.id);
+      if(pairCanvas){
+        const pairBlob=await canvasToPvcJpgBlob(pairCanvas);
+        zip.file(`${c.fileName}_SideBySide_PVC_Print.jpg`, pairBlob);
+      }
+    }
+    const content=await zip.generateAsync({type:'blob'});
+    triggerDownload(content, 'Pragati_Smart_Cards_PVC_300DPI.zip');
+    setStatus('✓ সব PVC সাইজ ফাইল ZIP-এ সেভ হয়েছে (300 DPI)');
+  }catch(e){
+    console.error(e);
+    alert('ZIP তৈরি করতে সমস্যা হয়েছে: '+e.message);
+  }finally{
+    busy(false);
   }
- }
- const content=await zip.generateAsync({type:'blob'});
- const a=document.createElement('a');a.href=URL.createObjectURL(content);a.download='Pragati_Smart_Cards_HQ.zip';a.click();
- setStatus('✓ সব High-Res ফাইল ZIP-এ সেভ হয়েছে');busy(false);
 };
 </script>
 </body>

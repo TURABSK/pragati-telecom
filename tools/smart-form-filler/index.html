@@ -143,50 +143,17 @@
 </head>
 <body>
 
-<!-- GLOBAL SHARED NAVIGATION HEADER -->
-<script src="../../js/shared-layout.js"></script>
-
-<!-- BREADCRUMB SUB-HEADER -->
-<nav class="studio-top-bar" aria-label="Breadcrumb">
-  <div class="studio-breadcrumbs">
-    <a href="../../index.html">🏠 Home</a> <span style="margin:0 6px;color:var(--text-light)">/</span> <span>AI Smart Form Filler</span>
-  </div>
-  <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); background: var(--bg-card); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-light);">
-    📍 Kalupur Middle Para, Murshidabad
-  </div>
-</nav>
-
 <div class="sff-page-wrapper">
 
   <!-- ===================================================================== -->
-  <!-- 1. SEO HERO SECTION                                                   -->
-  <!-- ===================================================================== -->
-  <header class="tool-hero-header">
-    <div class="tool-hero-badge">⚡ AI PDF Tool</div>
-    <h1 class="tool-hero-title">AI Smart Form Filler</h1>
-    <p class="tool-hero-subtitle">Fill PDF, scanned and image-based forms online with smart field detection.</p>
-    
-    <div class="feature-chips-row">
-      <span class="feature-chip">✓ PDF Forms</span>
-      <span class="feature-chip">✓ Scanned Forms</span>
-      <span class="feature-chip">✓ Smart Detection</span>
-      <span class="feature-chip">✓ Manual Editing</span>
-      <span class="feature-chip">✓ PDF Export</span>
-    </div>
-
-    <div>
-      <a href="#form-filler-workspace" class="hero-cta-btn">Open Smart Form Filler ↓</a>
-    </div>
-  </header>
-
-  <!-- ===================================================================== -->
-  <!-- 2. SMART FORM FILLER APPLICATION WORKSPACE CONTAINER                  -->
+  <!-- SMART FORM FILLER APPLICATION WORKSPACE CONTAINER                     -->
   <!-- ===================================================================== -->
   <section id="form-filler-workspace" class="sff-app-card" aria-label="Smart Form Filler Application Workspace">
     
     <!-- Workspace App Bar -->
     <div class="app-bar">
       <div class="brand">
+        <a href="../../index.html" class="sff-home-btn" title="ওয়েবসাইটে ফিরে যান">🏠 হোম</a>
         <span class="brand-mark">📋</span>
         <div class="brand-text">
           <strong>Smart Form Filler</strong>
@@ -306,7 +273,7 @@
             <h4>লেখার ধরন</h4>
             <div class="settings-row">
               <label for="fontSizeInput">ফন্ট সাইজ</label>
-              <input type="number" id="fontSizeInput" class="num-input" value="12" min="8" max="24">
+              <input type="number" id="fontSizeInput" class="num-input" value="12" min="1" max="36">
             </div>
             <div class="settings-row">
               <label for="fontColorInput">কালি রং</label>
@@ -352,6 +319,27 @@
 
       <!-- Right Stage Area -->
       <section class="stage-area" id="stageArea">
+        <!-- Floating Quick Stamp Side Toolbar (কুইক স্ট্যাম্প টুলবার) -->
+        <div class="quick-stamp-toolbar" id="quickStampToolbar" aria-label="দ্রুত স্ট্যাম্প টুলবার">
+          <div class="quick-stamp-header">
+            <span class="quick-stamp-title">⚡ কুইক টুল</span>
+          </div>
+          <div class="quick-stamp-buttons">
+            <button type="button" class="stamp-tool-btn" data-stamp="tick" title="টিক চিহ্ন বসান (✓) - অপশন বেছে নিতে">
+              <span class="stamp-icon">☑️</span>
+              <span class="stamp-text">টিক (✓)</span>
+            </button>
+            <button type="button" class="stamp-tool-btn" data-stamp="text" title="নতুন লেখার ফিল্ড বসান">
+              <span class="stamp-icon">📝</span>
+              <span class="stamp-text">টেক্সট</span>
+            </button>
+            <button type="button" class="stamp-tool-btn" data-stamp="cross" title="ক্রস চিহ্ন (✗) বসান">
+              <span class="stamp-icon">❎</span>
+              <span class="stamp-text">ক্রস (✗)</span>
+            </button>
+          </div>
+        </div>
+
         <div id="autoTemplateBanner" class="auto-template-banner" hidden>
           <div class="auto-template-banner-content">
             <span class="auto-template-icon">✨</span>
@@ -365,12 +353,37 @@
             <button type="button" class="btn-close-banner" id="btnCloseAutoTemplate" title="বন্ধ করুন">×</button>
           </div>
         </div>
+
         <div class="stage-inner" id="stageInner" style="display: none;">
           <canvas id="pageCanvas"></canvas>
           <div id="overlay"></div>
         </div>
+
+        <!-- Interactive Drag & Drop Upload Zone in Page View -->
         <div class="empty-state" id="emptyState">
-          <p>শুরু করতে একটা PDF বা ছবি আপলোড করুন</p>
+          <div class="dropzone-card" id="stageDropzone" role="button" tabindex="0" title="ফাইল আপলোড করতে ক্লিক করুন বা ফাইল টেনে আনুন">
+            <div class="dropzone-icon-wrap">
+              <span class="dropzone-icon">📥</span>
+            </div>
+            <h3 class="dropzone-title">এখানে PDF বা ফর্মের ছবি টেনে এনে ড্রপ করুন</h3>
+            <p class="dropzone-subtitle">অথবা আপনার ডিভাইস থেকে ফাইল বেছে নিতে এখানে ক্লিক করুন</p>
+            <div class="dropzone-pills">
+              <span class="dz-pill">📄 PDF ফাইল</span>
+              <span class="dz-pill">🖼️ JPG, PNG, WebP স্ক্যান</span>
+              <span class="dz-pill">📑 আবেদনপত্র ও সরকারি ফর্ম</span>
+            </div>
+            <button type="button" class="dropzone-btn" id="btnDropzoneBrowse">
+              📂 ফাইল নির্বাচন করুন
+            </button>
+          </div>
+        </div>
+
+        <!-- Drag overlay for when a document is already open -->
+        <div class="stage-drag-overlay" id="stageDragOverlay" hidden>
+          <div class="stage-drag-content">
+            <span class="stage-drag-icon">📄</span>
+            <h3>নতুন ফাইল ড্রপ করে খুলুন</h3>
+          </div>
         </div>
       </section>
     </div>

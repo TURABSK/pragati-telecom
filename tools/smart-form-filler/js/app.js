@@ -49,7 +49,7 @@
     hoveredFieldId: null,
     pageDims: {},        // pageNum -> {width, height} UNSCALED (viewport scale 1.0)
     printerOffsetMm: { x: 0, y: 0 },
-    font: { family: "'Noto Sans Bengali','Inter',sans-serif", size: 12, color: '#0b2f6b', weight: '600', checkSymbol: '✔', checkScale: 1.6 }
+    font: { family: "'Noto Sans Bengali','Inter',sans-serif", size: 12, color: '#0b2f6b', weight: '600', checkSymbol: '✔', checkScale: 0.8 }
   };
 
   // ---- Small UI helpers -----------------------------------------------
@@ -113,6 +113,113 @@
   // =========================================================================
   // TEMPLATES STORAGE & SMART FORM RECOGNITION
   // =========================================================================
+  // BUILT-IN OFFICIAL FORMS & TEMPLATES REPOSITORY
+  // =========================================================================
+  var BUILTIN_TEMPLATES = [
+    {
+      id: 'tpl_wb_jobcard_3page_official',
+      name: 'জনকল্যাণ শিবির - জব কার্ড ও পারিবারিক তথ্য আবেদনপত্র (৩ পাতা)',
+      isBuiltin: true,
+      fileHash: '2438609647a801fd5282c383bbe80dbbd361a55c2e911a03b7092a40a644da47',
+      fileSize: 309127,
+      totalPages: 3,
+      aspectRatio: '0.773',
+      printerOffsetMm: { x: 0, y: 0 },
+      fields: [
+        // PAGE 1: Job Card Application Form
+        { page: 1, label: 'ব্লক', type: 'text', xNorm: 0.1193, yNorm: 0.1919, wNorm: 0.1552, hNorm: 0.0164 },
+        { page: 1, label: 'আমি (আবেদনকারীর নাম)', type: 'text', xNorm: 0.2165, yNorm: 0.2936, wNorm: 0.4493, hNorm: 0.0177 },
+        { page: 1, label: 'পিতা/স্বামীর নাম', type: 'text', xNorm: 0.1193, yNorm: 0.3163, wNorm: 0.2042, hNorm: 0.0177 },
+        { page: 1, label: 'গ্রাম পঞ্চায়েত', type: 'text', xNorm: 0.3513, yNorm: 0.3163, wNorm: 0.2859, hNorm: 0.0177 },
+        { page: 1, label: 'তারিখ', type: 'text', xNorm: 0.1675, yNorm: 0.4899, wNorm: 0.1225, hNorm: 0.0177 },
+        { page: 1, label: 'আবেদনকারীর পুরো নাম', type: 'text', xNorm: 0.6127, yNorm: 0.5152, wNorm: 0.1634, hNorm: 0.0177 },
+        { page: 1, label: 'মোবাইল নং', type: 'text', xNorm: 0.7312, yNorm: 0.5379, wNorm: 0.1471, hNorm: 0.0177 },
+
+        // PAGE 2: Family Details & Table
+        // Top Address Section
+        { page: 2, label: 'আবেদনকারীর নাম', type: 'text', xNorm: 0.2614, yNorm: 0.1098, wNorm: 0.3676, hNorm: 0.0164 },
+        { page: 2, label: 'পিতা/ স্বামীর নাম', type: 'text', xNorm: 0.2614, yNorm: 0.1433, wNorm: 0.3676, hNorm: 0.0164 },
+        { page: 2, label: 'পরিবারের প্রধান সদস্যের নাম', type: 'text', xNorm: 0.3513, yNorm: 0.1812, wNorm: 0.3431, hNorm: 0.0164 },
+        { page: 2, label: 'গ্রাম', type: 'text', xNorm: 0.1634, yNorm: 0.2513, wNorm: 0.1389, hNorm: 0.0164 },
+        { page: 2, label: 'মৌজা', type: 'text', xNorm: 0.3595, yNorm: 0.2513, wNorm: 0.1471, hNorm: 0.0164 },
+        { page: 2, label: 'সংসদ', type: 'text', xNorm: 0.5637, yNorm: 0.2513, wNorm: 0.1552, hNorm: 0.0164 },
+        { page: 2, label: 'গ্রাম পঞ্চায়েত', type: 'text', xNorm: 0.2165, yNorm: 0.2866, wNorm: 0.1429, hNorm: 0.0164 },
+        { page: 2, label: 'ব্লক', type: 'text', xNorm: 0.4085, yNorm: 0.2866, wNorm: 0.1144, hNorm: 0.0164 },
+        { page: 2, label: 'জেলা', type: 'text', xNorm: 0.5759, yNorm: 0.2866, wNorm: 0.1429, hNorm: 0.0164 },
+        { page: 2, label: 'পিন কোড', type: 'text', xNorm: 0.1838, yNorm: 0.3220, wNorm: 0.1429, hNorm: 0.0164 },
+
+        // Row 1 (Table)
+        { page: 2, label: 'সদস্য ১ - নাম', type: 'text', xNorm: 0.0784, yNorm: 0.5177, wNorm: 0.1127, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ১ - জন্ম তারিখ', type: 'text', xNorm: 0.1912, yNorm: 0.5177, wNorm: 0.0931, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ১ - লিঙ্গ (পুং/স্ত্রী/অন্য)', type: 'text', xNorm: 0.2843, yNorm: 0.5177, wNorm: 0.0458, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ১ - কাস্ট (SC/ST/OBC/Gen)', type: 'text', xNorm: 0.3301, yNorm: 0.5177, wNorm: 0.0694, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ১ - ভোটার কার্ড পুরো নং', type: 'text', xNorm: 0.3995, yNorm: 0.5177, wNorm: 0.1275, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ১ - আধার কার্ড নং', type: 'text', xNorm: 0.5270, yNorm: 0.5177, wNorm: 0.1511, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ১ - মোবাইল নং', type: 'text', xNorm: 0.6781, yNorm: 0.5177, wNorm: 0.1152, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ১ - ব্যাঙ্ক তথ্য (শাখা/IFSC/A/C)', type: 'text', xNorm: 0.7933, yNorm: 0.5177, wNorm: 0.1275, hNorm: 0.0202 },
+
+        // Row 2 (Table)
+        { page: 2, label: 'সদস্য ২ - নাম', type: 'text', xNorm: 0.0784, yNorm: 0.5379, wNorm: 0.1127, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ২ - জন্ম তারিখ', type: 'text', xNorm: 0.1912, yNorm: 0.5379, wNorm: 0.0931, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ২ - লিঙ্গ (পুং/স্ত্রী/অন্য)', type: 'text', xNorm: 0.2843, yNorm: 0.5379, wNorm: 0.0458, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ২ - কাস্ট (SC/ST/OBC/Gen)', type: 'text', xNorm: 0.3301, yNorm: 0.5379, wNorm: 0.0694, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ২ - ভোটার কার্ড পুরো নং', type: 'text', xNorm: 0.3995, yNorm: 0.5379, wNorm: 0.1275, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ২ - আধার কার্ড নং', type: 'text', xNorm: 0.5270, yNorm: 0.5379, wNorm: 0.1511, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ২ - মোবাইল নং', type: 'text', xNorm: 0.6781, yNorm: 0.5379, wNorm: 0.1152, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ২ - ব্যাঙ্ক তথ্য (শাখা/IFSC/A/C)', type: 'text', xNorm: 0.7933, yNorm: 0.5379, wNorm: 0.1275, hNorm: 0.0202 },
+
+        // Row 3 (Table)
+        { page: 2, label: 'সদস্য ৩ - নাম', type: 'text', xNorm: 0.0784, yNorm: 0.5581, wNorm: 0.1127, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৩ - জন্ম তারিখ', type: 'text', xNorm: 0.1912, yNorm: 0.5581, wNorm: 0.0931, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৩ - লিঙ্গ (পুং/স্ত্রী/অন্য)', type: 'text', xNorm: 0.2843, yNorm: 0.5581, wNorm: 0.0458, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৩ - কাস্ট (SC/ST/OBC/Gen)', type: 'text', xNorm: 0.3301, yNorm: 0.5581, wNorm: 0.0694, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৩ - ভোটার কার্ড পুরো নং', type: 'text', xNorm: 0.3995, yNorm: 0.5581, wNorm: 0.1275, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৩ - আধার কার্ড নং', type: 'text', xNorm: 0.5270, yNorm: 0.5581, wNorm: 0.1511, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৩ - মোবাইল নং', type: 'text', xNorm: 0.6781, yNorm: 0.5581, wNorm: 0.1152, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৩ - ব্যাঙ্ক তথ্য (শাখা/IFSC/A/C)', type: 'text', xNorm: 0.7933, yNorm: 0.5581, wNorm: 0.1275, hNorm: 0.0202 },
+
+        // Row 4 (Table)
+        { page: 2, label: 'সদস্য ৪ - নাম', type: 'text', xNorm: 0.0784, yNorm: 0.5783, wNorm: 0.1127, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৪ - জন্ম তারিখ', type: 'text', xNorm: 0.1912, yNorm: 0.5783, wNorm: 0.0931, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৪ - লিঙ্গ (পুং/স্ত্রী/অন্য)', type: 'text', xNorm: 0.2843, yNorm: 0.5783, wNorm: 0.0458, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৪ - কাস্ট (SC/ST/OBC/Gen)', type: 'text', xNorm: 0.3301, yNorm: 0.5783, wNorm: 0.0694, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৪ - ভোটার কার্ড পুরো নং', type: 'text', xNorm: 0.3995, yNorm: 0.5783, wNorm: 0.1275, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৪ - আধার কার্ড নং', type: 'text', xNorm: 0.5270, yNorm: 0.5783, wNorm: 0.1511, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৪ - মোবাইল নং', type: 'text', xNorm: 0.6781, yNorm: 0.5783, wNorm: 0.1152, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৪ - ব্যাঙ্ক তথ্য (শাখা/IFSC/A/C)', type: 'text', xNorm: 0.7933, yNorm: 0.5783, wNorm: 0.1275, hNorm: 0.0202 },
+
+        // Row 5 (Table)
+        { page: 2, label: 'সদস্য ৫ - নাম', type: 'text', xNorm: 0.0784, yNorm: 0.5985, wNorm: 0.1127, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৫ - জন্ম তারিখ', type: 'text', xNorm: 0.1912, yNorm: 0.5985, wNorm: 0.0931, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৫ - লিঙ্গ (পুং/স্ত্রী/অন্য)', type: 'text', xNorm: 0.2843, yNorm: 0.5985, wNorm: 0.0458, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৫ - কাস্ট (SC/ST/OBC/Gen)', type: 'text', xNorm: 0.3301, yNorm: 0.5985, wNorm: 0.0694, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৫ - ভোটার কার্ড পুরো নং', type: 'text', xNorm: 0.3995, yNorm: 0.5985, wNorm: 0.1275, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৫ - আধার কার্ড নং', type: 'text', xNorm: 0.5270, yNorm: 0.5985, wNorm: 0.1511, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৫ - মোবাইল নং', type: 'text', xNorm: 0.6781, yNorm: 0.5985, wNorm: 0.1152, hNorm: 0.0202 },
+        { page: 2, label: 'সদস্য ৫ - ব্যাঙ্ক তথ্য (শাখা/IFSC/A/C)', type: 'text', xNorm: 0.7933, yNorm: 0.5985, wNorm: 0.1275, hNorm: 0.0202 },
+
+        // Receipt (রসিদ)
+        { page: 2, label: 'রসিদ - আবেদনকারীর নাম', type: 'text', xNorm: 0.1797, yNorm: 0.8567, wNorm: 0.2941, hNorm: 0.0177 },
+
+        // PAGE 3: Aadhaar Consent Form
+        // English Section
+        { page: 3, label: 'Name (English)', type: 'text', xNorm: 0.1429, yNorm: 0.1667, wNorm: 0.3595, hNorm: 0.0177 },
+        { page: 3, label: 'Job Card Number (English)', type: 'text', xNorm: 0.7843, yNorm: 0.1667, wNorm: 0.0980, hNorm: 0.0177 },
+        { page: 3, label: 'Job Card Continuation (English)', type: 'text', xNorm: 0.1185, yNorm: 0.1932, wNorm: 0.2737, hNorm: 0.0177 },
+        { page: 3, label: 'Aadhaar Number (English)', type: 'text', xNorm: 0.6180, yNorm: 0.1932, wNorm: 0.2600, hNorm: 0.0177 },
+        { page: 3, label: 'Date (English)', type: 'text', xNorm: 0.1675, yNorm: 0.3138, wNorm: 0.1429, hNorm: 0.0177 },
+        { page: 3, label: 'Signer Name (English)', type: 'text', xNorm: 0.5882, yNorm: 0.4122, wNorm: 0.1879, hNorm: 0.0177 },
+
+        // Bengali Section
+        { page: 3, label: 'আমি (নাম)', type: 'text', xNorm: 0.1838, yNorm: 0.6086, wNorm: 0.3676, hNorm: 0.0177 },
+        { page: 3, label: 'জব কার্ড নম্বর (বাংলা)', type: 'text', xNorm: 0.1176, yNorm: 0.6376, wNorm: 0.4902, hNorm: 0.0177 },
+        { page: 3, label: 'আধার নম্বর (বাংলা)', type: 'text', xNorm: 0.1176, yNorm: 0.6660, wNorm: 0.3962, hNorm: 0.0177 },
+        { page: 3, label: 'তারিখ (বাংলা)', type: 'text', xNorm: 0.1757, yNorm: 0.7525, wNorm: 0.1348, hNorm: 0.0177 },
+        { page: 3, label: 'নাম (স্বাক্ষর/টিপসই)', type: 'text', xNorm: 0.5719, yNorm: 0.8579, wNorm: 0.2042, hNorm: 0.0177 }
+      ]
+    }
+  ];
+
   var TPL_KEY = 'sff_templates_v1';
   function getTemplates() { try { return JSON.parse(localStorage.getItem(TPL_KEY) || '[]'); } catch (e) { return []; } }
   function saveTemplates(t) { localStorage.setItem(TPL_KEY, JSON.stringify(t)); renderTemplatesList(); }
@@ -141,7 +248,8 @@
   }
 
   function findMatchingTemplate(fileInfo) {
-    var tpls = getTemplates();
+    var userTpls = getTemplates();
+    var tpls = BUILTIN_TEMPLATES.concat(userTpls);
     if (!tpls || tpls.length === 0) return null;
 
     var curNameNorm = normalizeDocName(fileInfo.fileName);
@@ -164,7 +272,13 @@
       if (nameMatch) return nameMatch;
     }
 
-    // 3. Exact file size AND total pages match
+    // 3. Document structure match: 3-page Job Card Form (aspect ratio ~0.773)
+    if (fileInfo.totalPages === 3 && fileInfo.aspectRatio && Math.abs(parseFloat(fileInfo.aspectRatio) - 0.773) < 0.05) {
+      var jcTpl = tpls.find(function (t) { return t.id === 'tpl_wb_jobcard_3page_official'; });
+      if (jcTpl) return jcTpl;
+    }
+
+    // 4. Exact file size AND total pages match
     if (fileInfo.fileSize && fileInfo.fileSize > 0) {
       var sizeMatch = tpls.find(function (t) {
         if (!t.fileSize || t.fileSize !== fileInfo.fileSize) return false;
@@ -182,8 +296,8 @@
     var nameEl = $('#autoTemplateName');
     var descEl = $('#autoTemplateDesc');
     if (!banner) return;
-    if (nameEl) nameEl.textContent = '✨ টেমপ্লেট লোড হয়েছে: "' + (tpl.name || 'সংরক্ষিত টেমপ্লেট') + '"';
-    if (descEl) descEl.textContent = 'পূর্বে সেভ করা টেমপ্লেট থেকে স্বয়ংক্রিয়ভাবে ' + tpl.fields.length + 'টি ফিল্ড বসানো হয়েছে (AI স্ক্যান এড়িয়ে সময় ও কোটা বাঁচানো হয়েছে)।';
+    if (nameEl) nameEl.textContent = '✨ সরকারি ফর্ম টেমপ্লেট: "' + (tpl.name || 'সংরক্ষিত টেমপ্লেট') + '"';
+    if (descEl) descEl.textContent = 'ফর্মটি নির্ভুলভাবে শনাক্ত হয়েছে এবং ' + tpl.fields.length + 'টি ফিল্ড সঠিক অবস্থানে বসানো হয়েছে। সরাসরি ক্লিক করে টাইপ শুরু করুন।';
     banner.hidden = false;
   }
 
@@ -197,7 +311,7 @@
     STATE.fields = t.fields.map(function (f) {
       return Object.assign({}, f, {
         id: uid('tpl'),
-        value: f.type === 'checkbox' ? false : '',
+        value: (f.value !== undefined) ? f.value : (f.type === 'checkbox' ? false : ''),
         source: 'template',
         needsReview: false,
         confidence: 1.0
@@ -218,7 +332,7 @@
 
     if (isAutoLoaded) {
       showAutoTemplateBanner(t);
-      toast('✨ সংরক্ষিত টেমপ্লেট "' + t.name + '" স্বয়ংক্রিয়ভাবে শনাক্ত ও প্রয়োগ করা হয়েছে!');
+      toast('✨ সরকারি ফর্ম "' + t.name + '" স্বয়ংক্রিয়ভাবে শনাক্ত ও প্রয়োগ করা হয়েছে!');
     } else {
       hideAutoTemplateBanner();
       toast('টেমপ্লেট "' + t.name + '" লোড হয়েছে।');
@@ -744,79 +858,127 @@
     return tryModel(0);
   }
 
-  // ---- 2) Gemini Vision fallback (for flat/print-and-fill PDFs & images) -
-  function detectViaGemini() {
-    var storedEnc = localStorage.getItem(ENC_STORAGE_KEY);
-    if (!storedEnc) {
-      toast('⚠️ Gemini দিয়ে ফর্ম স্ক্যান করতে প্রথমে সেটিংসে গিয়ে আপনার Gemini API Key দিন।');
-      setTab('settings');
-      var keyInput = $('#geminiApiKeyInput');
-      if (keyInput) {
-        keyInput.focus();
-        keyInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-      return Promise.resolve();
+  // Robust Bounding Box Parser: handles 0-1000 scale, 0-1 normalized scale, arrays, objects & inverted coordinates
+  function parseBoundingBox(rawBox) {
+    var ymin = 0, xmin = 0, ymax = 0, xmax = 0;
+    if (Array.isArray(rawBox)) {
+      ymin = Number(rawBox[0]) || 0;
+      xmin = Number(rawBox[1]) || 0;
+      ymax = Number(rawBox[2]) || 0;
+      xmax = Number(rawBox[3]) || 0;
+    } else if (rawBox && typeof rawBox === 'object') {
+      ymin = Number(rawBox.ymin !== undefined ? rawBox.ymin : (rawBox.top !== undefined ? rawBox.top : rawBox.y)) || 0;
+      xmin = Number(rawBox.xmin !== undefined ? rawBox.xmin : (rawBox.left !== undefined ? rawBox.left : rawBox.x)) || 0;
+      ymax = Number(rawBox.ymax !== undefined ? rawBox.ymax : (rawBox.bottom !== undefined ? rawBox.bottom : (ymin + (rawBox.height || rawBox.h || 0)))) || 0;
+      xmax = Number(rawBox.xmax !== undefined ? rawBox.xmax : (rawBox.right !== undefined ? rawBox.right : (xmin + (rawBox.width || rawBox.w || 0)))) || 0;
     }
 
-    setBusy(true, 'Gemini AI দিয়ে ফর্ম পড়া হচ্ছে...');
+    if (ymin > ymax) { var ty = ymin; ymin = ymax; ymax = ty; }
+    if (xmin > xmax) { var tx = xmin; xmin = xmax; xmax = tx; }
+
+    var isThousand = (ymin > 1 || xmin > 1 || ymax > 1 || xmax > 1);
+    var scaleDiv = isThousand ? 1000 : 1;
+
+    var xNorm = Math.max(0, Math.min(0.98, xmin / scaleDiv));
+    var yNorm = Math.max(0, Math.min(0.98, ymin / scaleDiv));
+    var wNorm = Math.max(0.015, Math.min(1 - xNorm, (xmax - xmin) / scaleDiv));
+    var hNorm = Math.max(0.012, Math.min(1 - yNorm, (ymax - ymin) / scaleDiv));
+
+    return { xNorm: xNorm, yNorm: yNorm, wNorm: wNorm, hNorm: hNorm };
+  }
+
+  // ---- 2) Gemini Vision fallback (Direct API key or Cloudflare serverless endpoint)
+  function handleGeminiApiResponse(json) {
+    if (!json || !json.success) {
+      toast('AI ফিল্ড স্ক্যান সম্পন্ন হয়নি: ' + ((json && json.error) || 'অজানা সমস্যা'));
+      return false;
+    }
+    var arr;
+    try {
+      var cleanData = json.data;
+      if (typeof cleanData === 'string') {
+        cleanData = cleanData.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
+        arr = JSON.parse(cleanData);
+      } else {
+        arr = cleanData;
+      }
+    } catch (e) {
+      console.error('JSON parse error:', e, json.data);
+      toast('AI থেকে বৈধ ফিল্ড ডেটা পাওয়া যায়নি।');
+      return false;
+    }
+    if (!Array.isArray(arr)) arr = [];
+
+    var fields = arr.map(function (item) {
+      var coords = parseBoundingBox(item.box_2d || item.box || [0, 0, 40, 300]);
+      return {
+        id: uid('gm'),
+        page: STATE.currentPage,
+        label: item.label || 'ফিল্ড',
+        type: item.type || 'text',
+        xNorm: coords.xNorm,
+        yNorm: coords.yNorm,
+        wNorm: coords.wNorm,
+        hNorm: coords.hNorm,
+        value: item.type === 'checkbox' ? false : (item.value || ''),
+        source: 'gemini',
+        needsReview: true,
+        confidence: 0.8
+      };
+    });
+
+    replacePageFields(fields);
+    toast('AI ' + fields.length + 'টি ফিল্ড খুঁজে পেয়েছে। সরাসরি ক্লিক করে টাইপ শুরু করুন।');
+    return true;
+  }
+
+  function detectViaGemini() {
+    var storedEnc = localStorage.getItem(ENC_STORAGE_KEY);
     var dims = STATE.pageDims[STATE.currentPage] || { width: canvas.width, height: canvas.height };
 
-    return decryptApiKey(storedEnc).then(function (apiKey) {
-      if (!apiKey) {
-        throw new Error('সংরক্ষিত API Key ডিক্রিপ্ট করা যায়নি। অনুগ্রহ করে সেটিংসে গিয়ে নতুন করে API Key দিন।');
-      }
-      return renderOffscreenForGemini(dims).then(function (dataUrl) {
-        var base64 = dataUrl.split(',')[1];
-        // Direct Google Gemini API call with automated model fallback
-        return callDirectGeminiWithFallback(apiKey, base64);
-      });
-    }).then(function (json) {
-      setBusy(false);
-      if (!json || !json.success) {
-        toast('Gemini এরর: ' + ((json && json.error) || 'অজানা সমস্যা'));
-        return;
-      }
-      var arr;
-      try {
-        var cleanData = json.data;
-        if (typeof cleanData === 'string') {
-          cleanData = cleanData.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
-          arr = JSON.parse(cleanData);
-        } else {
-          arr = cleanData;
-        }
-      } catch (e) {
-        console.error('JSON parse error:', e, json.data);
-        toast('Gemini থেকে বৈধ JSON পাওয়া যায়নি।');
-        return;
-      }
-      if (!Array.isArray(arr)) arr = [];
+    setBusy(true, 'AI দিয়ে ফর্ম বিশ্লেষণ করা হচ্ছে...');
 
-      var fields = arr.map(function (item) {
-        var box = item.box_2d || [0, 0, 40, 300];
-        var ymin = box[0], xmin = box[1], ymax = box[2], xmax = box[3];
-        return {
-          id: uid('gm'),
-          page: STATE.currentPage,
-          label: item.label || 'ফিল্ড',
-          type: item.type || 'text',
-          xNorm: Math.max(0, ymin === undefined ? 0 : xmin / 1000),
-          yNorm: Math.max(0, ymin === undefined ? 0 : ymin / 1000),
-          wNorm: Math.max(0.01, ((xmax || 0) - (xmin || 0)) / 1000),
-          hNorm: Math.max(0.01, ((ymax || 0) - (ymin || 0)) / 1000),
-          value: item.type === 'checkbox' ? false : (item.value || ''),
-          source: 'gemini',
-          needsReview: true,
-          confidence: 0.8
-        };
+    // 1. If direct Gemini API key is configured in Settings, use it
+    if (storedEnc) {
+      return decryptApiKey(storedEnc).then(function (apiKey) {
+        if (!apiKey || !apiKey.trim()) throw new Error('API Key নেই');
+        return renderOffscreenForGemini(dims).then(function (dataUrl) {
+          var base64 = dataUrl.split(',')[1];
+          return callDirectGeminiWithFallback(apiKey.trim(), base64);
+        });
+      }).then(function (json) {
+        setBusy(false);
+        handleGeminiApiResponse(json);
+      }).catch(function (directErr) {
+        console.warn('Direct Gemini call failed, attempting server endpoint fallback...', directErr);
+        return tryCloudflareBackend(dims);
       });
+    }
 
-      replacePageFields(fields);
-      toast('Gemini ' + fields.length + 'টি ফিল্ড খুঁজে পেয়েছে। যাচাই ট্যাবে গিয়ে চেক করে নিন।');
+    // 2. Cloudflare Worker API fallback (/api/form-filler-ai)
+    return tryCloudflareBackend(dims);
+  }
+
+  function tryCloudflareBackend(dims) {
+    return renderOffscreenForGemini(dims).then(function (dataUrl) {
+      var base64 = dataUrl.split(',')[1];
+      return fetch('/api/form-filler-ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: base64, mimeType: 'image/jpeg' })
+      });
+    }).then(function (res) {
+      if (res.ok) {
+        return res.json().then(function (json) {
+          setBusy(false);
+          handleGeminiApiResponse(json);
+        });
+      }
+      throw new Error('সার্ভার সাড়া দেয়নি (HTTP ' + res.status + ')');
     }).catch(function (err) {
       setBusy(false);
-      console.error(err);
-      toast('Gemini কল ব্যর্থ হয়েছে: ' + (err.message || err));
+      // Gentle notification without forcing tab switch
+      toast('💡 AI স্ক্যান করতে সেটিংসে আপনার Gemini Key দিতে পারেন, অথবা "আঁকুন" মোডে নিজেই সহজে ফিল্ড বসিয়ে নিতে পারেন।');
     });
   }
 
@@ -902,6 +1064,7 @@
     var scaleUsed = currentCanvasScale();
     var offset = offsetInCanvasPx(scaleUsed);
     var fields = getPageFields();
+    var searchQ = ($('#fieldSearchInput') && $('#fieldSearchInput').value || '').trim().toLowerCase();
 
     fields.forEach(function (f) {
       var leftPx = (f.xNorm * canvas.width + offset.x) * STATE.zoom;
@@ -914,6 +1077,9 @@
       if (f.needsReview) box.classList.add('needs-review');
       if (STATE.selectedFieldId === f.id) box.classList.add('is-selected');
       if (STATE.hoveredFieldId === f.id) box.classList.add('is-hovered');
+      if (searchQ && ((f.label && f.label.toLowerCase().includes(searchQ)) || (typeof f.value === 'string' && f.value.toLowerCase().includes(searchQ)))) {
+        box.classList.add('search-matched');
+      }
       box.style.left = leftPx + 'px';
       box.style.top = topPx + 'px';
       box.style.width = wPx + 'px';
@@ -932,12 +1098,12 @@
           if (f.value) {
             var chk = document.createElement('span');
             chk.className = 'overlay-check';
-            var baseBoxDim = Math.max(wPx, hPx);
-            var scaleMultiplier = STATE.font.checkScale || 1.6;
-            var checkFontSize = Math.max(18, Math.round(baseBoxDim * scaleMultiplier));
+            var baseBoxDim = Math.min(wPx, hPx);
+            var scaleMultiplier = STATE.font.checkScale || 0.8;
+            var checkFontSize = Math.max(9, Math.round(baseBoxDim * scaleMultiplier));
             chk.style.fontSize = checkFontSize + 'px';
             chk.style.color = STATE.font.color;
-            chk.textContent = STATE.font.checkSymbol;
+            chk.textContent = f.checkSymbol || STATE.font.checkSymbol;
             box.appendChild(chk);
           } else if (STATE.hoveredFieldId === f.id) {
             var chint = document.createElement('span');
@@ -951,7 +1117,9 @@
           span.style.fontFamily = STATE.font.family;
           span.style.fontWeight = STATE.font.weight;
           span.style.color = STATE.font.color;
-          span.style.fontSize = Math.round(STATE.font.size * scaleUsed * STATE.zoom) + 'px';
+          var fieldBaseSize = f.fontSize || STATE.font.size;
+          var fontSizePx = Math.max(1, Math.round(fieldBaseSize * scaleUsed * STATE.zoom));
+          span.style.fontSize = fontSizePx + 'px';
           span.textContent = f.value;
           box.appendChild(span);
         } else if (STATE.hoveredFieldId === f.id) {
@@ -965,16 +1133,22 @@
         hint2.className = 'overlay-hint';
         hint2.textContent = f.label;
         box.appendChild(hint2);
-
-        if (STATE.mode === 'edit' && STATE.selectedFieldId === f.id) {
-          ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'].forEach(function (dir) {
-            var h = document.createElement('div');
-            h.className = 'resize-handle handle-' + dir;
-            h.dataset.handle = dir;
-            box.appendChild(h);
-          });
-        }
       }
+
+      // Universal resize handles: allows dragging with mouse to make field longer/shorter (↔) or taller/shorter (↕)
+      ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'].forEach(function (dir) {
+        var h = document.createElement('div');
+        h.className = 'resize-handle handle-' + dir;
+        h.dataset.handle = dir;
+        if (dir === 'e' || dir === 'w') {
+          h.title = 'মাউস দিয়ে টেনে ডানে/বামে লম্বা বা খাটো করুন (↔)';
+        } else if (dir === 'n' || dir === 's') {
+          h.title = 'মাউস দিয়ে টেনে উপরে/নিচে সাইজ পরিবর্তন করুন (↕)';
+        } else {
+          h.title = 'মাউস দিয়ে টেনে কোণা বরাবর সাইজ পরিবর্তন করুন';
+        }
+        box.appendChild(h);
+      });
 
       overlay.appendChild(box);
     });
@@ -994,10 +1168,10 @@
   function hoverTipText(f) {
     if (f.type === 'checkbox') {
       var sym = symbolPreview(f);
-      return (f.value ? 'ক্লিক করলে "' + sym + '" উঠে যাবে (আন-টিক)' : 'ক্লিক করলে "' + sym + '" বসবে') + ' • ধরে সরাতে পারেন — ' + f.label;
+      return (f.value ? 'ক্লিক করলে "' + sym + '" উঠে যাবে (আন-টিক)' : 'ক্লিক করলে "' + sym + '" বসবে') + ' • ধরে সরান বা হ্যান্ডেল টেনে সাইজ বদলান — ' + f.label;
     }
-    if (f.type === 'textarea') return '✏️ এখানে লিখুন • মাউস দিয়ে ধরে পজিশন বদলান — ' + f.label;
-    return '✏️ এখানে লিখুন • মাউস দিয়ে ধরে পজিশন বদলান — ' + f.label;
+    if (f.type === 'textarea') return '✏️ এখানে লিখুন • হ্যান্ডেল টেনে সাইজ বদলান • ধরে সরান — ' + f.label;
+    return '✏️ এখানে লিখুন • ডানের হ্যান্ডেল টেনে লম্বা/খাটো করুন (↔) — ' + f.label;
   }
 
   function showHoverTip(fieldEl, f, clientX, clientY) {
@@ -1031,6 +1205,10 @@
   }
 
   overlay.addEventListener('mouseover', function (e) {
+    if (e.target && e.target.classList && e.target.classList.contains('resize-handle')) {
+      hideHoverTip();
+      return;
+    }
     var target = e.target.closest('.field-box');
     if (!target || dragSession || resizing || drawing) return;
     var f = STATE.fields.find(function (x) { return x.id === target.dataset.fieldId; });
@@ -1073,6 +1251,118 @@
   }
 
   // =========================================================================
+  // QUICK STAMP TOOLBAR (টিক চিহ্ন, টেক্সট, তারিখ, স্বাক্ষর দ্রুত বসানো)
+  // =========================================================================
+  var activeStampTool = null;
+
+  function setStampTool(tool) {
+    activeStampTool = tool;
+    $all('.stamp-tool-btn').forEach(function (b) {
+      b.classList.toggle('is-active', b.dataset.stamp === tool);
+    });
+    if (tool) {
+      var toolNames = {
+        tick: 'টিক চিহ্ন (✓)',
+        text: 'নতুন টেক্সট ফিল্ড',
+        cross: 'ক্রস চিহ্ন (✗)'
+      };
+      toast('👉 ' + (toolNames[tool] || tool) + ' সক্রিয়: ফর্মে যেখানে বসাতে চান সেখানে ক্লিক করুন');
+    }
+  }
+
+  function applyStampAtPosition(tool, clientX, clientY) {
+    if (!STATE.imageElement && !STATE.pdfDoc) {
+      toast('দয়া করে প্রথমে একটি ফর্ম বা PDF আপলোড করুন');
+      return;
+    }
+    var r = overlay.getBoundingClientRect();
+    var clickX = clientX - r.left;
+    var clickY = clientY - r.top;
+    var stageW = canvas.width * STATE.zoom;
+    var stageH = canvas.height * STATE.zoom;
+    var normX = Math.max(0, Math.min(0.96, clickX / stageW));
+    var normY = Math.max(0, Math.min(0.98, clickY / stageH));
+
+    if (tool === 'tick') {
+      var f = addField({
+        xNorm: Math.max(0, normX - 0.0075),
+        yNorm: Math.max(0, normY - 0.007),
+        wNorm: 0.015,
+        hNorm: 0.014,
+        type: 'checkbox',
+        label: 'টিক চিহ্ন (✓)',
+        checkSymbol: '✓',
+        value: true
+      });
+      STATE.selectedFieldId = f.id;
+      renderOverlay();
+      renderFieldsList();
+      toast('✓ টিক চিহ্ন বসানো হয়েছে');
+    } else if (tool === 'cross') {
+      var f = addField({
+        xNorm: Math.max(0, normX - 0.0075),
+        yNorm: Math.max(0, normY - 0.007),
+        wNorm: 0.015,
+        hNorm: 0.014,
+        type: 'checkbox',
+        label: 'ক্রস চিহ্ন (✗)',
+        checkSymbol: '✗',
+        value: true
+      });
+      STATE.selectedFieldId = f.id;
+      renderOverlay();
+      renderFieldsList();
+      toast('✓ ক্রস চিহ্ন বসানো হয়েছে');
+    } else if (tool === 'text') {
+      var f = addField({
+        xNorm: Math.max(0, normX),
+        yNorm: Math.max(0, normY - 0.008),
+        wNorm: 0.16,
+        hNorm: 0.020,
+        type: 'text',
+        label: 'টেক্সট ফিল্ড',
+        value: ''
+      });
+      STATE.selectedFieldId = f.id;
+      renderOverlay();
+      renderFieldsList();
+      openInlineEditor(f);
+      toast('✓ লেখার ফিল্ড যোগ করা হয়েছে');
+    } else if (tool === 'date') {
+      var d = new Date();
+      var todayStr = String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear();
+      var f = addField({
+        xNorm: Math.max(0, normX),
+        yNorm: Math.max(0, normY - 0.008),
+        wNorm: 0.12,
+        hNorm: 0.020,
+        type: 'text',
+        label: 'তারিখ',
+        value: todayStr
+      });
+      STATE.selectedFieldId = f.id;
+      renderOverlay();
+      renderFieldsList();
+      toast('✓ আজকের তারিখ বসানো হয়েছে: ' + todayStr);
+    } else if (tool === 'signature') {
+      var f = addField({
+        xNorm: Math.max(0, normX),
+        yNorm: Math.max(0, normY - 0.008),
+        wNorm: 0.18,
+        hNorm: 0.022,
+        type: 'text',
+        label: 'স্বাক্ষর / নাম',
+        value: ''
+      });
+      STATE.selectedFieldId = f.id;
+      renderOverlay();
+      renderFieldsList();
+      openInlineEditor(f);
+      toast('✓ স্বাক্ষর বক্স যোগ করা হয়েছে');
+    }
+  }
+
+  // =========================================================================
   // INTERACTION: Universal Direct Mouse Dragging, Resizing, Drawing & Filling
   // =========================================================================
   var drawing = null;
@@ -1085,6 +1375,23 @@
     var clientY = isTouch ? e.touches[0].clientY : e.clientY;
     var target = e.target.closest ? e.target.closest('.field-box') : null;
     hideHoverTip();
+
+    // 1. Quick Stamp Active
+    if (activeStampTool) {
+      if (target && target.classList.contains('checkbox-type')) {
+        var cbField = STATE.fields.find(function (x) { return x.id === target.dataset.fieldId; });
+        if (cbField) {
+          cbField.value = !cbField.value;
+          renderOverlay();
+          renderFieldsList();
+          toast((cbField.value ? '✓ টিক দেওয়া হয়েছে: ' : 'টিক সরানো হয়েছে: ') + cbField.label);
+        }
+      } else {
+        applyStampAtPosition(activeStampTool, clientX, clientY);
+      }
+      if (!isTouch) e.preventDefault();
+      return;
+    }
 
     if (STATE.mode === 'draw' && !target) {
       var r = overlay.getBoundingClientRect();
@@ -1105,7 +1412,9 @@
       var f = STATE.fields.find(function (x) { return x.id === fieldId; });
       if (!f) return;
 
-      if (handle && STATE.mode === 'edit') {
+      // Universal mouse dragging handles: pull East handle to make longer/shorter (↔), or corners/edges
+      if (handle) {
+        closeInlineEditor(true);
         resizing = {
           id: fieldId,
           handle: handle,
@@ -1114,9 +1423,16 @@
           x: f.xNorm,
           y: f.yNorm,
           w: f.wNorm,
-          h: f.hNorm
+          h: f.hNorm,
+          isMoved: false
         };
-        e.preventDefault();
+        STATE.selectedFieldId = fieldId;
+        $all('.field-box', overlay).forEach(function (b) {
+          b.classList.toggle('is-selected', b.dataset.fieldId === fieldId);
+        });
+        document.body.classList.add('sff-is-resizing');
+        if (!isTouch) e.preventDefault();
+        e.stopPropagation();
         return;
       }
 
@@ -1165,9 +1481,31 @@
       return;
     }
 
+    if (resizing) {
+      var f = STATE.fields.find(function (x) { return x.id === resizing.id; });
+      if (!f) return;
+      var dist = Math.hypot(clientX - resizing.startClientX, clientY - resizing.startClientY);
+      if (dist >= 2) {
+        resizing.isMoved = true;
+      }
+      var stageW2 = canvas.width * STATE.zoom, stageH2 = canvas.height * STATE.zoom;
+      var ddx = (clientX - resizing.startClientX) / stageW2;
+      var ddy = (clientY - resizing.startClientY) / stageH2;
+      var x = resizing.x, y = resizing.y, w = resizing.w, h = resizing.h;
+      var hd = resizing.handle;
+      if (hd.indexOf('e') !== -1) w = Math.max(0.005, Math.min(1 - x, resizing.w + ddx));
+      if (hd.indexOf('s') !== -1) h = Math.max(0.005, Math.min(1 - y, resizing.h + ddy));
+      if (hd.indexOf('w') !== -1) { var nw = resizing.w - ddx; if (nw > 0.005 && (resizing.x + ddx >= 0)) { x = resizing.x + ddx; w = nw; } }
+      if (hd.indexOf('n') !== -1) { var nh = resizing.h - ddy; if (nh > 0.005 && (resizing.y + ddy >= 0)) { y = resizing.y + ddy; h = nh; } }
+      updateField(resizing.id, { xNorm: x, yNorm: y, wNorm: w, hNorm: h });
+      if (isTouch) e.preventDefault();
+      return;
+    }
+
     if (dragSession) {
       var dist = Math.hypot(clientX - dragSession.startClientX, clientY - dragSession.startClientY);
-      if (dist >= 3 || dragSession.isMoved) {
+      var threshold = (STATE.mode === 'fill') ? 10 : 5;
+      if (dist >= threshold || dragSession.isMoved) {
         dragSession.isMoved = true;
         dragSession.el.classList.add('is-dragging');
         document.body.classList.add('sff-is-dragging');
@@ -1196,27 +1534,22 @@
       if (isTouch) e.preventDefault();
       return;
     }
-
-    if (resizing) {
-      var f = STATE.fields.find(function (x) { return x.id === resizing.id; });
-      if (!f) return;
-      var stageW2 = canvas.width * STATE.zoom, stageH2 = canvas.height * STATE.zoom;
-      var ddx = (clientX - resizing.startClientX) / stageW2;
-      var ddy = (clientY - resizing.startClientY) / stageH2;
-      var x = resizing.x, y = resizing.y, w = resizing.w, h = resizing.h;
-      var hd = resizing.handle;
-      if (hd.indexOf('e') !== -1) w = Math.max(0.01, Math.min(1 - x, resizing.w + ddx));
-      if (hd.indexOf('s') !== -1) h = Math.max(0.01, Math.min(1 - y, resizing.h + ddy));
-      if (hd.indexOf('w') !== -1) { var nw = resizing.w - ddx; if (nw > 0.01 && (resizing.x + ddx >= 0)) { x = resizing.x + ddx; w = nw; } }
-      if (hd.indexOf('n') !== -1) { var nh = resizing.h - ddy; if (nh > 0.01 && (resizing.y + ddy >= 0)) { y = resizing.y + ddy; h = nh; } }
-      updateField(resizing.id, { xNorm: x, yNorm: y, wNorm: w, hNorm: h });
-      if (isTouch) e.preventDefault();
-    }
   }
 
   function onPointerUp() {
     hideMoveTooltip();
     document.body.classList.remove('sff-is-dragging');
+    document.body.classList.remove('sff-is-resizing');
+
+    if (resizing) {
+      var wasMoved = resizing.isMoved;
+      resizing = null;
+      if (wasMoved) {
+        renderFieldsList();
+        toast('↔ ফিল্ড সাইজ সংরক্ষণ করা হয়েছে');
+      }
+      return;
+    }
 
     if (drawing) {
       var w = drawing.w || 0, h = drawing.h || 0;
@@ -1254,10 +1587,11 @@
           if (clickedField.type === 'checkbox') {
             updateField(clickedField.id, { value: !clickedField.value });
             renderFieldsList();
+            toast((clickedField.value ? '✓ টিক দেওয়া হয়েছে: ' : 'টিক সরানো হয়েছে: ') + clickedField.label);
           } else {
+            openInlineEditor(clickedField);
             var input = document.getElementById('val_' + clickedField.id);
             if (input) {
-              input.focus();
               input.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
           }
@@ -1319,17 +1653,27 @@
 
   // =========================================================================
   // DIRECT ON-FORM DOUBLE-CLICK FILLING (Floating Inline Editor)
-  // =========================================================================
   var activeInlineEditor = null;
+  var onDocClickOutsideHandler = null;
+  var outsideTimeout = null;
 
   function closeInlineEditor(save) {
+    if (outsideTimeout) {
+      clearTimeout(outsideTimeout);
+      outsideTimeout = null;
+    }
+    if (onDocClickOutsideHandler) {
+      document.removeEventListener('pointerdown', onDocClickOutsideHandler);
+      onDocClickOutsideHandler = null;
+    }
     if (!activeInlineEditor) return;
     var ed = activeInlineEditor;
     activeInlineEditor = null;
 
     if (save && ed.input) {
       var val = ed.input.value;
-      updateField(ed.fieldId, { value: val });
+      var f = STATE.fields.find(function (x) { return x.id === ed.fieldId; });
+      updateField(ed.fieldId, { value: val, fontSize: (f ? f.fontSize : undefined) });
       var sidebarInp = document.getElementById('val_' + ed.fieldId);
       if (sidebarInp) sidebarInp.value = val;
     }
@@ -1346,8 +1690,8 @@
     var offset = offsetInCanvasPx(scaleUsed);
     var leftPx = (field.xNorm * canvas.width + offset.x) * STATE.zoom;
     var topPx = (field.yNorm * canvas.height + offset.y) * STATE.zoom;
-    var wPx = Math.max(140, (field.wNorm * canvas.width) * STATE.zoom);
-    var hPx = Math.max(30, (field.hNorm * canvas.height) * STATE.zoom);
+    var wPx = Math.max(80, (field.wNorm * canvas.width) * STATE.zoom);
+    var hPx = Math.max(26, (field.hNorm * canvas.height) * STATE.zoom);
 
     var wrap = document.createElement('div');
     wrap.className = 'sff-inline-editor-wrap';
@@ -1361,17 +1705,107 @@
     if (!isTextarea) input.type = (field.type === 'number' ? 'number' : 'text');
     input.value = field.value || '';
     input.placeholder = field.label || 'এখানে লিখুন...';
-    input.style.fontSize = Math.max(12, Math.round(STATE.font.size * scaleUsed * STATE.zoom)) + 'px';
+
+    var curFontSize = field.fontSize || STATE.font.size;
+    function calcInputFontSize(fs) {
+      return Math.max(1, Math.round(fs * scaleUsed * STATE.zoom));
+    }
+    input.style.fontSize = calcInputFontSize(curFontSize) + 'px';
+    input.style.fontFamily = STATE.font.family;
+    input.style.fontWeight = STATE.font.weight;
     input.style.color = STATE.font.color;
     input.style.height = hPx + 'px';
 
     var badge = document.createElement('div');
     badge.className = 'sff-inline-editor-badge';
-    badge.textContent = field.label + ' • [Enter] সেভ • [Esc] বাতিল • [Tab] পরের ফিল্ড';
+    badge.innerHTML = '<span class="sff-inline-badge-title">' + escapeHtml(field.label) + '</span>' +
+      '<div class="sff-inline-font-controls">' +
+        '<button type="button" class="sff-font-btn" id="sffInlineDec" title="ফন্ট ছোট করুন (A-)">A−</button>' +
+        '<span class="sff-font-size-label" id="sffInlineSize">' + curFontSize + 'px</span>' +
+        '<button type="button" class="sff-font-btn" id="sffInlineInc" title="ফন্ট বড় করুন (A+)">A+</button>' +
+        '<button type="button" class="sff-font-btn sff-font-autofit" id="sffInlineFit" title="বক্সের মাপে ফন্ট অটো-ফিট করুন">⚡ Auto</button>' +
+      '</div>' +
+      '<span style="font-size:9.5px; opacity:0.8; margin-left:4px;">[Enter] সেভ • [Tab] পরেরটি</span>';
+
+    // Prevent focus loss when clicking font size controls
+    badge.addEventListener('mousedown', function (e) {
+      wrap.dataset.hovered = 'true';
+      if (e.target.closest('.sff-font-btn')) {
+        e.preventDefault();
+      }
+    });
+
+    var decBtn = badge.querySelector('#sffInlineDec');
+    if (decBtn) {
+      decBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        wrap.dataset.hovered = 'true';
+        var cur = field.fontSize || STATE.font.size;
+        var next = Math.max(1, cur - 1);
+        field.fontSize = next;
+        updateField(field.id, { fontSize: next });
+        badge.querySelector('#sffInlineSize').textContent = next + 'px';
+        input.style.fontSize = calcInputFontSize(next) + 'px';
+        renderFieldsList();
+        input.focus();
+      });
+    }
+
+    var incBtn = badge.querySelector('#sffInlineInc');
+    if (incBtn) {
+      incBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        wrap.dataset.hovered = 'true';
+        var cur = field.fontSize || STATE.font.size;
+        var next = Math.min(36, cur + 1);
+        field.fontSize = next;
+        updateField(field.id, { fontSize: next });
+        badge.querySelector('#sffInlineSize').textContent = next + 'px';
+        input.style.fontSize = calcInputFontSize(next) + 'px';
+        renderFieldsList();
+        input.focus();
+      });
+    }
+
+    var fitBtn = badge.querySelector('#sffInlineFit');
+    if (fitBtn) {
+      fitBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var text = input.value || field.value || '';
+        if (!text) {
+          toast('আগে কিছু টেক্সট লিখুন');
+          return;
+        }
+        var availWidth = (field.wNorm * canvas.width) - 8;
+        var tCanvas = document.createElement('canvas');
+        var tCtx = tCanvas.getContext('2d');
+        var cur = field.fontSize || STATE.font.size;
+        tCtx.font = STATE.font.weight + ' ' + cur + 'px ' + STATE.font.family;
+        var mWidth = tCtx.measureText(text).width;
+        if (mWidth > availWidth && availWidth > 15) {
+          var fit = Math.max(1, Math.floor(cur * (availWidth / mWidth)));
+          field.fontSize = fit;
+          updateField(field.id, { fontSize: fit });
+          badge.querySelector('#sffInlineSize').textContent = fit + 'px';
+          input.style.fontSize = calcInputFontSize(fit) + 'px';
+          renderFieldsList();
+          toast('⚡ ফন্ট সাইজ ' + fit + 'px এ অটো-ফিট করা হয়েছে');
+        } else {
+          toast('✓ লেখাটি বক্সের সাইজের মধ্যে ঠিক আছে');
+        }
+        input.focus();
+      });
+    }
 
     wrap.appendChild(input);
     wrap.appendChild(badge);
-    overlay.appendChild(wrap);
+    stageInner.appendChild(wrap);
+
+    wrap.addEventListener('mouseenter', function () { wrap.dataset.hovered = 'true'; });
+    wrap.addEventListener('mouseleave', function () { wrap.dataset.hovered = 'false'; });
 
     activeInlineEditor = { wrap: wrap, input: input, fieldId: field.id };
 
@@ -1384,6 +1818,23 @@
       field.value = input.value;
       var sidebarInp = document.getElementById('val_' + field.id);
       if (sidebarInp) sidebarInp.value = input.value;
+
+      // Real-time auto-fit indication if text exceeds width
+      var availWidth = (field.wNorm * canvas.width) - 8;
+      if (availWidth > 20 && input.value.length > 3) {
+        var tCanvas = document.createElement('canvas');
+        var tCtx = tCanvas.getContext('2d');
+        var cur = field.fontSize || STATE.font.size;
+        tCtx.font = STATE.font.weight + ' ' + cur + 'px ' + STATE.font.family;
+        var mWidth = tCtx.measureText(input.value).width;
+        if (mWidth > availWidth) {
+          var fit = Math.max(1, Math.floor(cur * (availWidth / mWidth)));
+          field.fontSize = fit;
+          var sizeLabel = badge.querySelector('#sffInlineSize');
+          if (sizeLabel) sizeLabel.textContent = fit + 'px';
+          input.style.fontSize = calcInputFontSize(fit) + 'px';
+        }
+      }
     });
 
     input.addEventListener('keydown', function (e) {
@@ -1414,13 +1865,17 @@
       }
     });
 
-    input.addEventListener('blur', function () {
-      setTimeout(function () {
-        if (activeInlineEditor && activeInlineEditor.fieldId === field.id) {
-          closeInlineEditor(true);
-        }
-      }, 180);
-    });
+    onDocClickOutsideHandler = function (e) {
+      if (wrap && !wrap.contains(e.target) && !e.target.closest('.field-box')) {
+        closeInlineEditor(true);
+      }
+    };
+    outsideTimeout = setTimeout(function () {
+      if (activeInlineEditor && activeInlineEditor.fieldId === field.id) {
+        document.addEventListener('pointerdown', onDocClickOutsideHandler);
+      }
+      outsideTimeout = null;
+    }, 150);
   }
 
   // =========================================================================
@@ -1431,6 +1886,7 @@
   var lastDblTrigger = 0;
 
   function handleFormDoubleClick(e) {
+    if (e.target && e.target.closest && e.target.closest('.sff-inline-editor-wrap')) return;
     var now = Date.now();
     if (now - lastDblTrigger < 300) return;
     lastDblTrigger = now;
@@ -1502,6 +1958,7 @@
 
   // Consecutive click detector for 100% reliable double-click detection across all devices
   overlay.addEventListener('click', function (e) {
+    if (e.target && e.target.closest && e.target.closest('.sff-inline-editor-wrap')) return;
     var now = Date.now();
     var dist = Math.hypot(e.clientX - lastClickX, e.clientY - lastClickY);
     if (now - lastClickTime < 380 && dist < 20) {
@@ -1562,7 +2019,13 @@
     updateToolbar();
     renderFieldsList();
     renderReviewList();
-    if (getPageFields().length === 0) detectFields();
+    if (getPageFields().length === 0 && STATE.fileType === 'pdf' && STATE.pdfDoc) {
+      detectAcroFormFields().then(function (acro) {
+        if (acro && acro.length > 0) {
+          replacePageFields(acro);
+        }
+      }).catch(function () {});
+    }
   }
 
   function renderFieldsList() {
@@ -1667,6 +2130,31 @@
 
     head.appendChild(labelInput);
     head.appendChild(renameBtn);
+
+    if (f.type !== 'checkbox') {
+      var fontCtrl = document.createElement('div');
+      fontCtrl.className = 'field-font-control';
+      var curSize = f.fontSize || STATE.font.size;
+      fontCtrl.innerHTML = '<button type="button" class="field-font-btn dec" title="ফন্ট ছোট করুন (A-)">A−</button>' +
+                           '<span class="field-font-val">' + curSize + '</span>' +
+                           '<button type="button" class="field-font-btn inc" title="ফন্ট বড় করুন (A+)">A+</button>';
+      fontCtrl.querySelector('.dec').addEventListener('click', function (e) {
+        e.stopPropagation();
+        var s = Math.max(1, (f.fontSize || STATE.font.size) - 1);
+        updateField(f.id, { fontSize: s });
+        renderOverlay();
+        renderFieldsList();
+      });
+      fontCtrl.querySelector('.inc').addEventListener('click', function (e) {
+        e.stopPropagation();
+        var s = Math.min(36, (f.fontSize || STATE.font.size) + 1);
+        updateField(f.id, { fontSize: s });
+        renderOverlay();
+        renderFieldsList();
+      });
+      head.appendChild(fontCtrl);
+    }
+
     head.appendChild(tag);
     head.appendChild(del);
     card.appendChild(head);
@@ -2030,29 +2518,40 @@
       if (f.type === 'checkbox') {
         if (f.value) {
           targetCtx.fillStyle = font.color;
-          var baseBoxDim = Math.max(w, h);
-          var scaleMultiplier = (font && font.checkScale) || 1.6;
-          var checkFontSize = Math.max(22 * scaleUsed, Math.round(baseBoxDim * scaleMultiplier));
+          var baseBoxDim = Math.min(w, h);
+          var scaleMultiplier = (font && font.checkScale) || 0.8;
+          var checkFontSize = Math.max(9 * scaleUsed, Math.round(baseBoxDim * scaleMultiplier));
           targetCtx.font = '900 ' + checkFontSize + 'px "Noto Sans Bengali", Arial, sans-serif';
           targetCtx.textBaseline = 'middle';
           targetCtx.textAlign = 'center';
-          targetCtx.fillText(font.checkSymbol, x + w / 2, y + h / 2);
+          targetCtx.fillText(f.checkSymbol || font.checkSymbol, x + w / 2, y + h / 2);
         }
       } else if (f.value) {
         targetCtx.fillStyle = font.color;
-        targetCtx.font = font.weight + ' ' + Math.round(font.size * scaleUsed) + 'px ' + font.family;
+        var effectiveBaseSize = f.fontSize || font.size;
+        var fontSize = Math.round(effectiveBaseSize * scaleUsed);
+        targetCtx.font = font.weight + ' ' + fontSize + 'px ' + font.family;
         targetCtx.textBaseline = 'middle';
         targetCtx.textAlign = 'left';
+        var paddingX = 4 * scaleUsed;
+        var maxTextWidth = Math.max(10, w - (paddingX * 2));
         if (f.type === 'textarea') {
           var lines = String(f.value).split('\n');
-          var lh = font.size * scaleUsed * 1.3;
-          var cy = y + lh * 0.6;
+          var lh = fontSize * 1.35;
+          var cy = y + lh * 0.7;
           lines.forEach(function (line) {
-            targetCtx.fillText(line, x + 3 * scaleUsed, cy);
+            targetCtx.fillText(line, x + paddingX, cy);
             cy += lh;
           });
         } else {
-          targetCtx.fillText(String(f.value), x + 3 * scaleUsed, y + h / 2);
+          var textVal = String(f.value);
+          var measuredW = targetCtx.measureText(textVal).width;
+          if (measuredW > maxTextWidth && maxTextWidth > 15) {
+            var scaledSize = Math.max(1 * scaleUsed, Math.floor(fontSize * (maxTextWidth / measuredW)));
+            targetCtx.font = font.weight + ' ' + scaledSize + 'px ' + font.family;
+          }
+          targetCtx.fillText(textVal, x + paddingX, y + h / 2);
+          targetCtx.font = font.weight + ' ' + fontSize + 'px ' + font.family;
         }
       }
     });
@@ -2182,34 +2681,184 @@
   });
 
   // =========================================================================
-  // UPLOAD / DRAG-DROP
+  // UPLOAD / DRAG-DROP / STAMP TOOLBAR WIRING
   // =========================================================================
   $('#btnUpload').addEventListener('click', function () { $('#fileInput').click(); });
   $('#fileInput').addEventListener('change', function (e) {
     if (e.target.files[0]) handleFile(e.target.files[0]);
     e.target.value = '';
   });
-  ['dragenter', 'dragover'].forEach(function (ev) {
-    $('#stageArea').addEventListener(ev, function (e) { e.preventDefault(); });
+
+  // Page View Interactive Dropzone
+  var stageDropzone = $('#stageDropzone');
+  if (stageDropzone) {
+    stageDropzone.addEventListener('click', function () {
+      $('#fileInput').click();
+    });
+  }
+  var btnDropzoneBrowse = $('#btnDropzoneBrowse');
+  if (btnDropzoneBrowse) {
+    btnDropzoneBrowse.addEventListener('click', function (e) {
+      e.stopPropagation();
+      $('#fileInput').click();
+    });
+  }
+
+  // Stamp toolbar button click and drag setup
+  $all('.stamp-tool-btn').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var tool = btn.dataset.stamp;
+      if (activeStampTool === tool) {
+        setStampTool(null);
+      } else {
+        setStampTool(tool);
+      }
+    });
+
+    btn.setAttribute('draggable', 'true');
+    btn.addEventListener('dragstart', function (e) {
+      e.dataTransfer.setData('text/plain', 'stamp:' + btn.dataset.stamp);
+      e.dataTransfer.effectAllowed = 'copy';
+    });
   });
-  $('#stageArea').addEventListener('drop', function (e) {
-    e.preventDefault();
-    if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+
+  window.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && activeStampTool) {
+      setStampTool(null);
+      toast('স্ট্যাম্প মোড বন্ধ করা হয়েছে');
+    }
   });
+
+  // Stage Area drag & drop handling (files and stamp tools)
+  var stageArea = $('#stageArea');
+  var stageDragOverlay = $('#stageDragOverlay');
+  var dragDepth = 0;
+
+  if (stageArea) {
+    stageArea.addEventListener('dragenter', function (e) {
+      e.preventDefault();
+      dragDepth++;
+      if (e.dataTransfer && e.dataTransfer.types && Array.from(e.dataTransfer.types).indexOf('Files') !== -1) {
+        if (STATE.pdfDoc || STATE.imageElement) {
+          if (stageDragOverlay) stageDragOverlay.hidden = false;
+        } else {
+          var dz = $('#stageDropzone');
+          if (dz) dz.classList.add('drag-hover');
+        }
+      }
+    });
+
+    stageArea.addEventListener('dragover', function (e) {
+      e.preventDefault();
+      if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+    });
+
+    stageArea.addEventListener('dragleave', function (e) {
+      e.preventDefault();
+      dragDepth--;
+      if (dragDepth <= 0) {
+        dragDepth = 0;
+        if (stageDragOverlay) stageDragOverlay.hidden = true;
+        var dz = $('#stageDropzone');
+        if (dz) dz.classList.remove('drag-hover');
+      }
+    });
+
+    stageArea.addEventListener('drop', function (e) {
+      e.preventDefault();
+      dragDepth = 0;
+      if (stageDragOverlay) stageDragOverlay.hidden = true;
+      var dz = $('#stageDropzone');
+      if (dz) dz.classList.remove('drag-hover');
+
+      // 1. Check if a stamp tool was dragged and dropped onto canvas
+      var stampData = e.dataTransfer ? e.dataTransfer.getData('text/plain') : '';
+      if (stampData && stampData.indexOf('stamp:') === 0) {
+        var tool = stampData.replace('stamp:', '');
+        applyStampAtPosition(tool, e.clientX, e.clientY);
+        return;
+      }
+
+      // 2. Check if a document file was dropped
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+        handleFile(e.dataTransfer.files[0]);
+      }
+    });
+  }
 
   var fieldSearchInput = $('#fieldSearchInput');
   if (fieldSearchInput) {
+    function scrollToMatchedBox(fieldId) {
+      setTimeout(function () {
+        var matchedBox = overlay.querySelector('[data-field-id="' + fieldId + '"]');
+        if (matchedBox && $('#stageArea')) {
+          var stage = $('#stageArea');
+          var bRect = matchedBox.getBoundingClientRect();
+          var sRect = stage.getBoundingClientRect();
+          var scrollY = (bRect.top - sRect.top) + stage.scrollTop - (stage.clientHeight / 2) + (bRect.height / 2);
+          var scrollX = (bRect.left - sRect.left) + stage.scrollLeft - (stage.clientWidth / 2) + (bRect.width / 2);
+          stage.scrollTo({ top: Math.max(0, scrollY), left: Math.max(0, scrollX), behavior: 'smooth' });
+        }
+      }, 60);
+    }
+
     fieldSearchInput.addEventListener('input', function () {
       renderFieldsList();
       var q = (fieldSearchInput.value || '').trim().toLowerCase();
       if (q) {
+        // 1. Search current page first
         var match = getPageFields().find(function (f) {
           return (f.label && f.label.toLowerCase().includes(q)) ||
                  (typeof f.value === 'string' && f.value.toLowerCase().includes(q));
         });
+
+        // 2. If not found on current page, search across entire document (all pages)
+        if (!match) {
+          match = STATE.fields.find(function (f) {
+            return (f.label && f.label.toLowerCase().includes(q)) ||
+                   (typeof f.value === 'string' && f.value.toLowerCase().includes(q));
+          });
+        }
+
         if (match) {
           STATE.selectedFieldId = match.id;
+          if (match.page && match.page !== STATE.currentPage) {
+            // Auto switch to that page so user instantly sees where the match is
+            STATE.currentPage = match.page;
+            renderPage().then(function () {
+              updateToolbar();
+              renderFieldsList();
+              renderOverlay();
+              scrollToMatchedBox(match.id);
+            });
+          } else {
+            renderOverlay();
+            scrollToMatchedBox(match.id);
+          }
+        } else {
+          STATE.selectedFieldId = null;
           renderOverlay();
+        }
+      } else {
+        renderOverlay();
+      }
+    });
+
+    fieldSearchInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (STATE.selectedFieldId) {
+          var f = STATE.fields.find(function (x) { return x.id === STATE.selectedFieldId; });
+          if (f) {
+            if (f.type === 'checkbox') {
+              updateField(f.id, { value: !f.value });
+              renderFieldsList();
+              toast((f.value ? '✓ টিক দেওয়া হয়েছে: ' : 'টিক সরানো হয়েছে: ') + f.label);
+            } else {
+              openInlineEditor(f);
+            }
+          }
         }
       }
     });

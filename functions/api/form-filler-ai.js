@@ -48,9 +48,10 @@ export async function onRequestPost(context) {
 }
 
 export async function handleFormFillerAI(request, env) {
-  const validation = await validateRequest(request);
-  if (validation.isOptions) return handleOptions();
-  if (validation.errorResponse) return validation.errorResponse;
+  try {
+    const validation = await validateRequest(request);
+    if (validation.isOptions) return handleOptions();
+    if (validation.errorResponse) return validation.errorResponse;
 
   const imageResult = extractImageData(validation.body);
   if (imageResult.error) {
